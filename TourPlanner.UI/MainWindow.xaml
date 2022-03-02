@@ -7,11 +7,15 @@
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="TourPlanner.UI.MainWindow"
         mc:Ignorable="d"
         Title="Tour Planner" Height="450" Width="800">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40px"/>
-            <RowDefinition Height="25px"/>
-            <RowDefinition Height="25px"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="400*"/>
         </Grid.RowDefinitions>
 
@@ -19,21 +23,34 @@
         <Label x:Name="Title" Grid.Row="0" Content="Tour Planner" FontSize="20px"/>
 
         <!-- MenuPanel -->
-        <Grid x:Name="MenuPanel"  Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="40" />
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="40"/>
-            </Grid.ColumnDefinitions>
-
-            <Button x:Name="FileButton" Content="File" Grid.Column="0"/>
-            <Button x:Name="EditButton" Content="Edit" Grid.Column="1"/>
-            <Button x:Name="OptionsButton" Content="Options" Grid.Column="2"/>
-            <TextBlock x:Name="MenuPanelSpacer" Grid.Column="3"/>
-            <Button x:Name="HelpButton" Content="Help" Grid.Column="4"/>
-        </Grid>
+        <Menu x:Name="MenuPanel" Grid.Row="1">
+            <MenuItem Name="FileMenuItem" Header="_File" Height="25">
+                <MenuItem Header="_New" />
+                <MenuItem Header="_Open" />
+                <MenuItem Header="_Save" />
+                <MenuItem Header="_Save_As" />
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+            <MenuItem Name="EditMenuItem" Header="_Edit" Height="25">
+                <MenuItem Header="_Delete" />
+                <MenuItem Header="_Settings" />
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+            <MenuItem x:Name="OptionsButton" Header="_Options" Height="25">
+                <MenuItem Header="_Test01" />
+                <MenuItem Header="_Test02" />
+                <Separator />
+                <MenuItem Header="_Test03" />
+            </MenuItem>
+            <MenuItem x:Name="HelpButton" Header="_Help" Height="25">
+                <MenuItem Header="_Test01" />
+                <MenuItem Header="_Test02" />
+                <Separator />
+                <MenuItem Header="_Test03" />
+            </MenuItem>
+        </Menu>
 
         <!-- SearchPanel -->
         <Grid x:Name="SearchPanel" Grid.Row="2">
