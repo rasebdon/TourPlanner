@@ -5,20 +5,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace TourPlanner.UI
+namespace TourPlanner.UI.ViewModels
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public abstract class BaseViewModel : INotifyPropertyChanged
     {
-        public ICommand ExecuteCommand { get; }
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public MainViewModel()
-        {
-            // ExecuteCommand = new ExecuteCommand(this);
-        }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {

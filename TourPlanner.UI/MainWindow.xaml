@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TourPlanner.UI"
+        xmlns:viewModels="clr-namespace:TourPlanner.UI.ViewModels"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="TourPlanner.UI.MainWindow"
         mc:Ignorable="d"
         Title="Tour Planner" Height="450" Width="800">
     <Window.DataContext>
-        <local:MainViewModel />
+        <viewModels:MainViewModel />
     </Window.DataContext>
 
     <Grid>
@@ -28,7 +29,7 @@
                 <MenuItem Header="_New" />
                 <MenuItem Header="_Open" />
                 <MenuItem Header="_Save" />
-                <MenuItem Header="_Save_As" />
+                <MenuItem Header="_Save As" />
                 <Separator />
                 <MenuItem Header="_Exit" />
             </MenuItem>
@@ -160,15 +161,18 @@
                         </Grid.ColumnDefinitions>
 
                         <Label x:Name="TourContentDataPanelTitle" Content="Logs:" Grid.Column="0"/>
-                        <Button x:Name="TourContentDataPanelAdd" Content="+" Grid.Column="1"/>
-                        <Button x:Name="TourContentDataPanelRemove" Content="-" Grid.Column="2"/>
+                        <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding DataPanelViewModel.AddRowCommand}"  Grid.Column="1"/>
+                        <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding DataPanelViewModel.RemoveRowCommand}" Grid.Column="2"/>
                     </Grid>
 
-                    <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1">
+                    <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
+                              ItemsSource="{Binding DataPanelViewModel.Data}" AutoGenerateColumns="False"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              SelectedItem="{Binding DataPanelViewModel.SelectedItem}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Date" FontWeight="Bold"/>
-                            <DataGridTextColumn Header="Duration" FontWeight="Bold"/>
-                            <DataGridTextColumn Header="Distance" FontWeight="Bold"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Date}" FontWeight="Bold"/>
+                            <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" FontWeight="Bold"/>
+                            <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" FontWeight="Bold"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
