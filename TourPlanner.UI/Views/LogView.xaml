@@ -21,14 +21,14 @@
             </Grid.ColumnDefinitions>
 
             <Label x:Name="TourContentDataPanelTitle" Content="Logs:" Grid.Column="0"/>
-            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding DataPanelViewModel.AddRowCommand}"  Grid.Column="1"/>
-            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding DataPanelViewModel.RemoveRowCommand}" Grid.Column="2"/>
+            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding LogViewModel.AddRowCommand}"  Grid.Column="1"/>
+            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding LogViewModel.RemoveRowCommand}" Grid.Column="2"/>
         </Grid>
 
     <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
-                                  ItemsSource="{Binding DataPanelViewModel.Data}" AutoGenerateColumns="False"
+                                  ItemsSource="{Binding LogViewModel.Data}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False"
-                                  SelectedItem="{Binding DataPanelViewModel.SelectedItem}">
+                                  SelectedItem="{Binding LogViewModel.SelectedItem}">
         <DataGrid.Columns>
             <DataGridTextColumn Header="Date" Binding="{Binding Date}" FontWeight="Bold"/>
             <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" FontWeight="Bold"/>

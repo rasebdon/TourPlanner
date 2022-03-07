@@ -9,16 +9,15 @@ using System.Windows.Input;
 
 namespace TourPlanner.UI.ViewModels
 {
-    public class DataPanelViewModel
+    public class LogViewModel
     {
         public ObservableCollection<TourPoint> Data { get; } = new();
+        public TourPoint? SelectedItem { get; set; }
 
         public ICommand AddRowCommand { get; }
         public ICommand RemoveRowCommand { get; }
 
-        public TourPoint? SelectedItem { get; set; }
-
-        public DataPanelViewModel()
+        public LogViewModel()
         {
 
             Data.Add(new TourPoint() { Date = DateTime.Now, Duration = 2f, Distance = 5.4f });
@@ -34,7 +33,7 @@ namespace TourPlanner.UI.ViewModels
             RemoveRowCommand = new RelayCommand(
                 o =>
                 {
-                    if(SelectedItem != null)
+                    if (SelectedItem != null)
                         Data.Remove(SelectedItem);
                 },
                 o => true);

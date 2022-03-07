@@ -20,11 +20,11 @@ namespace TourPlanner.UI.ViewModels
 
     public class MainViewModel : BaseViewModel
     {
-        public DataPanelViewModel DataPanelViewModel { get; }
+        public LogViewModel LogViewModel { get; }
 
         public MainViewModel()
         {
-            DataPanelViewModel = new();
+            LogViewModel = new();
         }
     }
 }

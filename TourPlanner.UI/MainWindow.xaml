@@ -20,8 +20,6 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         
-        <!-- TODO: Put Header, MenuPanel and SearchPanel into another xaml files -->
-
         <!-- Header -->
         <Label x:Name="Title" Grid.Row="0" Content="Tour Planner" FontSize="20px"/>
 
