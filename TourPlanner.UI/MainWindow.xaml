@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TourPlanner.UI"
+        xmlns:local="clr-namespace:TourPlanner.UI.Views"
         xmlns:viewModels="clr-namespace:TourPlanner.UI.ViewModels"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="TourPlanner.UI.MainWindow"
         mc:Ignorable="d"
@@ -17,8 +17,10 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="400*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+        
+        <!-- TODO: Put Header, MenuPanel and SearchPanel into another xaml files -->
 
         <!-- Header -->
         <Label x:Name="Title" Grid.Row="0" Content="Tour Planner" FontSize="20px"/>
@@ -72,36 +74,12 @@
                 <ColumnDefinition MinWidth="300" Width="4*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- TourListPanel -->
-            <Grid x:Name="TourListPanel" Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30px"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <!-- TourListHeaderPanel -->
-                <Grid x:Name="TourListHeaderPanel" Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Label x:Name="TourListHeader" Grid.Column="0" Content="Tours"/>
-                    <Button x:Name="TourListAddButton" Grid.Column="1" Content="+" Width="20"/>
-                    <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Width="20"/>
-                </Grid>
-
-                <!-- TourListContentPanel -->
-                <ListBox x:Name="TourListContentPanel" Grid.Row="1">
-                    <ListBoxItem Content="- Tour 1"/>
-                    <ListBoxItem Content="- Tour 2"/>
-                    <ListBoxItem Content="- Tour 3"/>
-                </ListBox>
-            </Grid>
+            <!-- ListView -->
+            <local:ListView Grid.Column="0"></local:ListView>
 
             <GridSplitter x:Name="ContentGridSplitter" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
-
+            
+            <!-- TourContentPanel -->
             <Grid x:Name="TourContentPanel" Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="150px" Height="*"/>
@@ -109,74 +87,16 @@
                     <RowDefinition MinHeight="150px" Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Grid x:Name="TourContentPanelUpper" Grid.Row="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Label x:Name="TourContentTitle" Content="Tour 1" Grid.Row="0"/>
-
-                    <!-- TourContentMenuBar -->
-                    <Grid x:Name="TourContentMenuBar" Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="120"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button x:Name="TourContentRouteButton" Content="Route" Grid.Column="0"/>
-                        <Button x:Name="TourContentDescriptionButton" Content="Description" Grid.Column="1"/>
-                    </Grid>
-
-                    <!-- TourContentBox -->
-                    <Grid x:Name="TourContentBox" Grid.Row="2">
-                        <Image Source="/assets/images/example_map.jpg" Stretch="Uniform" StretchDirection="Both" RenderTransformOrigin="0.5,0.5">
-                            <Image.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                    <SkewTransform/>
-                                    <RotateTransform/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </Image.RenderTransform>
-                        </Image>
-                    </Grid>
-                </Grid>
+                <!-- MapView-->
+                <local:MapView Grid.Row="0"></local:MapView>
 
                 <GridSplitter x:Name="TourContentGridSplitter" Height="5" Grid.Row="1" HorizontalAlignment="Stretch"/>
-
-                <Grid x:Name="TourContentPanelLower" Grid.Row="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- TourContentDataPanelMenuBar -->
-                    <Grid x:Name="TourContentDataPanelMenuBar" Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition Width="40"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label x:Name="TourContentDataPanelTitle" Content="Logs:" Grid.Column="0"/>
-                        <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding DataPanelViewModel.AddRowCommand}"  Grid.Column="1"/>
-                        <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding DataPanelViewModel.RemoveRowCommand}" Grid.Column="2"/>
-                    </Grid>
-
-                    <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
-                              ItemsSource="{Binding DataPanelViewModel.Data}" AutoGenerateColumns="False"
-                              CanUserAddRows="False" CanUserDeleteRows="False"
-                              SelectedItem="{Binding DataPanelViewModel.SelectedItem}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Date" Binding="{Binding Date}" FontWeight="Bold"/>
-                            <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" FontWeight="Bold"/>
-                            <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" FontWeight="Bold"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                
+                <!-- LogView -->
+                <local:LogView Grid.Row="2"></local:LogView>
             </Grid>
         </Grid>
+
     </Grid>
 </Window>
+    
