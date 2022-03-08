@@ -86,7 +86,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- MapView-->
-                <local:MapView Grid.Row="0"></local:MapView>
+                <local:TourView Grid.Row="0"></local:TourView>
 
                 <GridSplitter x:Name="TourContentGridSplitter" Height="5" Grid.Row="1" HorizontalAlignment="Stretch"/>
                 
