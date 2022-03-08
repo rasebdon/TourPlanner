@@ -21,8 +21,8 @@
             </Grid.ColumnDefinitions>
 
             <Label x:Name="TourContentDataPanelTitle" Content="Logs:" Grid.Column="0"/>
-            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding LogViewModel.AddRowCommand}"  Grid.Column="1"/>
-            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding LogViewModel.RemoveRowCommand}" Grid.Column="2"/>
+            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding LogViewModel.AddLogPoint}"  Grid.Column="1"/>
+            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding LogViewModel.RemoveLogPoint}" Grid.Column="2"/>
         </Grid>
 
     <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"

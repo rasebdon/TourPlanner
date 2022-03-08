@@ -11,19 +11,28 @@ using System.Windows.Input;
 
 namespace TourPlanner.UI.ViewModels
 {
-    public class TourPoint
+    public class LogPoint
     {
         public DateTime Date { get; set; }
         public float Duration { get; set; }
         public float Distance { get; set; }
     }
+    public class ListPoint
+    {
+        public string? Name { get; set; }
+        // TODO: Add Tour Object ?
+    }
 
     public class MainViewModel : BaseViewModel
     {
+        public ListViewModel ListViewModel { get; }
+        //public TourViewModel TourViewModel { get; }
         public LogViewModel LogViewModel { get; }
 
         public MainViewModel()
         {
+            ListViewModel = new();
+            //TourViewModel = new();
             LogViewModel = new();
         }
     }

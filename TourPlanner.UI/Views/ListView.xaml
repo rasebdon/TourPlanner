@@ -5,6 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TourPlanner.UI.Views"
              mc:Ignorable="d">
+    
+    <UserControl.Resources>
+        <DataTemplate x:Key="ListPointItemTemplate">
+            <Grid>
+                <Label Content="{Binding Path=Name, FallbackValue=Tour}"></Label>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <!--<Grid x:Name="TourListPanel" Grid.Column="0">-->
     <Grid>
         <Grid.RowDefinitions>
@@ -21,15 +30,12 @@
             </Grid.ColumnDefinitions>
 
             <Label x:Name="TourListHeader" Grid.Column="0" Content="Tours"/>
-            <Button x:Name="TourListAddButton" Grid.Column="1" Content="+" Width="20"/>
-            <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Width="20"/>
+            <Button x:Name="TourListAddButton" Grid.Column="1" Content="+" Command="{Binding ListViewModel.AddListPoint}" Width="20"/>
+            <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Command="{Binding ListViewModel.RemoveListPoint}" Width="20"/>
         </Grid>
 
         <!-- TourListContentPanel -->
-        <ListBox x:Name="TourListContentPanel" Grid.Row="1">
-            <ListBoxItem Content="- Tour 1"/>
-            <ListBoxItem Content="- Tour 2"/>
-            <ListBoxItem Content="- Tour 3"/>
-        </ListBox>
+        <ListBox ItemTemplate="{DynamicResource ListPointItemTemplate}" x:Name="TourListContentPanel" Grid.Row="1" 
+                 ItemsSource="{Binding ListViewModel.Data}" SelectedItem="{Binding ListViewModel.SelectedItem}">        </ListBox>
     </Grid>
 </UserControl>
