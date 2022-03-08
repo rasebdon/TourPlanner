@@ -3,13 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.UI", "TourPlanner.UI\TourPlanner.UI.csproj", "{11CF875B-C237-43CD-B9FF-B1983404A078}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{CB4715EB-AB07-4806-9A17-CC3D5006F1A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Models", "TourPlanner.Models\TourPlanner.Models.csproj", "{0AB9FB57-CABD-4E69-8412-DBE263894811}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{937AE6FD-A57A-43D3-AE6E-286BBC400964}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.BL.API", "TourPlanner.BL.API\TourPlanner.BL.API.csproj", "{DD98DE7C-D6EC-4C0C-8163-13FDC2743C85}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{49F5DF50-6CAA-45A6-8DC5-C8B4BC948759}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.DAL", "TourPlanner.DAL\TourPlanner.DAL.csproj", "{75B37A1B-EB41-4BDF-BC64-EB6788654BC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TourPlanner.Client.BL", "src\Client\TourPlanner.Client.BL\TourPlanner.Client.BL.csproj", "{24F297B4-BC44-429B-A293-12D51E6C2EDF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.UI", "src\Client\TourPlanner.Client.UI\TourPlanner.UI.csproj", "{50445E36-7393-47D1-A5AC-0A45B0E106C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Common.Models", "src\Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj", "{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.API", "src\Server\TourPlanner.Server.BL.API\TourPlanner.Server.BL.API.csproj", "{A5730320-D6C4-45B1-A06E-D7C410758955}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.DAL", "src\Server\TourPlanner.Server.DAL\TourPlanner.Server.DAL.csproj", "{07767972-BE1D-4DFD-8DDD-19FB25D65457}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.MapQuestAPI", "src\Server\TourPlanner.Server.BL.MapQuestAPI\TourPlanner.Server.BL.MapQuestAPI.csproj", "{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,25 +27,41 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{11CF875B-C237-43CD-B9FF-B1983404A078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11CF875B-C237-43CD-B9FF-B1983404A078}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11CF875B-C237-43CD-B9FF-B1983404A078}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11CF875B-C237-43CD-B9FF-B1983404A078}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0AB9FB57-CABD-4E69-8412-DBE263894811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0AB9FB57-CABD-4E69-8412-DBE263894811}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0AB9FB57-CABD-4E69-8412-DBE263894811}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0AB9FB57-CABD-4E69-8412-DBE263894811}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD98DE7C-D6EC-4C0C-8163-13FDC2743C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD98DE7C-D6EC-4C0C-8163-13FDC2743C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD98DE7C-D6EC-4C0C-8163-13FDC2743C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD98DE7C-D6EC-4C0C-8163-13FDC2743C85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75B37A1B-EB41-4BDF-BC64-EB6788654BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75B37A1B-EB41-4BDF-BC64-EB6788654BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75B37A1B-EB41-4BDF-BC64-EB6788654BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75B37A1B-EB41-4BDF-BC64-EB6788654BC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5730320-D6C4-45B1-A06E-D7C410758955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5730320-D6C4-45B1-A06E-D7C410758955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5730320-D6C4-45B1-A06E-D7C410758955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5730320-D6C4-45B1-A06E-D7C410758955}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07767972-BE1D-4DFD-8DDD-19FB25D65457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07767972-BE1D-4DFD-8DDD-19FB25D65457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07767972-BE1D-4DFD-8DDD-19FB25D65457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07767972-BE1D-4DFD-8DDD-19FB25D65457}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{24F297B4-BC44-429B-A293-12D51E6C2EDF} = {CB4715EB-AB07-4806-9A17-CC3D5006F1A5}
+		{50445E36-7393-47D1-A5AC-0A45B0E106C8} = {CB4715EB-AB07-4806-9A17-CC3D5006F1A5}
+		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E} = {49F5DF50-6CAA-45A6-8DC5-C8B4BC948759}
+		{A5730320-D6C4-45B1-A06E-D7C410758955} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
+		{07767972-BE1D-4DFD-8DDD-19FB25D65457} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
+		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E7A94BD-AFF0-4D47-B8A5-8134A929F88E}
