@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{937AE6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{49F5DF50-6CAA-45A6-8DC5-C8B4BC948759}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TourPlanner.Client.BL", "src\Client\TourPlanner.Client.BL\TourPlanner.Client.BL.csproj", "{24F297B4-BC44-429B-A293-12D51E6C2EDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Client.BL", "src\Client\TourPlanner.Client.BL\TourPlanner.Client.BL.csproj", "{24F297B4-BC44-429B-A293-12D51E6C2EDF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.UI", "src\Client\TourPlanner.Client.UI\TourPlanner.UI.csproj", "{50445E36-7393-47D1-A5AC-0A45B0E106C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Client.UI", "src\Client\TourPlanner.Client.UI\TourPlanner.Client.UI.csproj", "{50445E36-7393-47D1-A5AC-0A45B0E106C8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Common.Models", "src\Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj", "{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}"
 EndProject

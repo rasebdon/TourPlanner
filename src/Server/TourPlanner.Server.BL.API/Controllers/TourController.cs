@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TourPlanner.Server.BL.MapQuestAPI;
 
 namespace TourPlanner.Server.BL.API.Controllers
 {
@@ -6,11 +7,15 @@ namespace TourPlanner.Server.BL.API.Controllers
     [Route("[controller]")]
     public class TourController : ControllerBase
     {
+        private readonly MapQuestService _mapQuestService;
         private readonly ILogger<TourController> _logger;
 
-        public TourController(ILogger<TourController> logger)
+        public TourController(
+            ILogger<TourController> logger,
+            MapQuestService mapQuestService)
         {
             _logger = logger;
+            _mapQuestService = mapQuestService;
         }
 
         [HttpGet]
@@ -45,9 +50,10 @@ namespace TourPlanner.Server.BL.API.Controllers
         }
 
         [HttpGet("{routeId}/Map")]
-        public IActionResult GetRouteMap([FromRoute] int routeId)
+        public async Task<IActionResult> GetRouteMap([FromRoute] int routeId)
         {
-            return NotFound();
+            var map = await _mapQuestService.GetRouteMap("Nußdorfer Straße, Wien, AUT", "Höchstädtplatz, Wien, AUT");
+            return File(map, "image/jpeg");
         }
 
         [HttpPost("{routeId}/Point")]

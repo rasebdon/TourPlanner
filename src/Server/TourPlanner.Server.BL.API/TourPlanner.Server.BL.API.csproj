@@ -10,4 +10,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TourPlanner.Server.BL.MapQuestAPI\TourPlanner.Server.BL.MapQuestAPI.csproj" />
+  </ItemGroup>
+
 </Project>
