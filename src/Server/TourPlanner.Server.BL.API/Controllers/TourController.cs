@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using TourPlanner.Common.Models;
+using TourPlanner.Server.BL.API.Services;
 using TourPlanner.Server.BL.MapQuestAPI;
+using TourPlanner.Server.DAL.Repositories;
 
 namespace TourPlanner.Server.BL.API.Controllers
 {
@@ -9,17 +12,32 @@ namespace TourPlanner.Server.BL.API.Controllers
     {
         private readonly MapQuestService _mapQuestService;
         private readonly ILogger<TourController> _logger;
+        private readonly PgsqlTourRepository _tourRepository;
 
         public TourController(
             ILogger<TourController> logger,
-            MapQuestService mapQuestService)
+            MapQuestService mapQuestService,
+            IRepositoryService repositoryService)
         {
             _logger = logger;
             _mapQuestService = mapQuestService;
+
+            // Get tour repository
+            {
+                if (repositoryService.GetRepository<Tour>() is not PgsqlTourRepository repo)
+                    throw new Exception($"No {nameof(PgsqlTourRepository)} is registered in the repository service!");
+                _tourRepository = repo;
+            }
         }
 
         [HttpGet]
         public IActionResult GetRoutes()
+        {
+            return NotFound();
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetTour(int id)
         {
             return NotFound();
         }
@@ -32,9 +50,25 @@ namespace TourPlanner.Server.BL.API.Controllers
 
 
         [HttpPost]
-        public IActionResult AddRoute([FromBody] object route)
+        public IActionResult AddTour([FromBody] Tour tour)
         {
-            return NotFound();
+            // Check if tour is complete
+            if(!IsValid(tour))
+                return BadRequest();
+
+            // Add tour to database through repository
+            if(!_tourRepository.Insert(ref tour))
+                return StatusCode(StatusCodes.Status500InternalServerError);
+
+            // Return tour with ids
+            return CreatedAtAction(nameof(GetTour), new { id = tour.Id }, tour);
+        }
+
+        private static bool IsValid(Tour tour)
+        {
+            return tour != null &&
+                tour.Name != null &&
+                tour.Name.Length > 0;
         }
 
         [HttpPut("{routeId}")]
