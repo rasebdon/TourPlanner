@@ -11,12 +11,6 @@ using System.Windows.Input;
 
 namespace TourPlanner.Client.UI.ViewModels
 {
-    public class LogPoint
-    {
-        public DateTime Date { get; set; }
-        public float Duration { get; set; }
-        public float Distance { get; set; }
-    }
     public class ListPoint
     {
         public string? Name { get; set; }

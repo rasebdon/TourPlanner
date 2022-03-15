@@ -17,4 +17,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj" />
+  </ItemGroup>
+
 </Project>

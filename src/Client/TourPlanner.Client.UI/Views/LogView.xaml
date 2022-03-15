@@ -25,15 +25,19 @@
             <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding LogViewModel.RemoveLogPoint}" Grid.Column="2"/>
         </Grid>
 
-    <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
+        <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
                                   ItemsSource="{Binding LogViewModel.Data}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False"
                                   SelectedItem="{Binding LogViewModel.SelectedItem}">
-        <DataGrid.Columns>
-            <DataGridTextColumn Header="Date" Binding="{Binding Date}" FontWeight="Bold"/>
-            <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" FontWeight="Bold"/>
-            <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" FontWeight="Bold"/>
-        </DataGrid.Columns>
-    </DataGrid>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Start Point Latitude" Binding="{Binding StartPoint.Latitude}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Start Point Longitude" Binding="{Binding StartPoint.Longitude}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="End Point Latitude" Binding="{Binding EndPoint.Latitude}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="End Point Longitude" Binding="{Binding EndPoint.Longitude}" FontWeight="Bold"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
