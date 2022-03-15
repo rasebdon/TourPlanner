@@ -1,5 +1,6 @@
 using TourPlanner.Server.BL.API.Services;
 using TourPlanner.Server.BL.MapQuestAPI;
+using TourPlanner.Server.DAL;
 
 namespace TourPlanner.Server.BL.API
 {
@@ -9,10 +10,8 @@ namespace TourPlanner.Server.BL.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Configure DAL layer services
-            Npgsql.NpgsqlConnection connection = new("CONNECTION_STRING");
-            connection.Open();
-            IRepositoryService repositoryService = new PgsqlRepositoryService(connection);
+            // Configure repository service
+            IRepositoryService repositoryService = new PgsqlRepositoryService();
 
             // Configure mapquestapi
             var apiKey = builder.Configuration.GetValue(typeof(string), "apiKey") as string;
