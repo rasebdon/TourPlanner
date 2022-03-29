@@ -13,7 +13,8 @@ namespace TourPlanner.Server.BL.API.Services
 
         public PgsqlRepositoryService()
         {
-            _database = new PgsqlDatabase("CONNECTION_STRING");
+            _database = new PgsqlDatabase(
+                "Server = 127.0.0.1; Port = 5432; Database = tour_planner; User Id = tour_planner_admin; Password = tour_planner_1234;");
 
             if (!_database.OpenConnection())
                 throw new Exception("Could not connect to database!");

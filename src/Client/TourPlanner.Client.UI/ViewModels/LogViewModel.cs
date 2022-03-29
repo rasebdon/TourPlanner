@@ -27,8 +27,6 @@ namespace TourPlanner.Client.UI.ViewModels
                     Date = DateTime.Now,
                     Duration = 2f,
                     Distance = 5.4f,
-                    EndPoint = new() { Latitude = 40.02421f, Longitude = 20.51962f },
-                    StartPoint = new() { Latitude = 41.02421f, Longitude = 21.51962f },
                 });
             Data.Add(
                 new TourEntry()
@@ -36,8 +34,6 @@ namespace TourPlanner.Client.UI.ViewModels
                     Date = new DateTime(2022, 03, 01),
                     Duration = 3.45f,
                     Distance = 12.4f,
-                    EndPoint = new() { Latitude = 41.02421f, Longitude = 21.51962f },
-                    StartPoint = new() { Latitude = 42.02421f, Longitude = 22.51962f },
                 });
 
             AddLogPoint = new RelayCommand(

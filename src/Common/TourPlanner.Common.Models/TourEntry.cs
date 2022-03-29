@@ -12,7 +12,5 @@ namespace TourPlanner.Common.Models
 		public DateTime Date { get; set; }
 		public float Duration { get; set; }
 		public float Distance { get; set; }
-		public TourPoint? StartPoint { get; set; }
-		public TourPoint? EndPoint { get; set; }
 	}
 }

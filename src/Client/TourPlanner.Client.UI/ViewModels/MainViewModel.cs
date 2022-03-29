@@ -11,12 +11,6 @@ using System.Windows.Input;
 
 namespace TourPlanner.Client.UI.ViewModels
 {
-    public class ListPoint
-    {
-        public string? Name { get; set; }
-        // TODO: Add Tour Object ?
-    }
-
     public class MainViewModel : BaseViewModel
     {
         public ListViewModel ListViewModel { get; }

@@ -17,6 +17,49 @@ namespace TourPlanner.Server.DAL.Repositories
         public PgsqlTourRepository(PgsqlDatabase database)
         {
             _database = database;
+
+            NpgsqlCommand cmd = new();
+            cmd.CommandText = @"SELECT EXISTS (
+                SELECT FROM 
+                    pg_tables
+                WHERE 
+                    schemaname = 'public' AND 
+                    tablename  = 'tours'
+                );";
+            var result = _database.SelectSingle(cmd);
+
+            if (result == null || bool.Parse(result["exists"]?.ToString() ?? "") == false)
+                CreateTables();
+        }
+
+        public void CreateTables()
+        {
+            NpgsqlCommand cmd = new();
+
+            cmd.CommandText = @"CREATE TABLE tour_points (
+                id SERIAL PRIMARY KEY,
+                latitude REAL,
+                longitude REAL);";
+            _database.ExecuteNonQuery(cmd);
+
+            cmd.CommandText = @"CREATE TABLE tours (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(50),
+                description VARCHAR(500),
+                start_point INT UNIQUE,
+                end_point INT UNIQUE,
+                FOREIGN KEY (start_point)
+                    REFERENCES tour_points (id),
+                FOREIGN KEY (end_point)
+                    REFERENCES tour_points (id));";
+            _database.ExecuteNonQuery(cmd);
+
+            cmd.CommandText = @"CREATE TABLE tour_entries (
+                id SERIAL PRIMARY KEY,
+                distance REAL,
+                duration REAL,
+                date TIMESTAMP);";
+            _database.ExecuteNonQuery(cmd);
         }
 
         public bool Delete(int id)
@@ -30,16 +73,39 @@ namespace TourPlanner.Server.DAL.Repositories
 
         public Tour? Get(int id)
         {
-            NpgsqlCommand cmd = new();
-            cmd.CommandText = "SELECT * FROM tours WHERE id=$id;";
-            cmd.Parameters.AddWithValue("id", id);
+            try
+            {
+                NpgsqlCommand cmd = new();
+                cmd.CommandText = "SELECT * FROM tours WHERE id=$id;";
+                cmd.Parameters.AddWithValue("id", id);
 
-            // Get base tour data
-            var result = _database.SelectSingle(cmd);
+                // Get base tour data
+                var tourData = _database.SelectSingle(cmd);
 
-            // Get tour entries
+                if (tourData == null || tourData.Count != 1)
+                    return null;
 
-            // Get tour points
+                // Get tour points
+                cmd.CommandText = "SELECT * FROM tour_points WHERE id=$id;";
+                cmd.Parameters["id"].Value = int.Parse(tourData["start_point"]?.ToString() ?? "");
+                var tourStartPoint = _database.SelectSingle(cmd);
+
+                cmd.Parameters["id"].Value = int.Parse(tourData["end_point"]?.ToString() ?? "");
+                var tourEndPoint = _database.SelectSingle(cmd);
+
+                // Get tour entries
+                cmd.CommandText = "SELECT * FROM tour_entries WHERE tour_id=$id;";
+                cmd.Parameters["id"].Value = int.Parse(tourData["id"]?.ToString() ?? "");
+
+                var tourEntries = _database.Select(cmd);
+
+                return ParseFromRow(tourData, tourEntries, tourStartPoint, tourEndPoint);
+            }
+            catch (Exception ex)
+            {
+                // LOG ERROR
+                Console.WriteLine(ex.ToString());
+            }
 
             return null;
         }
@@ -47,27 +113,11 @@ namespace TourPlanner.Server.DAL.Repositories
         private Tour? ParseFromRow(
             OrderedDictionary tourData,
             OrderedDictionary[] tourEntries,
-            OrderedDictionary[] tourPoints)
+            OrderedDictionary startPointData,
+            OrderedDictionary endPointData)
         {
             try
             {
-
-                // Parse the tour points to a collection of tour point objects
-                Dictionary<int, TourPoint> points = new();
-                foreach (var point in tourPoints)
-                {
-                    int id = int.Parse(point["id"]?.ToString() ?? "");
-
-                    points.Add(
-                        id,
-                        new()
-                        {
-                            Id = id,
-                            Latitude = long.Parse(point["latidute"]?.ToString() ?? ""),
-                            Longitude = long.Parse(point["longitude"]?.ToString() ?? ""),
-                        });
-                }
-
                 // Parse the tour entries to a collection of tour entries
                 List<TourEntry> entries = new();
                 foreach (var entry in tourEntries)
@@ -79,10 +129,24 @@ namespace TourPlanner.Server.DAL.Repositories
                             Date = DateTime.Parse(entry["date"]?.ToString() ?? ""),
                             Distance = float.Parse(entry["distance"]?.ToString() ?? ""),
                             Duration = float.Parse(entry["duration"]?.ToString() ?? ""),
-                            StartPoint = points[int.Parse(entry["start_point"]?.ToString() ?? "")],
-                            EndPoint = points[int.Parse(entry["end_point"]?.ToString() ?? "")],
                         });
                 }
+
+                // Get tour start and endpoint
+                TourPoint startPoint = new()
+                {
+                    Id = int.Parse(startPointData["id"]?.ToString() ?? ""),
+                    Latitude = float.Parse(startPointData["latitude"]?.ToString() ?? ""),
+                    Longitude = float.Parse(startPointData["longitude"]?.ToString() ?? ""),
+                };
+                
+                TourPoint endPoint = new()
+                {
+                    Id = int.Parse(endPointData["id"]?.ToString() ?? ""),
+                    Latitude = float.Parse(endPointData["latitude"]?.ToString() ?? ""),
+                    Longitude = float.Parse(endPointData["longitude"]?.ToString() ?? ""),
+                };
+
 
                 // Build tour from rest of data
                 return new()
@@ -91,6 +155,8 @@ namespace TourPlanner.Server.DAL.Repositories
                     Name = tourData["name"]?.ToString(),
                     Description = tourData["description"]?.ToString(),
                     Entries = entries,
+                    StartPoint = startPoint,
+                    EndPoint = endPoint,
                 };
             }
             catch (Exception)

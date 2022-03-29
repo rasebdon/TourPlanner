@@ -2,7 +2,7 @@
 
 namespace TourPlanner.Server.BL.MapQuestAPI
 {
-    public class MapQuestService
+    public class MapQuestService : IMapService
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
