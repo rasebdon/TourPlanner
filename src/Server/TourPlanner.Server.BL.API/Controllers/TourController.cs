@@ -10,13 +10,13 @@ namespace TourPlanner.Server.BL.API.Controllers
     [Route("[controller]")]
     public class TourController : ControllerBase
     {
-        private readonly MapQuestService _mapQuestService;
+        private readonly MapQuestMapService _mapQuestService;
         private readonly ILogger<TourController> _logger;
         private readonly PgsqlTourRepository _tourRepository;
 
         public TourController(
             ILogger<TourController> logger,
-            MapQuestService mapQuestService,
+            MapQuestMapService mapQuestService,
             IRepositoryService repositoryService)
         {
             _logger = logger;
@@ -31,7 +31,7 @@ namespace TourPlanner.Server.BL.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRoutes()
+        public IActionResult GetTours()
         {
             return NotFound();
         }
@@ -39,11 +39,23 @@ namespace TourPlanner.Server.BL.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetTour(int id)
         {
-            return NotFound();
+            try
+            {
+                var tour = _tourRepository.Get(id);
+
+                if(tour == null)
+                    return NotFound();
+                return Ok(tour);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
         [HttpGet("{searchTerm}")]
-        public IActionResult GetRoutes([FromRoute] string searchTerm)
+        public IActionResult GetTours([FromRoute] string searchTerm)
         {
             return NotFound();
         }
@@ -71,23 +83,62 @@ namespace TourPlanner.Server.BL.API.Controllers
                 tour.Name.Length > 0;
         }
 
-        [HttpPut("{routeId}")]
-        public IActionResult UpdateRoute([FromRoute] int routeId, [FromBody] object route)
+        [HttpPut("{tourId}")]
+        public IActionResult UpdateTour([FromRoute] int tourId, [FromBody] Tour tour)
         {
             return NotFound();
         }
 
-        [HttpDelete("{routeId}")]
-        public IActionResult DeleteRoute([FromRoute] int routeId)
+        [HttpDelete("{tourId}")]
+        public IActionResult DeleteTour([FromRoute] int tourId)
         {
-            return NotFound();
+            try
+            {
+                var deleted = _tourRepository.Delete(tourId);
+                if(!deleted)
+                    return BadRequest();
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
-        [HttpGet("{routeId}/Map")]
-        public async Task<IActionResult> GetRouteMap([FromRoute] int routeId)
+        [HttpGet("{tourId}/Map")]
+        public async Task<IActionResult> GetTourMap([FromRoute] int tourId)
         {
-            var map = await _mapQuestService.GetRouteMap("Nußdorfer Straße, Wien, AUT", "Höchstädtplatz, Wien, AUT");
-            return File(map, "image/jpeg");
+            try
+            {
+                // Get tour
+                //var tour = _tourRepository.Get(tourId);
+                var tour = new Tour()
+                {
+                    StartPoint = new()
+                    {
+                        Latitude = 40,
+                        Longitude = 35,
+                    },
+                    EndPoint = new()
+                    {
+                        Latitude = 40.05f,
+                        Longitude = 35.05f
+                    }
+                };
+
+                if(tour == null)
+                    return NotFound();
+
+                // Get tour map from map service
+                var map = await _mapQuestService.GetRouteMap(tour.StartPoint, tour.EndPoint);
+                return File(map, "image/jpeg");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
         [HttpPost("{routeId}/Point")]
