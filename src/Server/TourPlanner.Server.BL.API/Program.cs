@@ -1,4 +1,5 @@
 using TourPlanner.Server.BL.API.Services;
+using TourPlanner.Server.BL.Common.Interfaces;
 using TourPlanner.Server.BL.MapQuestAPI;
 using TourPlanner.Server.DAL;
 
@@ -15,11 +16,13 @@ namespace TourPlanner.Server.BL.API
 
             // Configure mapquestapi
             var apiKey = builder.Configuration.GetValue(typeof(string), "apiKey") as string;
-            MapQuestMapService mapQuestService = new(apiKey ?? "");
+            IMapService mapService = new MapQuestMapService(apiKey ?? "");
+            ITourService tourService = new MapQuestTourService(apiKey ?? "");
 
             // Add services to the container.
             builder.Services.AddSingleton(repositoryService);
-            builder.Services.AddSingleton(mapQuestService);
+            builder.Services.AddSingleton(mapService);
+            builder.Services.AddSingleton(tourService);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

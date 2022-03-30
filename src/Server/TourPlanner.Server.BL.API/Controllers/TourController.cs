@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TourPlanner.Common.Models;
 using TourPlanner.Server.BL.API.Services;
+using TourPlanner.Server.BL.Common.Interfaces;
 using TourPlanner.Server.BL.MapQuestAPI;
 using TourPlanner.Server.DAL.Repositories;
 
@@ -10,17 +11,20 @@ namespace TourPlanner.Server.BL.API.Controllers
     [Route("[controller]")]
     public class TourController : ControllerBase
     {
-        private readonly MapQuestMapService _mapQuestService;
+        private readonly IMapService _mapService;
+        private readonly ITourService _tourService;
         private readonly ILogger<TourController> _logger;
         private readonly PgsqlTourRepository _tourRepository;
 
         public TourController(
             ILogger<TourController> logger,
-            MapQuestMapService mapQuestService,
+            IMapService mapService,
+            ITourService tourService,
             IRepositoryService repositoryService)
         {
             _logger = logger;
-            _mapQuestService = mapQuestService;
+            _mapService = mapService;
+            _tourService = tourService;
 
             // Get tour repository
             {
@@ -33,15 +37,27 @@ namespace TourPlanner.Server.BL.API.Controllers
         [HttpGet]
         public IActionResult GetTours()
         {
-            return NotFound();
+            try
+            {
+                var tours = _tourRepository.GetAll();
+
+                if (tours == null)
+                    return NotFound();
+                return Ok(tours);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetTour(int id)
+        [HttpGet("{tourId}")]
+        public IActionResult GetTour(int tourId)
         {
             try
             {
-                var tour = _tourRepository.Get(id);
+                var tour = _tourRepository.Get(tourId);
 
                 if(tour == null)
                     return NotFound();
@@ -54,7 +70,7 @@ namespace TourPlanner.Server.BL.API.Controllers
             return StatusCode(500);
         }
 
-        [HttpGet("{searchTerm}")]
+        [HttpGet("Search/{searchTerm}")]
         public IActionResult GetTours([FromRoute] string searchTerm)
         {
             return NotFound();
@@ -62,25 +78,38 @@ namespace TourPlanner.Server.BL.API.Controllers
 
 
         [HttpPost]
-        public IActionResult AddTour([FromBody] Tour tour)
+        public async Task<IActionResult> AddTour([FromBody] Tour tour)
         {
-            // Check if tour is complete
-            if(!IsValid(tour))
-                return BadRequest();
+            try
+            {
+                // Check if tour is complete
+                if (!IsValid(tour))
+                    return BadRequest();
 
-            // Add tour to database through repository
-            if(!_tourRepository.Insert(ref tour))
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                // Get distance of tour
+                tour.Distance = await _tourService.GetDistance(tour.StartPoint, tour.EndPoint);
 
-            // Return tour with ids
-            return CreatedAtAction(nameof(GetTour), new { id = tour.Id }, tour);
+                // Add tour to database through repository
+                if (!_tourRepository.Insert(ref tour))
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+
+                // Return tour with ids
+                return CreatedAtAction(nameof(GetTour), new { id = tour.Id }, tour);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
         private static bool IsValid(Tour tour)
         {
             return tour != null &&
                 tour.Name != null &&
-                tour.Name.Length > 0;
+                tour.Name.Length > 0 &&
+                tour.StartPoint != null &&
+                tour.EndPoint != null;
         }
 
         [HttpPut("{tourId}")]
@@ -112,27 +141,17 @@ namespace TourPlanner.Server.BL.API.Controllers
             try
             {
                 // Get tour
-                //var tour = _tourRepository.Get(tourId);
-                var tour = new Tour()
-                {
-                    StartPoint = new()
-                    {
-                        Latitude = 40,
-                        Longitude = 35,
-                    },
-                    EndPoint = new()
-                    {
-                        Latitude = 40.05f,
-                        Longitude = 35.05f
-                    }
-                };
+                var tour = _tourRepository.Get(tourId);
 
                 if(tour == null)
                     return NotFound();
 
+                if (tour.StartPoint == null || tour.EndPoint == null)
+                    return StatusCode(500);
+
                 // Get tour map from map service
-                var map = await _mapQuestService.GetRouteMap(tour.StartPoint, tour.EndPoint);
-                return File(map, "image/jpeg");
+                var map = await _mapService.GetRouteMap(tour.StartPoint, tour.EndPoint);
+                return File(map.ToArray(), "image/jpeg");
             }
             catch (Exception ex)
             {
@@ -141,20 +160,20 @@ namespace TourPlanner.Server.BL.API.Controllers
             return StatusCode(500);
         }
 
-        [HttpPost("{routeId}/Point")]
-        public IActionResult AddRoutePoint([FromRoute] int routeId, [FromBody] object point)
+        [HttpPost("{tourId}/Entry")]
+        public IActionResult AddTourEntry([FromRoute] int tourId, [FromBody] TourEntry entry)
         {
             return NotFound();
         }
 
-        [HttpDelete("{routeId}/Point")]
-        public IActionResult AddRoutePoint([FromRoute] int routeId)
+        [HttpDelete("{tourId}/Entry")]
+        public IActionResult DeleteTourEntry([FromRoute] int tourId)
         {
             return NotFound();
         }
 
-        [HttpPut("{routeId}/Point")]
-        public IActionResult UpdateRoutePoint([FromRoute] int routeId, [FromBody] object point)
+        [HttpPut("{tourId}/Entry")]
+        public IActionResult UpdateTourEntry([FromRoute] int tourId, [FromBody] TourEntry entry)
         {
             return NotFound();
         }

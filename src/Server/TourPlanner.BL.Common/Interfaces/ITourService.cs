@@ -9,6 +9,6 @@ namespace TourPlanner.Server.BL.Common.Interfaces
 {
     public interface ITourService
     {
-        float GetDistance(TourPoint start, TourPoint end);
+        Task<float> GetDistance(TourPoint start, TourPoint end);
     }
 }
