@@ -16,7 +16,7 @@ namespace TourPlanner.Server.BL.MapQuestAPI
 
         public async Task<float> GetDistance(TourPoint start, TourPoint end)
         {
-            Uri uri = new($"https://www.mapquestapi.com/directions/v2/route?key={_apiKey}&from={start.Latitude.ToString().Replace(",", ".")}, {start.Longitude.ToString().ToString().Replace(",", ".")}&to={end.Latitude.ToString().Replace(",", ".")}, {end.Longitude.ToString().Replace(",", ".")}");
+            Uri uri = new($"https://www.mapquestapi.com/directions/v2/route?key={_apiKey}&from={start.Latitude.ToString().Replace(",", ".")}, {start.Longitude.ToString().ToString().Replace(",", ".")}&to={end.Latitude.ToString().Replace(",", ".")}, {end.Longitude.ToString().Replace(",", ".")}&unit=k");
             string content = await(await _httpClient.GetAsync(uri)).Content.ReadAsStringAsync();
             var jsonData = (JObject?)JsonConvert.DeserializeObject(content);
 

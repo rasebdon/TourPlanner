@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TourPlanner.Common.Models;
 using TourPlanner.Server.BL.API.Services;
 using TourPlanner.Server.BL.Common.Interfaces;
-using TourPlanner.Server.BL.MapQuestAPI;
-using TourPlanner.Server.DAL.Repositories;
+using TourPlanner.Server.DAL.Repositories.Pgsql;
 
 namespace TourPlanner.Server.BL.API.Controllers
 {
@@ -15,6 +14,7 @@ namespace TourPlanner.Server.BL.API.Controllers
         private readonly ITourService _tourService;
         private readonly ILogger<TourController> _logger;
         private readonly PgsqlTourRepository _tourRepository;
+        private readonly PgsqlTourEntryRepository _tourEntryRepository;
 
         public TourController(
             ILogger<TourController> logger,
@@ -29,8 +29,14 @@ namespace TourPlanner.Server.BL.API.Controllers
             // Get tour repository
             {
                 if (repositoryService.GetRepository<Tour>() is not PgsqlTourRepository repo)
-                    throw new Exception($"No {nameof(PgsqlTourRepository)} is registered in the repository service!");
+                    throw new MissingRepositoryException(typeof(PgsqlTourRepository));
                 _tourRepository = repo;
+            }
+            // Get tour entry repository
+            {
+                if (repositoryService.GetRepository<TourEntry>() is not PgsqlTourEntryRepository repo)
+                    throw new MissingRepositoryException(typeof(PgsqlTourEntryRepository));
+                _tourEntryRepository = repo;
             }
         }
 
@@ -70,13 +76,6 @@ namespace TourPlanner.Server.BL.API.Controllers
             return StatusCode(500);
         }
 
-        [HttpGet("Search/{searchTerm}")]
-        public IActionResult GetTours([FromRoute] string searchTerm)
-        {
-            return NotFound();
-        }
-
-
         [HttpPost]
         public async Task<IActionResult> AddTour([FromBody] Tour tour)
         {
@@ -94,7 +93,7 @@ namespace TourPlanner.Server.BL.API.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError);
 
                 // Return tour with ids
-                return CreatedAtAction(nameof(GetTour), new { id = tour.Id }, tour);
+                return StatusCode(201, tour);
             }
             catch (Exception ex)
             {
@@ -113,9 +112,20 @@ namespace TourPlanner.Server.BL.API.Controllers
         }
 
         [HttpPut("{tourId}")]
-        public IActionResult UpdateTour([FromRoute] int tourId, [FromBody] Tour tour)
+        public IActionResult UpdateTour([FromBody] Tour tour)
         {
-            return NotFound();
+            try
+            {
+                var updated = _tourRepository.Update(ref tour);
+                if (!updated)
+                    return BadRequest();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
         [HttpDelete("{tourId}")]
@@ -163,19 +173,54 @@ namespace TourPlanner.Server.BL.API.Controllers
         [HttpPost("{tourId}/Entry")]
         public IActionResult AddTourEntry([FromRoute] int tourId, [FromBody] TourEntry entry)
         {
-            return NotFound();
+            try
+            {
+                entry.TourId = tourId;
+                var inserted = _tourEntryRepository.Insert(ref entry);
+                if (!inserted)
+                    return BadRequest();
+                return StatusCode(201, entry);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
-        [HttpDelete("{tourId}/Entry")]
-        public IActionResult DeleteTourEntry([FromRoute] int tourId)
+        [HttpDelete("{tourEntryId}/Entry")]
+        public IActionResult DeleteTourEntry([FromRoute] int tourEntryId)
         {
-            return NotFound();
+            try
+            {
+                var deleted = _tourEntryRepository.Delete(tourEntryId);
+                if (!deleted)
+                    return BadRequest();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
 
         [HttpPut("{tourId}/Entry")]
         public IActionResult UpdateTourEntry([FromRoute] int tourId, [FromBody] TourEntry entry)
         {
-            return NotFound();
+            try
+            {
+                entry.TourId = tourId;
+                var updated = _tourEntryRepository.Update(ref entry);
+                if (!updated)
+                    return BadRequest();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return StatusCode(500);
         }
     }
 }

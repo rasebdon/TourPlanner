@@ -8,15 +8,17 @@ using Npgsql;
 using System.Data;
 using System.Collections.Specialized;
 
-namespace TourPlanner.Server.DAL.Repositories
+namespace TourPlanner.Server.DAL.Repositories.Pgsql
 {
     public class PgsqlTourRepository : IRepository<Tour>
     {
         private readonly PgsqlDatabase _database;
+        private readonly PgsqlTourEntryRepository _tourEntryRepository;
 
-        public PgsqlTourRepository(PgsqlDatabase database)
+        public PgsqlTourRepository(PgsqlDatabase database, PgsqlTourEntryRepository tourEntryRepository)
         {
             _database = database;
+            _tourEntryRepository = tourEntryRepository;
 
             NpgsqlCommand cmd = new();
             cmd.CommandText = @"SELECT EXISTS (
@@ -68,11 +70,35 @@ namespace TourPlanner.Server.DAL.Repositories
 
         public bool Delete(int id)
         {
+            // Get tour for points
+            Tour? tour = Get(id);
+            if (tour == null)
+                return false;
+
             NpgsqlCommand cmd = new();
             cmd.CommandText = "DELETE FROM tours WHERE id=@id;";
             cmd.Parameters.AddWithValue("id", id);
 
-            return _database.ExecuteNonQuery(cmd) == 1;
+            bool success = _database.ExecuteNonQuery(cmd) == 1;
+            if (!success)
+                return false;
+
+            cmd.CommandText = "DELETE FROM tour_entries WHERE tour_id=@id;";
+            _database.ExecuteNonQuery(cmd);
+
+            cmd.CommandText = "DELETE FROM tour_points WHERE id=@id";
+            cmd.Parameters["id"].Value = tour.StartPoint?.Id;
+
+            success = _database.ExecuteNonQuery(cmd) == 1;
+            if (!success)
+                return false;
+
+            cmd.Parameters["id"].Value = tour.EndPoint?.Id;
+            success = _database.ExecuteNonQuery(cmd) == 1;
+            if (!success)
+                return false;
+
+            return true;
         }
 
         public Tour? Get(int id)
@@ -121,61 +147,6 @@ namespace TourPlanner.Server.DAL.Repositories
             return ParseFromRow(tourData, tourEntries, tourStartPoint, tourEndPoint);
         }
 
-        private Tour? ParseFromRow(
-            OrderedDictionary tourData,
-            OrderedDictionary[] tourEntries,
-            OrderedDictionary startPointData,
-            OrderedDictionary endPointData)
-        {
-            try
-            {
-                // Parse the tour entries to a collection of tour entries
-                List<TourEntry> entries = new();
-                foreach (var entry in tourEntries)
-                {
-                    entries.Add(
-                        new()
-                        {
-                            Id = int.Parse(entry["id"]?.ToString() ?? ""),
-                            Date = DateTime.Parse(entry["date"]?.ToString() ?? ""),
-                            Distance = float.Parse(entry["distance"]?.ToString() ?? ""),
-                            Duration = float.Parse(entry["duration"]?.ToString() ?? ""),
-                        });
-                }
-
-                // Get tour start and endpoint
-                TourPoint startPoint = new()
-                {
-                    Id = int.Parse(startPointData["id"]?.ToString() ?? ""),
-                    Latitude = float.Parse(startPointData["latitude"]?.ToString() ?? ""),
-                    Longitude = float.Parse(startPointData["longitude"]?.ToString() ?? ""),
-                };
-
-                TourPoint endPoint = new()
-                {
-                    Id = int.Parse(endPointData["id"]?.ToString() ?? ""),
-                    Latitude = float.Parse(endPointData["latitude"]?.ToString() ?? ""),
-                    Longitude = float.Parse(endPointData["longitude"]?.ToString() ?? ""),
-                };
-
-                // Build tour from rest of data
-                return new()
-                {
-                    Id = int.Parse(tourData["id"]?.ToString() ?? ""),
-                    Name = tourData["name"]?.ToString(),
-                    Description = tourData["description"]?.ToString(),
-                    Distance = float.Parse(tourData["distance"]?.ToString() ?? ""),
-                    Entries = entries,
-                    StartPoint = startPoint,
-                    EndPoint = endPoint,
-                };
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public IEnumerable<Tour> GetAll()
         {
             List<Tour> tours = new();
@@ -187,6 +158,9 @@ namespace TourPlanner.Server.DAL.Repositories
 
                 // Get base tour data
                 var tourData = _database.Select(cmd);
+
+                if(tourData == null)
+                    return Enumerable.Empty<Tour>();
 
                 foreach (var tour in tourData)
                 {
@@ -263,18 +237,20 @@ namespace TourPlanner.Server.DAL.Repositories
                 item.Id = int.Parse(result["id"]?.ToString() ?? "");
 
                 // Insert tour entries
-                cmd.CommandText = $@"INSERT INTO tour_entries (distance, date, duration)
-                VALUES (@dist, @date, @dur) RETURNING id;";
+                cmd.CommandText = $@"INSERT INTO tour_entries (distance, date, duration, tour_id)
+                VALUES (@dist, @date, @dur, @tour_id) RETURNING id;";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add("dist", NpgsqlTypes.NpgsqlDbType.Real);
                 cmd.Parameters.Add("date", NpgsqlTypes.NpgsqlDbType.TimestampTz);
                 cmd.Parameters.Add("dur", NpgsqlTypes.NpgsqlDbType.Real);
+                cmd.Parameters.Add("tour_id", NpgsqlTypes.NpgsqlDbType.Integer);
 
                 foreach (var entry in item.Entries)
                 {
                     cmd.Parameters["dist"].Value = entry.Distance;
                     cmd.Parameters["date"].Value = entry.Date;
                     cmd.Parameters["dur"].Value = entry.Duration;
+                    cmd.Parameters["tour_id"].Value = item.Id;
 
                     result = _database.SelectSingle(cmd);
                     if (result == null)
@@ -296,10 +272,163 @@ namespace TourPlanner.Server.DAL.Repositories
             return false;
         }
 
-        public bool Update(ref Tour item)
+        public bool Update(ref Tour tour)
         {
-            throw new NotImplementedException();
+            if (tour.StartPoint == null || tour.EndPoint == null || tour.Distance == null ||
+            tour.Name == null || tour.Description == null)
+                return false;
+
+            try
+            {
+                NpgsqlCommand cmd = new();
+                // Update tour data
+                cmd.CommandText = @"UPDATE tours SET name=@name, description=@desc, dist=@dist,
+                start_point=@start_point_id, end_point=@end_point_id WHERE tours.id=@id;";
+                cmd.Parameters.AddWithValue("name", tour.Name);
+                cmd.Parameters.AddWithValue("desc", tour.Description);
+                cmd.Parameters.AddWithValue("dist", tour.Distance);
+                cmd.Parameters.AddWithValue("start_point_id", tour.StartPoint.Id);
+                cmd.Parameters.AddWithValue("end_point_id", tour.EndPoint.Id);
+                cmd.Parameters.AddWithValue("id", tour.Id);
+
+                if (_database.ExecuteNonQuery(cmd) != 1)
+                    return false;
+
+                // Update start point
+                cmd = new();
+                cmd.CommandText = $@"UPDATE tour_points SET latitude=@lat, longitude=@lon WHERE tour_points.id=@id;";
+                cmd.Parameters.AddWithValue("lat", tour.StartPoint.Latitude);
+                cmd.Parameters.AddWithValue("lon", tour.StartPoint.Longitude);
+                cmd.Parameters.AddWithValue("id", tour.StartPoint.Id);
+
+                if (_database.ExecuteNonQuery(cmd) != 1)
+                    return false;
+
+                // Update end point
+                cmd.Parameters["lat"].Value = tour.EndPoint.Latitude;
+                cmd.Parameters["lon"].Value = tour.EndPoint.Longitude;
+                cmd.Parameters["id"].Value = tour.EndPoint.Id;
+
+                if (_database.ExecuteNonQuery(cmd) != 1)
+                    return false;
+
+                // Update entries
+                // Get old entries
+                cmd = new();
+                cmd.CommandText = "SELECT * FROM tour_entries WHERE tour_id=@id;";
+                cmd.Parameters.AddWithValue("id", tour.Id);
+
+                var oldEntriesData = _database.Select(cmd);
+
+                var edited = new List<TourEntry>();
+
+                // Update / Delete old entries
+                if(oldEntriesData != null || oldEntriesData?.Length > 0)
+                {
+                    foreach (var entryData in oldEntriesData)
+                    {
+                        // Get old entry
+                        var oldEntry = PgsqlTourEntryRepository.ParseFromRow(entryData);
+
+                        if(oldEntry == null)
+                            continue;
+
+                        // Check if it still exists
+                        var newEntry = tour.Entries.Where(e => e.Id == oldEntry.Id).FirstOrDefault();
+
+                        // If it does exist => Update it
+                        if (newEntry != null)
+                        {
+                            if(!_tourEntryRepository.Update(ref newEntry)) 
+                                return false;
+                            edited.Add(newEntry);
+                        }
+                        // If it does not exist => Delete it
+                        else
+                        {
+                            _tourEntryRepository.Delete(oldEntry.Id);
+                        }
+
+                    }
+                }
+
+                // Insert rest of new entries
+                for (int i = 0; i < tour.Entries.Count; i++)
+                {
+                    TourEntry entry = tour.Entries[i];
+
+                    // Check if it was already edited
+                    if (!edited.Where(e => e.Id == entry.Id).Any())
+                    {
+                        // Insert the not edited entry
+                        if (!_tourEntryRepository.Insert(ref entry))
+                            return false;
+                    }
+                }
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return false;
         }
 
+        private Tour? ParseFromRow(
+            OrderedDictionary tourData,
+            OrderedDictionary[] tourEntries,
+            OrderedDictionary startPointData,
+            OrderedDictionary endPointData)
+        {
+            try
+            {
+                // Parse the tour entries to a collection of tour entries
+                List<TourEntry> entries = new();
+                foreach (var entry in tourEntries)
+                {
+                    entries.Add(
+                        new()
+                        {
+                            Id = int.Parse(entry["id"]?.ToString() ?? ""),
+                            TourId = int.Parse(entry["tour_id"]?.ToString() ?? ""),
+                            Date = DateTime.Parse(entry["date"]?.ToString() ?? ""),
+                            Distance = float.Parse(entry["distance"]?.ToString() ?? ""),
+                            Duration = float.Parse(entry["duration"]?.ToString() ?? ""),
+                        });
+                }
+
+                // Get tour start and endpoint
+                TourPoint startPoint = new()
+                {
+                    Id = int.Parse(startPointData["id"]?.ToString() ?? ""),
+                    Latitude = float.Parse(startPointData["latitude"]?.ToString() ?? ""),
+                    Longitude = float.Parse(startPointData["longitude"]?.ToString() ?? ""),
+                };
+
+                TourPoint endPoint = new()
+                {
+                    Id = int.Parse(endPointData["id"]?.ToString() ?? ""),
+                    Latitude = float.Parse(endPointData["latitude"]?.ToString() ?? ""),
+                    Longitude = float.Parse(endPointData["longitude"]?.ToString() ?? ""),
+                };
+
+                // Build tour from rest of data
+                return new()
+                {
+                    Id = int.Parse(tourData["id"]?.ToString() ?? ""),
+                    Name = tourData["name"]?.ToString(),
+                    Description = tourData["description"]?.ToString(),
+                    Distance = float.Parse(tourData["distance"]?.ToString() ?? ""),
+                    Entries = entries,
+                    StartPoint = startPoint,
+                    EndPoint = endPoint,
+                };
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }
