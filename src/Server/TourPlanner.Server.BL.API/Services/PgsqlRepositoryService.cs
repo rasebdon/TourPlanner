@@ -12,10 +12,11 @@ namespace TourPlanner.Server.BL.API.Services
         private readonly Dictionary<Type, object> _repositories = new();
         private readonly PgsqlDatabase _database;
 
-        public PgsqlRepositoryService()
+        public PgsqlRepositoryService(string database, string username, string password)
         {
             _database = new PgsqlDatabase(
-                "Server = 127.0.0.1; Port = 5432; Database = tour_planner; User Id = tour_planner_admin; Password = tour_planner_1234;");
+                @$"Server = 127.0.0.1; Port = 5432; Database = {database};
+                User Id = {username}; Password = {password};");
 
             if (!_database.OpenConnection())
                 throw new Exception("Could not connect to database!");

@@ -241,16 +241,17 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 VALUES (@dist, @date, @dur, @tour_id) RETURNING id;";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add("dist", NpgsqlTypes.NpgsqlDbType.Real);
-                cmd.Parameters.Add("date", NpgsqlTypes.NpgsqlDbType.TimestampTz);
+                cmd.Parameters.Add("date", NpgsqlTypes.NpgsqlDbType.Timestamp);
                 cmd.Parameters.Add("dur", NpgsqlTypes.NpgsqlDbType.Real);
                 cmd.Parameters.Add("tour_id", NpgsqlTypes.NpgsqlDbType.Integer);
 
                 foreach (var entry in item.Entries)
                 {
+                    entry.TourId = item.Id;
                     cmd.Parameters["dist"].Value = entry.Distance;
                     cmd.Parameters["date"].Value = entry.Date;
                     cmd.Parameters["dur"].Value = entry.Duration;
-                    cmd.Parameters["tour_id"].Value = item.Id;
+                    cmd.Parameters["tour_id"].Value = entry.TourId;
 
                     result = _database.SelectSingle(cmd);
                     if (result == null)

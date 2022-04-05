@@ -12,7 +12,8 @@ namespace TourPlanner.Server.BL.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Configure repository service
-            IRepositoryService repositoryService = new PgsqlRepositoryService();
+            IRepositoryService repositoryService = new PgsqlRepositoryService(
+                "tour_planner", "tour_planner_admin", "tour_planner_1234");
 
             // Configure mapquestapi
             var apiKey = builder.Configuration.GetValue(typeof(string), "apiKey") as string;
@@ -45,7 +46,6 @@ namespace TourPlanner.Server.BL.API
             app.MapControllers();
 
             app.Run();
-
         }
     }
 }
