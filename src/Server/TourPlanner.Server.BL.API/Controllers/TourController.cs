@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TourPlanner.Common.Models;
 using TourPlanner.Server.BL.API.Services;
 using TourPlanner.Server.BL.Common.Interfaces;
+using TourPlanner.Server.DAL.Repositories;
 using TourPlanner.Server.DAL.Repositories.Pgsql;
 
 namespace TourPlanner.Server.BL.API.Controllers
@@ -13,8 +14,8 @@ namespace TourPlanner.Server.BL.API.Controllers
         private readonly IMapService _mapService;
         private readonly IRouteService _tourService;
         private readonly ILogger<TourController> _logger;
-        private readonly PgsqlTourRepository _tourRepository;
-        private readonly PgsqlTourEntryRepository _tourEntryRepository;
+        private readonly IRepository<Tour> _tourRepository;
+        private readonly IRepository<TourEntry> _tourEntryRepository;
 
         public TourController(
             ILogger<TourController> logger,
@@ -26,18 +27,12 @@ namespace TourPlanner.Server.BL.API.Controllers
             _mapService = mapService;
             _tourService = tourService;
 
-            // Get tour repository
-            {
-                if (repositoryService.GetRepository<Tour>() is not PgsqlTourRepository repo)
-                    throw new MissingRepositoryException(typeof(PgsqlTourRepository));
-                _tourRepository = repo;
-            }
-            // Get tour entry repository
-            {
-                if (repositoryService.GetRepository<TourEntry>() is not PgsqlTourEntryRepository repo)
-                    throw new MissingRepositoryException(typeof(PgsqlTourEntryRepository));
-                _tourEntryRepository = repo;
-            }
+            // Get repositories
+            _tourRepository = repositoryService.GetRepository<Tour>() ?? 
+                throw new MissingRepositoryException(typeof(PgsqlTourRepository));
+
+            _tourEntryRepository = repositoryService.GetRepository<TourEntry>() ??
+                throw new MissingRepositoryException(typeof(PgsqlTourEntryRepository));
         }
 
         [HttpGet]
