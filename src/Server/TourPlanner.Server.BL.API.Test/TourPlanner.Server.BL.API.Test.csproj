@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Server\TourPlanner.Server.BL.API\TourPlanner.Server.BL.API.csproj" />
+    <ProjectReference Include="..\..\Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj" />
+    <ProjectReference Include="..\TourPlanner.Server.BL.API\TourPlanner.Server.BL.API.csproj" />
+    <ProjectReference Include="..\TourPlanner.Server.DAL\TourPlanner.Server.DAL.csproj" />
   </ItemGroup>
 
 </Project>

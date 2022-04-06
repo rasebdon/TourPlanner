@@ -25,14 +25,14 @@ namespace TourPlanner.Client.UI.ViewModels
                 new TourEntry()
                 { 
                     Date = DateTime.Now,
-                    Duration = 2f,
+                    Duration = 7200,
                     Distance = 5.4f,
                 });
             Data.Add(
                 new TourEntry()
                 {
                     Date = new DateTime(2022, 03, 01),
-                    Duration = 3.45f,
+                    Duration = 11345,
                     Distance = 12.4f,
                 });
 
