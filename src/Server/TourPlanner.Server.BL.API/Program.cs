@@ -18,7 +18,7 @@ namespace TourPlanner.Server.BL.API
             // Configure mapquestapi
             var apiKey = builder.Configuration.GetValue(typeof(string), "apiKey") as string;
             IMapService mapService = new MapQuestMapService(apiKey ?? "");
-            ITourService tourService = new MapQuestTourService(apiKey ?? "");
+            IRouteService tourService = new MapQuestTourService(apiKey ?? "");
 
             // Add services to the container.
             builder.Services.AddSingleton(repositoryService);

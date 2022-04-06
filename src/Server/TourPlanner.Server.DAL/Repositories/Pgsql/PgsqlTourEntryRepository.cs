@@ -62,7 +62,10 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                     TourId = int.Parse(row["tour_id"]?.ToString() ?? ""),
                     Date = DateTime.Parse(row["date"]?.ToString() ?? ""),
                     Distance = float.Parse(row["distance"]?.ToString() ?? ""),
-                    Duration = float.Parse(row["duration"]?.ToString() ?? ""),
+                    Duration = int.Parse(row["duration"]?.ToString() ?? ""),
+                    Comment = row["comment"]?.ToString() ?? "",
+                    Difficulty = float.Parse(row["difficulty"]?.ToString() ?? ""),
+                    Rating = float.Parse(row["rating"]?.ToString() ?? ""),
                 };
             }
             catch (Exception ex)
@@ -111,13 +114,17 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             {
                 // Insert tour entries
                 NpgsqlCommand cmd = new();
-                cmd.CommandText = $@"INSERT INTO tour_entries (distance, date, duration, tour_id)
-                VALUES (@dist, @date, @dur, @tour_id) RETURNING id;";
+                cmd.CommandText = $@"INSERT INTO tour_entries (distance, date, duration, tour_id
+                comment, difficulty, rating) VALUES (@dist, @date, @dur, @tour_id, @com, @dif, @rat)
+                RETURNING id;";
                 cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("dist", item.Distance);
                 cmd.Parameters.AddWithValue("date", item.Date);
                 cmd.Parameters.AddWithValue("dur", item.Duration);
                 cmd.Parameters.AddWithValue("tour_id", item.TourId);
+                cmd.Parameters.AddWithValue("com", item.Comment);
+                cmd.Parameters.AddWithValue("dif", item.Difficulty);
+                cmd.Parameters.AddWithValue("rat", item.Rating);
 
                 var result = _database.SelectSingle(cmd);
                 if (result == null)
@@ -140,13 +147,17 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             try
             {
                 NpgsqlCommand cmd = new();
-                cmd.CommandText = @"UPDATE tour_entries SET tour_id=@tour_id, distance=@dist, duration=@dur, date=@date
+                cmd.CommandText = @"UPDATE tour_entries SET tour_id=@tour_id, distance=@dist,
+                duration=@dur, date=@date, comment=@com, difficulty=@dif, rating=@rat
                 WHERE id=@id;";
                 cmd.Parameters.AddWithValue("id", item.Id);
                 cmd.Parameters.AddWithValue("tour_id", item.TourId);
                 cmd.Parameters.AddWithValue("dist", item.Distance);
                 cmd.Parameters.AddWithValue("dur", item.Duration);
                 cmd.Parameters.AddWithValue("date", item.Date);
+                cmd.Parameters.AddWithValue("com", item.Comment);
+                cmd.Parameters.AddWithValue("dif", item.Difficulty);
+                cmd.Parameters.AddWithValue("rat", item.Rating);
 
                 return _database.ExecuteNonQuery(cmd) == 1;
             }

@@ -11,7 +11,7 @@ namespace TourPlanner.Server.BL.API.Controllers
     public class TourController : ControllerBase
     {
         private readonly IMapService _mapService;
-        private readonly ITourService _tourService;
+        private readonly IRouteService _tourService;
         private readonly ILogger<TourController> _logger;
         private readonly PgsqlTourRepository _tourRepository;
         private readonly PgsqlTourEntryRepository _tourEntryRepository;
@@ -19,7 +19,7 @@ namespace TourPlanner.Server.BL.API.Controllers
         public TourController(
             ILogger<TourController> logger,
             IMapService mapService,
-            ITourService tourService,
+            IRouteService tourService,
             IRepositoryService repositoryService)
         {
             _logger = logger;
@@ -85,8 +85,14 @@ namespace TourPlanner.Server.BL.API.Controllers
                 if (!IsValid(tour))
                     return BadRequest();
 
-                // Get distance of tour
-                tour.Distance = await _tourService.GetDistance(tour.StartPoint, tour.EndPoint);
+                // Get additional info of tour
+                var info = await _tourService.GetRouteInfo(tour.StartPoint, tour.EndPoint, tour.TransportType);
+
+                if(info == null)
+                    return BadRequest();
+
+                tour.Distance = info.Distance;
+                tour.EstimatedTime = info.Time;
 
                 // Add tour to database through repository
                 if (!_tourRepository.Insert(ref tour))
