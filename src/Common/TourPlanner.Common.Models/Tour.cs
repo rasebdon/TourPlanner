@@ -25,7 +25,7 @@
         { 
             get
             {
-                float cf = 5;
+                float cf = 0;
                 foreach (var entry in Entries)
                 {
                     float timeScaling = (float)(1 - Math.Pow(Math.E, (-entry.Duration) * 0.0001d));

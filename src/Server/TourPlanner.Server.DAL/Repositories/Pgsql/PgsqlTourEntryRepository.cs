@@ -119,7 +119,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 RETURNING id;";
                 cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("dist", item.Distance);
-                cmd.Parameters.AddWithValue("date", item.Date);
+                cmd.Parameters.AddWithValue("date", DateTime.SpecifyKind(item.Date, DateTimeKind.Unspecified));
                 cmd.Parameters.AddWithValue("dur", item.Duration);
                 cmd.Parameters.AddWithValue("tour_id", item.TourId);
                 cmd.Parameters.AddWithValue("com", item.Comment);
@@ -154,7 +154,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 cmd.Parameters.AddWithValue("tour_id", item.TourId);
                 cmd.Parameters.AddWithValue("dist", item.Distance);
                 cmd.Parameters.AddWithValue("dur", item.Duration);
-                cmd.Parameters.AddWithValue("date", item.Date);
+                cmd.Parameters.AddWithValue("date", DateTime.SpecifyKind(item.Date, DateTimeKind.Unspecified));
                 cmd.Parameters.AddWithValue("com", item.Comment);
                 cmd.Parameters.AddWithValue("dif", item.Difficulty);
                 cmd.Parameters.AddWithValue("rat", item.Rating);

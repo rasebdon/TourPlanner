@@ -247,7 +247,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 {
                     entry.TourId = item.Id;
                     cmd.Parameters["dist"].Value = entry.Distance;
-                    cmd.Parameters["date"].Value = entry.Date;
+                    cmd.Parameters["date"].Value = DateTime.SpecifyKind(entry.Date, DateTimeKind.Unspecified);
                     cmd.Parameters["dur"].Value = entry.Duration;
                     cmd.Parameters["tour_id"].Value = entry.TourId;
                     cmd.Parameters["com"].Value = entry.Comment;
