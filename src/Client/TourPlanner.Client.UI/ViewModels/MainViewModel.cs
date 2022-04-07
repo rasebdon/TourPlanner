@@ -7,21 +7,26 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using TourPlanner.Client.UI.Services;
+using TourPlanner.Common.Models;
 
 namespace TourPlanner.Client.UI.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        public ListViewModel ListViewModel { get; }
-        //public TourViewModel TourViewModel { get; }
-        public LogViewModel LogViewModel { get; }
+        private readonly ITourCollectionService _tourCollectionService;
 
-        public MainViewModel()
+        public MainViewModel(ITourCollectionService tourCollectionService)
         {
-            ListViewModel = new();
-            //TourViewModel = new();
-            LogViewModel = new();
+            _tourCollectionService = tourCollectionService;
+
+            // Get tours from API and close application if it cannot be retrieved
+            if (!_tourCollectionService.LoadToursApi())
+            {
+                Application.Current.Shutdown();
+            }
         }
     }
 }

@@ -12,7 +12,25 @@ namespace TourPlanner.Client.UI.ViewModels
 {
     public class LogViewModel : BaseViewModel
     {
-        public ObservableCollection<TourEntry> Data { get; } = new();
+        public ObservableCollection<TourEntry> Data { get; private set; } = new();
+
+        private Tour? _tour;
+        public Tour? Tour 
+        {
+            get
+            {
+                return _tour;
+            }
+            set
+            {
+                _tour = value;
+                if(_tour != null)
+                {
+                    Data.Clear();
+                    _tour.Entries.ForEach(e => Data.Add(e));
+                }
+            }
+        }
         public TourEntry? SelectedItem { get; set; }
 
         public ICommand AddLogPoint { get; }
@@ -20,22 +38,6 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public LogViewModel()
         {
-
-            Data.Add(
-                new TourEntry()
-                { 
-                    Date = DateTime.Now,
-                    Duration = 7200,
-                    Distance = 5.4f,
-                });
-            Data.Add(
-                new TourEntry()
-                {
-                    Date = new DateTime(2022, 03, 01),
-                    Duration = 11345,
-                    Distance = 12.4f,
-                });
-
             AddLogPoint = new RelayCommand(
                 o =>
                 {

@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TourPlanner.Client.UI.Views"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="150">
-    
+             d:DesignHeight="300" d:DesignWidth="150"
+             DataContext="{Binding ListViewModel, Source={StaticResource IoCConfig2}}">
     <UserControl.Resources>
         <DataTemplate x:Key="ListPointItemTemplate">
             <Grid>
@@ -14,7 +14,7 @@
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30px"/>
@@ -30,12 +30,13 @@
             </Grid.ColumnDefinitions>
 
             <Label x:Name="TourListHeader" Grid.Column="0" Content="Tours"/>
-            <Button x:Name="TourListAddButton" Grid.Column="1" Content="+" Command="{Binding ListViewModel.AddListPoint}" Width="20"/>
-            <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Command="{Binding ListViewModel.RemoveListPoint}" Width="20"/>
+            <Button x:Name="TourListAddButton" Grid.Column="1" Content="+" Command="{Binding AddListPoint}" Width="20"/>
+            <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Command="{Binding RemoveListPoint}" Width="20"/>
         </Grid>
 
         <!-- TourListContentPanel -->
         <ListBox ItemTemplate="{DynamicResource ListPointItemTemplate}" x:Name="TourListContentPanel" Grid.Row="1" 
-                 ItemsSource="{Binding ListViewModel.Data}" SelectedItem="{Binding ListViewModel.SelectedItem}">        </ListBox>
+                 ItemsSource="{Binding Tours}" SelectedItem="{Binding SelectedItem}">
+        </ListBox>
     </Grid>
 </UserControl>
