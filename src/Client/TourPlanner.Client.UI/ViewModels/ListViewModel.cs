@@ -28,6 +28,7 @@ namespace TourPlanner.Client.UI.ViewModels
                 if(selectedItem != null)
                 {
                     _logViewModel.Tour = selectedItem;
+                    _tourViewModel.Tour = selectedItem;
                 }
             }
         }
@@ -37,6 +38,7 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private readonly ITourCollectionService _tourCollectionService;
         private readonly LogViewModel _logViewModel;
+        private readonly TourViewModel _tourViewModel;
 
         public ObservableCollection<Tour> Tours
         {
@@ -48,10 +50,12 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public ListViewModel(
             ITourCollectionService tourCollectionService,
-            LogViewModel logViewModel)
+            LogViewModel logViewModel,
+            TourViewModel tourViewModel)
         {
             _tourCollectionService = tourCollectionService;
             _logViewModel = logViewModel;
+            _tourViewModel = tourViewModel;
 
             // TODO : Open a new window for creating a new tour
             AddListPoint = new RelayCommand(
