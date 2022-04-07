@@ -147,7 +147,7 @@ namespace TourPlanner.Server.BL.API.Controllers
         }
 
         [HttpGet("{tourId}/Map")]
-        public async Task<IActionResult> GetTourMap([FromRoute] int tourId)
+        public async Task<IActionResult> GetTourMap([FromRoute] int tourId, [FromQuery] float? width, [FromQuery] float? height)
         {
             try
             {
@@ -160,8 +160,14 @@ namespace TourPlanner.Server.BL.API.Controllers
                 if (tour.StartPoint == null || tour.EndPoint == null)
                     return StatusCode(500);
 
+                if(width == null || height == null)
+                {
+                    width = 0;
+                    height = 0;
+                }
+
                 // Get tour map from map service
-                var map = await _mapService.GetRouteMap(tour.StartPoint, tour.EndPoint);
+                var map = await _mapService.GetRouteMap(tour.StartPoint, tour.EndPoint, width.Value, height.Value);
                 return File(map.ToArray(), "image/jpeg");
             }
             catch (Exception ex)

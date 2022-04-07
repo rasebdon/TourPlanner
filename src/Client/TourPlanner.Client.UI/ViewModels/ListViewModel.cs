@@ -28,6 +28,7 @@ namespace TourPlanner.Client.UI.ViewModels
                 if(selectedItem != null)
                 {
                     _logViewModel.Tour = selectedItem;
+                    _tourViewModel.Tour = selectedItem;
                 }
             }
         }
@@ -37,21 +38,24 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private readonly ITourCollectionService _tourCollectionService;
         private readonly LogViewModel _logViewModel;
+        private readonly TourViewModel _tourViewModel;
 
         public ObservableCollection<Tour> Tours
         {
             get
             {
-                return _tourCollectionService.Tours;
+                return _tourCollectionService.DisplayedTours;
             }
         }
 
         public ListViewModel(
             ITourCollectionService tourCollectionService,
-            LogViewModel logViewModel)
+            LogViewModel logViewModel,
+            TourViewModel tourViewModel)
         {
             _tourCollectionService = tourCollectionService;
             _logViewModel = logViewModel;
+            _tourViewModel = tourViewModel;
 
             // TODO : Open a new window for creating a new tour
             AddListPoint = new RelayCommand(
@@ -75,7 +79,9 @@ namespace TourPlanner.Client.UI.ViewModels
                         Entries = new()
                     };
                     if (_tourCollectionService.SaveTourApi(ref tour))
-                        _tourCollectionService.Tours.Add(tour);
+                    {
+                        _tourCollectionService.AllTours.Add(tour);
+                    }
 
                 },
                 o => true);
@@ -85,7 +91,9 @@ namespace TourPlanner.Client.UI.ViewModels
                     if (SelectedItem != null)
                     {
                         if (_tourCollectionService.DeleteTourApi(SelectedItem.Id))
-                            _tourCollectionService.Tours.Remove(SelectedItem);
+                        {
+                            _tourCollectionService.AllTours.Remove(SelectedItem);
+                        }
                     }
                 },
                 o => true);

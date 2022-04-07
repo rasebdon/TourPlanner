@@ -10,7 +10,8 @@ namespace TourPlanner.Client.UI.Services
 {
     public interface ITourCollectionService
     {
-        public ObservableCollection<Tour> Tours { get; }
+        public ObservableCollection<Tour> AllTours { get; }
+        public ObservableCollection<Tour> DisplayedTours { get; }
 
         public bool SaveTourApi(ref Tour tour);
         public bool DeleteTourApi(int tourId);
