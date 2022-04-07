@@ -44,7 +44,7 @@ namespace TourPlanner.Client.UI.ViewModels
         {
             get
             {
-                return _tourCollectionService.Tours;
+                return _tourCollectionService.DisplayedTours;
             }
         }
 
@@ -79,7 +79,9 @@ namespace TourPlanner.Client.UI.ViewModels
                         Entries = new()
                     };
                     if (_tourCollectionService.SaveTourApi(ref tour))
-                        _tourCollectionService.Tours.Add(tour);
+                    {
+                        _tourCollectionService.AllTours.Add(tour);
+                    }
 
                 },
                 o => true);
@@ -89,7 +91,9 @@ namespace TourPlanner.Client.UI.ViewModels
                     if (SelectedItem != null)
                     {
                         if (_tourCollectionService.DeleteTourApi(SelectedItem.Id))
-                            _tourCollectionService.Tours.Remove(SelectedItem);
+                        {
+                            _tourCollectionService.AllTours.Remove(SelectedItem);
+                        }
                     }
                 },
                 o => true);

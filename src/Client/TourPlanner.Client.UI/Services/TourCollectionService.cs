@@ -13,13 +13,25 @@ namespace TourPlanner.Client.UI.Services
 {
     public class TourCollectionService : ITourCollectionService
     {
-        public ObservableCollection<Tour> Tours { get; private set; } = new ObservableCollection<Tour>();
+        public ObservableCollection<Tour> AllTours { get; private set; } = new ObservableCollection<Tour>();
+        public ObservableCollection<Tour> DisplayedTours { get; private set; } = new ObservableCollection<Tour>();
 
         private readonly IApiService _apiService;
 
         public TourCollectionService(IApiService apiService)
         {
             _apiService = apiService;
+
+            AllTours.CollectionChanged += AllTours_CollectionChanged;
+        }
+
+        private void AllTours_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            DisplayedTours.Clear();
+            foreach (var tour in AllTours)
+            {
+                DisplayedTours.Add(tour);
+            }
         }
 
         public bool Export(Uri filePath)
@@ -47,8 +59,11 @@ namespace TourPlanner.Client.UI.Services
                 if (tours == null)
                     return false;
 
-                Tours.Clear();
-                Tours = new ObservableCollection<Tour>(tours);
+                AllTours = new ObservableCollection<Tour>(tours);
+                AllTours.CollectionChanged += AllTours_CollectionChanged;
+
+                DisplayedTours = new ObservableCollection<Tour>(tours);
+
                 return true;
             }
             catch (Exception)
