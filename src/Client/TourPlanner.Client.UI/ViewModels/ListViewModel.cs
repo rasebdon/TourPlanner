@@ -20,14 +20,14 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public ListViewModel()
         {
-            Data.Add(new Tour() { Name = "Tour 1" });
-            Data.Add(new Tour() { Name = "Tour 2" });
-            Data.Add(new Tour() { Name = "Tour 3" });
+            Data.Add(new Tour() { Name = "Tour 1", EndPoint = new(), StartPoint = new() });
+            Data.Add(new Tour() { Name = "Tour 2", EndPoint = new(), StartPoint = new() });
+            Data.Add(new Tour() { Name = "Tour 3", EndPoint = new(), StartPoint = new() });
 
             AddListPoint = new RelayCommand(
                 o =>
                 {
-                    Data.Add(new Tour() { Name = "New Tour"});
+                    Data.Add(new Tour() { Name = "New Tour", EndPoint = new(), StartPoint = new()});
                 },
                 o => true);
             RemoveListPoint = new RelayCommand(

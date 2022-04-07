@@ -10,8 +10,8 @@
     public class Tour
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Description { get; set; }
+        public string Name { get; set; } = "New Tour";
+        public string Description { get; set; } = "";
         public float Distance { get; set; }
         public float EstimatedTime { get; set; }
         public TransportType TransportType { get; set; }
