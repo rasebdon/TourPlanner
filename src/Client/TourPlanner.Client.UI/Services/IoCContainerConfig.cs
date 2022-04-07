@@ -21,8 +21,8 @@ namespace TourPlanner.Client.UI.Services
             // register the MainViewModel as well, the ServiceProvider will provide the constructor parameters
             // for the MainViewModel based on the configuration above
             services.AddSingleton<MainViewModel>();
-            services.AddSingleton<ListViewModel>();
             services.AddSingleton<LogViewModel>();
+            services.AddSingleton<ListViewModel>();
             services.AddSingleton<TourViewModel>();
 
             // finish configuration and build the provider

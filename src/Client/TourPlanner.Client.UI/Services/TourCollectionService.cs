@@ -79,7 +79,7 @@ namespace TourPlanner.Client.UI.Services
             }
 
             // Check if saving was successful
-            if (response.Item2 != HttpStatusCode.OK || response.Item2 != HttpStatusCode.Created)
+            if (response.Item2 != HttpStatusCode.OK && response.Item2 != HttpStatusCode.Created)
                 return false;
 
             // Parse string as tour

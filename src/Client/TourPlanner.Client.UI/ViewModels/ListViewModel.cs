@@ -13,12 +13,30 @@ namespace TourPlanner.Client.UI.ViewModels
 {
     public class ListViewModel : BaseViewModel
     {
-        public Tour? SelectedItem { get; set; }
+        private Tour? selectedItem;
+        public Tour? SelectedItem
+        { 
+            get
+            {
+                return selectedItem;
+            }
+            set
+            {
+                selectedItem = value;
+
+                // Change other component views
+                if(selectedItem != null)
+                {
+                    _logViewModel.Tour = selectedItem;
+                }
+            }
+        }
 
         public ICommand AddListPoint { get; }
         public ICommand RemoveListPoint { get; }
 
-        private ITourCollectionService _tourCollectionService;
+        private readonly ITourCollectionService _tourCollectionService;
+        private readonly LogViewModel _logViewModel;
 
         public ObservableCollection<Tour> Tours
         {
@@ -28,9 +46,12 @@ namespace TourPlanner.Client.UI.ViewModels
             }
         }
 
-        public ListViewModel(ITourCollectionService tourCollectionService)
+        public ListViewModel(
+            ITourCollectionService tourCollectionService,
+            LogViewModel logViewModel)
         {
             _tourCollectionService = tourCollectionService;
+            _logViewModel = logViewModel;
 
             // TODO : Open a new window for creating a new tour
             AddListPoint = new RelayCommand(
@@ -53,7 +74,7 @@ namespace TourPlanner.Client.UI.ViewModels
                         TransportType = TransportType.AUTO,
                         Entries = new()
                     };
-                    if(_tourCollectionService.SaveTourApi(ref tour))
+                    if (_tourCollectionService.SaveTourApi(ref tour))
                         _tourCollectionService.Tours.Add(tour);
 
                 },
