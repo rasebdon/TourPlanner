@@ -6,35 +6,66 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TourPlanner.Client.UI.Services;
 using TourPlanner.Common.Models;
 
 namespace TourPlanner.Client.UI.ViewModels
 {
     public class ListViewModel : BaseViewModel
     {
-        public ObservableCollection<Tour> Data { get; } = new();
         public Tour? SelectedItem { get; set; }
 
         public ICommand AddListPoint { get; }
         public ICommand RemoveListPoint { get; }
 
-        public ListViewModel()
-        {
-            Data.Add(new Tour() { Name = "Tour 1", EndPoint = new(), StartPoint = new() });
-            Data.Add(new Tour() { Name = "Tour 2", EndPoint = new(), StartPoint = new() });
-            Data.Add(new Tour() { Name = "Tour 3", EndPoint = new(), StartPoint = new() });
+        private ITourCollectionService _tourCollectionService;
 
+        public ObservableCollection<Tour> Tours
+        {
+            get
+            {
+                return _tourCollectionService.Tours;
+            }
+        }
+
+        public ListViewModel(ITourCollectionService tourCollectionService)
+        {
+            _tourCollectionService = tourCollectionService;
+
+            // TODO : Open a new window for creating a new tour
             AddListPoint = new RelayCommand(
                 o =>
                 {
-                    Data.Add(new Tour() { Name = "New Tour", EndPoint = new(), StartPoint = new()});
+                    var tour = new Tour()
+                    {
+                        Id = -1,
+                        Name = "New Tour",
+                        EndPoint = new()
+                        {
+                            Latitude = 39,
+                            Longitude = 39.05f,
+                        },
+                        StartPoint = new()
+                        {
+                            Latitude = 39.095f,
+                            Longitude = 39.15f,
+                        },
+                        TransportType = TransportType.AUTO,
+                        Entries = new()
+                    };
+                    if(_tourCollectionService.SaveTourApi(ref tour))
+                        _tourCollectionService.Tours.Add(tour);
+
                 },
                 o => true);
             RemoveListPoint = new RelayCommand(
                 o =>
                 {
                     if (SelectedItem != null)
-                        Data.Remove(SelectedItem);
+                    {
+                        if (_tourCollectionService.DeleteTourApi(SelectedItem.Id))
+                            _tourCollectionService.Tours.Remove(SelectedItem);
+                    }
                 },
                 o => true);
         }

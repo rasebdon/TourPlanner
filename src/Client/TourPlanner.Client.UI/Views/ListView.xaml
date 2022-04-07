@@ -36,7 +36,7 @@
 
         <!-- TourListContentPanel -->
         <ListBox ItemTemplate="{DynamicResource ListPointItemTemplate}" x:Name="TourListContentPanel" Grid.Row="1" 
-                 ItemsSource="{Binding Data}" SelectedItem="{Binding SelectedItem}">
+                 ItemsSource="{Binding Tours}" SelectedItem="{Binding SelectedItem}">
         </ListBox>
     </Grid>
 </UserControl>

@@ -25,6 +25,9 @@
         {
             get
             {
+                if (Entries.Count == 0)
+                    return 5;
+
                 float cf = 0;
                 foreach (var entry in Entries)
                 {

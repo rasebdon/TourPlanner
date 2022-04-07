@@ -17,8 +17,6 @@ namespace TourPlanner.Client.UI.Services
             // same for ICommunicationHandler, IContentInterpreter, IFilterHandler
             services.AddSingleton<IApiService, TourPlannerApiService>();
             services.AddSingleton<ITourCollectionService, TourCollectionService>();
-            //services.AddSingleton<IContentInterpreter, HTTPOutputInterpreter>();
-            //services.AddSingleton<IFilterHandler, CsvBasedFilter>();
 
             // register the MainViewModel as well, the ServiceProvider will provide the constructor parameters
             // for the MainViewModel based on the configuration above

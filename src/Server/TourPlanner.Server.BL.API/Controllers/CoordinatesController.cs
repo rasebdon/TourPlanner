@@ -13,7 +13,7 @@ namespace TourPlanner.Server.BL.API.Controllers
             return null;
         }
 
-        [HttpGet]
+        [HttpGet("Map")]
         public async Task<IActionResult> GetMapFromCoordinates([FromQuery] float lat, [FromQuery] float lon)
         {
             return null;

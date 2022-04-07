@@ -11,7 +11,7 @@ namespace TourPlanner.Client.UI.Services
 {
     public class TourPlannerApiService : IApiService
     {
-        private readonly string _url = "https://localhost:7222/api/";
+        private readonly string _url = "https://localhost:5001/api/";
         private readonly HttpClient _httpClient;
 
         public TourPlannerApiService()
