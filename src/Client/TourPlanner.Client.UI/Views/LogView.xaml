@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TourPlanner.Client.UI.Views"
              mc:Ignorable="d"
-             d:DesignHeight="150" d:DesignWidth="300">
+             d:DesignHeight="150" d:DesignWidth="300"
+             DataContext="{Binding LogViewModel, Source={StaticResource IoCConfig2}}">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -21,14 +23,14 @@
             </Grid.ColumnDefinitions>
 
             <Label x:Name="TourContentDataPanelTitle" Content="Logs:" Grid.Column="0"/>
-            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding LogViewModel.AddLogPoint}"  Grid.Column="1"/>
-            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding LogViewModel.RemoveLogPoint}" Grid.Column="2"/>
+            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding AddLogPoint}"  Grid.Column="1"/>
+            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding RemoveLogPoint}" Grid.Column="2"/>
         </Grid>
 
         <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
-                                  ItemsSource="{Binding LogViewModel.Data}" AutoGenerateColumns="False"
+                                  ItemsSource="{Binding Data}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False"
-                                  SelectedItem="{Binding LogViewModel.SelectedItem}">
+                                  SelectedItem="{Binding SelectedItem}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Binding="{Binding Date}" FontWeight="Bold"/>
                 <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" FontWeight="Bold"/>

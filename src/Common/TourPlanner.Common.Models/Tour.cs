@@ -21,8 +21,8 @@
         /// <summary>
         /// Value between 0 (not child friendly) and 10 (very child friendly)
         /// </summary>
-        public float ChildFriendliness 
-        { 
+        public float ChildFriendliness
+        {
             get
             {
                 float cf = 0;
@@ -35,7 +35,7 @@
                     cf += (timeScaling + distanceScaling + difficultyScaling) / 3f * 10f;
                 }
                 return 10 - (cf / Entries.Count);
-            } 
+            }
         }
         /// <summary>
         /// Value between 0 (not popular) and 1 (popular)
@@ -54,19 +54,22 @@
 
         public override bool Equals(object? obj)
         {
-            var equals = new HashSet<TourEntry>(
-                Entries, EqualityComparer<TourEntry>.Default).SetEquals(((Tour)obj).Entries);
+            if (obj is Tour tour)
+            {
+                var equals = new HashSet<TourEntry>(
+                Entries, EqualityComparer<TourEntry>.Default).SetEquals(tour.Entries);
 
-            return obj is Tour tour &&
-                   Id == tour.Id &&
-                   Name == tour.Name &&
-                   Description == tour.Description &&
-                   Distance == tour.Distance &&
-                   EstimatedTime == tour.EstimatedTime &&
-                   TransportType == tour.TransportType &&
-                   StartPoint.Equals(tour.StartPoint) &&
-                   EndPoint.Equals(tour.EndPoint) &&
-                   equals;
+                return equals &&
+                       Id == tour.Id &&
+                       Name == tour.Name &&
+                       Description == tour.Description &&
+                       Distance == tour.Distance &&
+                       EstimatedTime == tour.EstimatedTime &&
+                       TransportType == tour.TransportType &&
+                       StartPoint.Equals(tour.StartPoint) &&
+                       EndPoint.Equals(tour.EndPoint);
+            }
+            return false;
         }
 
         public override int GetHashCode()

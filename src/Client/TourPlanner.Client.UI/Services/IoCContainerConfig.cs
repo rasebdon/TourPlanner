@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TourPlanner.Client.UI.ViewModels;
 
-namespace TourPlanner.Client.BL
+namespace TourPlanner.Client.UI.Services
 {
     public class IoCContainerConfig
     {
@@ -21,15 +22,25 @@ namespace TourPlanner.Client.BL
             // register the MainViewModel as well, the ServiceProvider will provide the constructor parameters
             // for the MainViewModel based on the configuration above
             services.AddSingleton<MainViewModel>();
+            services.AddSingleton<ListViewModel>();
+            services.AddSingleton<LogViewModel>();
+            services.AddSingleton<TourViewModel>();
 
             // finish configuration and build the provider
             _serviceProvider = services.BuildServiceProvider();
         }
 
-        /// <summary>
-        /// Getter for retrieving and binding the MainViewModel in MainWindow.xaml as its DataContext
-        /// </summary>
-        //public MainViewModel MainViewModel
-        //    => _serviceProvider.GetService<MainViewModel>();
+        public MainViewModel MainViewModel
+            => _serviceProvider.GetService<MainViewModel>();
+        
+        public TourViewModel TourViewModel
+            => _serviceProvider.GetService<TourViewModel>();
+        
+        public LogViewModel LogViewModel
+            => _serviceProvider.GetService<LogViewModel>();
+        
+        public ListViewModel ListViewModel
+            => _serviceProvider.GetService<ListViewModel>();
+
     }
 }

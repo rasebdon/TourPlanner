@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{937AE6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{49F5DF50-6CAA-45A6-8DC5-C8B4BC948759}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Client.BL", "src\Client\TourPlanner.Client.BL\TourPlanner.Client.BL.csproj", "{24F297B4-BC44-429B-A293-12D51E6C2EDF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Client.UI", "src\Client\TourPlanner.Client.UI\TourPlanner.Client.UI.csproj", "{50445E36-7393-47D1-A5AC-0A45B0E106C8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Common.Models", "src\Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj", "{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}"
@@ -35,10 +33,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24F297B4-BC44-429B-A293-12D51E6C2EDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -80,7 +74,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{24F297B4-BC44-429B-A293-12D51E6C2EDF} = {CB4715EB-AB07-4806-9A17-CC3D5006F1A5}
 		{50445E36-7393-47D1-A5AC-0A45B0E106C8} = {CB4715EB-AB07-4806-9A17-CC3D5006F1A5}
 		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E} = {49F5DF50-6CAA-45A6-8DC5-C8B4BC948759}
 		{A5730320-D6C4-45B1-A06E-D7C410758955} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
