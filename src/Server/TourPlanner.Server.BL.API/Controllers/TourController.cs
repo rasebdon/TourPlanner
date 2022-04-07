@@ -8,7 +8,7 @@ using TourPlanner.Server.DAL.Repositories.Pgsql;
 namespace TourPlanner.Server.BL.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class TourController : ControllerBase
     {
         private readonly IMapService _mapService;

@@ -15,7 +15,8 @@ namespace TourPlanner.Client.UI.Services
             var services = new ServiceCollection();
 
             // same for ICommunicationHandler, IContentInterpreter, IFilterHandler
-            //services.AddSingleton<ICommunicationHandler, NetworkCommunicationHandler>();
+            services.AddSingleton<IApiService, TourPlannerApiService>();
+            services.AddSingleton<ITourCollectionService, TourCollectionService>();
             //services.AddSingleton<IContentInterpreter, HTTPOutputInterpreter>();
             //services.AddSingleton<IFilterHandler, CsvBasedFilter>();
 
