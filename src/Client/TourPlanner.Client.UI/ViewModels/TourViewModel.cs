@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using TourPlanner.Client.UI.Services;
 using TourPlanner.Common.Models;
@@ -29,7 +30,9 @@ namespace TourPlanner.Client.UI.ViewModels
                 _tour = value;
                 if(_tour != null)
                 {
-                    UpdateMap(_tour);
+                    UpdateMap(_tour, false);
+                    Description = _tour.Description;
+                    OnPropertyChanged(nameof(Description));
                 }
                 else
                 {
@@ -38,10 +41,23 @@ namespace TourPlanner.Client.UI.ViewModels
             }
         }
 
+        public string Description { get; set; } = "";
+
+        public Visibility ImageEnabled { get; set; } = Visibility.Visible;
+        public Visibility DescriptionEnabled { get; set; } = Visibility.Hidden;
+
+        public ICommand DisplayRoute { get; }
+        public ICommand DisplayDescription { get; }
+        
+
         private readonly IApiService _apiService;
 
         public TourViewModel(IApiService apiService)
         {
+            DisplayRoute = new RelayCommand(ShowImage);
+            DisplayDescription = new RelayCommand(ShowDescription);
+
+
             ImagePath = GetImageFromPath("assets/images/no_image.jpg");
 
             _apiService = apiService;
@@ -50,11 +66,27 @@ namespace TourPlanner.Client.UI.ViewModels
             Directory.CreateDirectory("assets/images");
         }
 
-        public bool UpdateMap(Tour tour)
+        private void ShowDescription(object? obj)
+        {
+            ImageEnabled = Visibility.Hidden;
+            DescriptionEnabled = Visibility.Visible;
+            OnPropertyChanged(nameof(DescriptionEnabled));
+            OnPropertyChanged(nameof(ImageEnabled));
+        }
+
+        private void ShowImage(object? obj)
+        {
+            ImageEnabled = Visibility.Visible;
+            DescriptionEnabled = Visibility.Hidden;
+            OnPropertyChanged(nameof(DescriptionEnabled));
+            OnPropertyChanged(nameof(ImageEnabled));
+        }
+
+        public bool UpdateMap(Tour tour, bool forceUpdate)
         {
             // Check if image is already saved
             var path = $"assets/images/{tour.Id}.jpg";
-            if (!File.Exists(path))
+            if (forceUpdate || !File.Exists(path))
             {
                 // Get image from api
                 var result = _apiService.GetBytesAsync($"Tour/{tour.Id}/Map").Result;

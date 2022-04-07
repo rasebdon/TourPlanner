@@ -23,13 +23,15 @@
                 <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="TourContentRouteButton" Content="Route" Grid.Column="0"/>
-            <Button x:Name="TourContentDescriptionButton" Content="Description" Grid.Column="1"/>
+            <Button x:Name="TourContentRouteButton" Command="{Binding DisplayRoute}" Content="Route" Grid.Column="0"/>
+            <Button x:Name="TourContentDescriptionButton" Command="{Binding DisplayDescription}" Content="Description" Grid.Column="1"/>
         </Grid>
 
         <!-- TourContentBox -->
         <Grid x:Name="TourContentBox" Grid.Row="2">
-            <Image Source="{Binding ImagePath}" Name="TourMapImage" Stretch="Uniform" StretchDirection="Both" RenderTransformOrigin="0.5,0.5">
+            <Image Source="{Binding ImagePath}" Name="TourMapImage" Stretch="Uniform" 
+                   StretchDirection="Both" RenderTransformOrigin="0.5,0.5"
+                   Visibility="{Binding ImageEnabled}">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -39,6 +41,7 @@
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>
+            <TextBlock Name="TourDescription" Visibility="{Binding DescriptionEnabled}" Text="{Binding Description}"></TextBlock>
         </Grid>
     </Grid>
 </UserControl>
