@@ -19,7 +19,7 @@
         
         <!-- Header -->
         <Label x:Name="Title" Grid.Row="0" Content="Tour Planner" FontSize="20px"/>
-
+        
         <!-- MenuPanel -->
         <Menu x:Name="MenuPanel" Grid.Row="1">
             <MenuItem Name="FileMenuItem" Header="_File" Height="25">
