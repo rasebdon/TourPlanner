@@ -32,24 +32,32 @@ namespace TourPlanner.Client.UI.Services
         public TourCollectionService(IApiService apiService)
         {
             _apiService = apiService;
-
-            PostDummyData();
-
+           
             AllTours.CollectionChanged += AllTours_CollectionChanged;
         }
 
-        void PostDummyData()
+        public void PostDummyData()
         {
-            var path = "F:\\source\\repos\\TourPlanner\\src\\Client\\TourPlanner.Client.UI\\assets\\dummy_data\\data.json";
+            var path = $"{Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName}\\assets\\dummy_data\\data.json";
             JObject? obj = (JObject?)JsonConvert.DeserializeObject(File.ReadAllText(path));
 
-            List<Tour> tours = obj["tours"].ToObject<List<Tour>>();
+            if (obj == null)
+                return;
+
+            List<Tour>? tours = obj["tours"]?.ToObject<List<Tour>>();
+
+            if (tours == null)
+                return;
 
             for (int i = 0; i < tours.Count; i++)
             {
                 var tour = tours[i];
-                CreateTourApi(ref tour);
+                if(CreateTourApi(ref tour))
+                    AllTours.Add(tour);
             }
+
+            OnPropertyChanged(nameof(AllTours));
+            OnPropertyChanged(nameof(DisplayedTours));
         }
 
         private void AllTours_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

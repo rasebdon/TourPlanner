@@ -27,6 +27,9 @@ namespace TourPlanner.Client.UI.ViewModels
         public ICommand ExportCommand { get; }
         public ICommand ImportCommand { get; }
 
+#if DEBUG
+        public ICommand CreateDummyData { get; }
+#endif
         private readonly ITourCollectionService _tourCollectionService;
 
         public MainViewModel(ITourCollectionService tourCollectionService)
@@ -37,6 +40,14 @@ namespace TourPlanner.Client.UI.ViewModels
             ExitCommand = new RelayCommand(Exit);
             ExportCommand = new RelayCommand(Export);
             ImportCommand = new RelayCommand(Import);
+
+#if DEBUG
+            CreateDummyData = new RelayCommand(
+                (object? o) => 
+                { 
+                    ((TourCollectionService)_tourCollectionService).PostDummyData(); 
+                });
+#endif
 
             // Get tours from API and close application if it cannot be retrieved
             if (!_tourCollectionService.LoadToursApi())
