@@ -120,7 +120,7 @@ namespace TourPlanner.Server.BL.API.Controllers
                 var updated = _tourRepository.Update(ref tour);
                 if (!updated)
                     return BadRequest();
-                return Ok();
+                return Ok(tour);
             }
             catch (Exception ex)
             {

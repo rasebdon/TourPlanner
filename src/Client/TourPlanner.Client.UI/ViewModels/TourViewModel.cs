@@ -32,12 +32,15 @@ namespace TourPlanner.Client.UI.ViewModels
                 {
                     UpdateMap(_tour, false);
                     Description = _tour.Description;
-                    OnPropertyChanged(nameof(Description));
                 }
                 else
                 {
+                    Description = "";
                     ImagePath = GetImageFromPath("assets/images/no_image.jpg");
                 }
+                OnPropertyChanged(nameof(Tour));
+                OnPropertyChanged(nameof(ImagePath));
+                OnPropertyChanged(nameof(Description));
             }
         }
 
@@ -99,7 +102,6 @@ namespace TourPlanner.Client.UI.ViewModels
             }
 
             ImagePath = GetImageFromPath(path);
-            OnPropertyChanged(nameof(ImagePath));
 
             return true;
         }

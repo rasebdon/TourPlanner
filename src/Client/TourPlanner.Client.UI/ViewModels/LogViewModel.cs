@@ -29,11 +29,12 @@ namespace TourPlanner.Client.UI.ViewModels
             set
             {
                 _tour = value;
+                Data.Clear();
                 if(_tour != null)
                 {
-                    Data.Clear();
                     _tour.Entries.ForEach(e => Data.Add(e));
                 }
+                OnPropertyChanged(nameof(Data));
                 OnPropertyChanged(nameof(Tour));
             }
         }

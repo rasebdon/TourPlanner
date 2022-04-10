@@ -25,11 +25,8 @@ namespace TourPlanner.Client.UI.ViewModels
                 selectedItem = value;
 
                 // Change other component views
-                if(selectedItem != null)
-                {
-                    _logViewModel.Tour = selectedItem;
-                    _tourViewModel.Tour = selectedItem;
-                }
+                _logViewModel.Tour = selectedItem;
+                _tourViewModel.Tour = selectedItem;
             }
         }
 

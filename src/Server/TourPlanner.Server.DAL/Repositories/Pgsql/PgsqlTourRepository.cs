@@ -284,16 +284,16 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             {
                 NpgsqlCommand cmd = new();
                 // Update tour data
-                cmd.CommandText = @"UPDATE tours SET name=@name, description=@desc, dist=@dist,
-                start_point=@start_point_id, end_point=@end_point_idm estimated_time=@eta,
+                cmd.CommandText = @"UPDATE tours SET name=@name, description=@desc, distance=@dist,
+                start_point=@start_point_id, end_point=@end_point_id, estimated_time=@eta,
                 transport_type=@tt WHERE tours.id=@id;";
                 cmd.Parameters.AddWithValue("name", tour.Name);
                 cmd.Parameters.AddWithValue("desc", tour.Description);
                 cmd.Parameters.AddWithValue("dist", tour.Distance);
-                cmd.Parameters.AddWithValue("eta", tour.EstimatedTime);
-                cmd.Parameters.AddWithValue("tt", (int)tour.TransportType);
                 cmd.Parameters.AddWithValue("start_point_id", tour.StartPoint.Id);
                 cmd.Parameters.AddWithValue("end_point_id", tour.EndPoint.Id);
+                cmd.Parameters.AddWithValue("eta", tour.EstimatedTime);
+                cmd.Parameters.AddWithValue("tt", (int)tour.TransportType);
                 cmd.Parameters.AddWithValue("id", tour.Id);
 
                 if (_database.ExecuteNonQuery(cmd) != 1)

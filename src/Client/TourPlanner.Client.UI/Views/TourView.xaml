@@ -14,7 +14,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label x:Name="TourContentTitle" Content="Tour 1" Grid.Row="0"/>
+        <Label x:Name="TourContentTitle" Content="{Binding Tour.Name}" Grid.Row="0"/>
 
         <!-- TourContentMenuBar -->
         <Grid x:Name="TourContentMenuBar" Grid.Row="1">

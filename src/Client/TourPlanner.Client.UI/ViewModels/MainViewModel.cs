@@ -25,6 +25,7 @@ namespace TourPlanner.Client.UI.ViewModels
         // Hotbar Commands
         public ICommand ExitCommand { get; }
         public ICommand ExportCommand { get; }
+        public ICommand ImportCommand { get; }
 
         private readonly ITourCollectionService _tourCollectionService;
 
@@ -35,11 +36,33 @@ namespace TourPlanner.Client.UI.ViewModels
             SearchCommand = new RelayCommand(Search);
             ExitCommand = new RelayCommand(Exit);
             ExportCommand = new RelayCommand(Export);
+            ImportCommand = new RelayCommand(Import);
 
             // Get tours from API and close application if it cannot be retrieved
             if (!_tourCollectionService.LoadToursApi())
             {
                 Exit(null);
+            }
+        }
+
+        private void Import(object? obj)
+        {
+            try
+            {
+                // Create OpenFileDialog
+                Microsoft.Win32.OpenFileDialog openFileDialog = new();
+
+                openFileDialog.DefaultExt = ".tours";
+                openFileDialog.Filter = "Tour planner documents (.tours)|*.tours";
+                Nullable<bool> result = openFileDialog.ShowDialog();
+                if (result == true)
+                {
+                    _tourCollectionService.Import(new Uri(openFileDialog.FileName, UriKind.Absolute));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "An error occured!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -52,7 +75,7 @@ namespace TourPlanner.Client.UI.ViewModels
 
                 saveFileDialog.DefaultExt = ".tours";
                 saveFileDialog.Filter = "Tour planner documents (.tours)|*.tours";
-                                Nullable<bool> result = saveFileDialog.ShowDialog();
+                Nullable<bool> result = saveFileDialog.ShowDialog();
                 if (result == true)
                 {
                     _tourCollectionService.Export(new Uri(saveFileDialog.FileName, UriKind.Absolute));
