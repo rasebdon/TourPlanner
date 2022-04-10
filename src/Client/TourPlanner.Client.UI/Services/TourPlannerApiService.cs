@@ -11,7 +11,11 @@ namespace TourPlanner.Client.UI.Services
 {
     public class TourPlannerApiService : IApiService
     {
-        private readonly string _url = "https://localhost:5001/api/";
+#if DEBUG
+        private readonly string _url = $"https://localhost:7222/api/";
+#else
+        private readonly string _url = $"https://localhost:5001/api/";
+#endif
         private readonly HttpClient _httpClient;
 
         public TourPlannerApiService()

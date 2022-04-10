@@ -195,12 +195,12 @@ namespace TourPlanner.Server.BL.API.Controllers
             return StatusCode(500);
         }
 
-        [HttpDelete("{tourEntryId}/Entry")]
-        public IActionResult DeleteTourEntry([FromRoute] int tourEntryId)
+        [HttpDelete("Entry/{entryId}")]
+        public IActionResult DeleteTourEntry([FromRoute] int entryId)
         {
             try
             {
-                var deleted = _tourEntryRepository.Delete(tourEntryId);
+                var deleted = _tourEntryRepository.Delete(entryId);
                 if (!deleted)
                     return BadRequest();
                 return Ok();
@@ -212,16 +212,16 @@ namespace TourPlanner.Server.BL.API.Controllers
             return StatusCode(500);
         }
 
-        [HttpPut("{tourId}/Entry")]
-        public IActionResult UpdateTourEntry([FromRoute] int tourId, [FromBody] TourEntry entry)
+        [HttpPut("Entry/{entryId}")]
+        public IActionResult UpdateTourEntry([FromRoute] int entryId, [FromBody] TourEntry entry)
         {
             try
             {
-                entry.TourId = tourId;
+                entry.Id = entryId;
                 var updated = _tourEntryRepository.Update(ref entry);
                 if (!updated)
                     return BadRequest();
-                return Ok();
+                return Ok(entry);
             }
             catch (Exception ex)
             {
