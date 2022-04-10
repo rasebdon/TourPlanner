@@ -79,21 +79,15 @@ namespace TourPlanner.Client.UI.ViewModels
                 o =>
                 {
                     OnPropertyChanged(nameof(Data));
-                    int errno = 0;
-                    for (int i = 0; i < Data.Count; i++)
-                    {
-                        var entry = Data[i];
-                        if (!UpdateTourEntry(ref entry))
-                            errno++;
-                    }
-                    if (errno > 0)
-                    {
-                        MessageBox.Show(
+                    OnPropertyChanged(nameof(SelectedItem));
+
+                    var entry = SelectedItem;
+                    if(entry != null && !UpdateTourEntry(ref entry))
+                         MessageBox.Show(
                             "No connection to server",
                             "An error occured while updating the table!",
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);
-                    }
                 },
                 o => true);
         }
