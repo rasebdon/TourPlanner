@@ -64,18 +64,18 @@ namespace TourPlanner.Client.UI.ViewModels
                         Name = "New Tour",
                         EndPoint = new()
                         {
-                            Latitude = 39,
-                            Longitude = 39.05f,
+                            Longitude = 39,
+                            Latitude = 39.05f,
                         },
                         StartPoint = new()
                         {
-                            Latitude = 39.095f,
-                            Longitude = 39.15f,
+                            Longitude = 39.095f,
+                            Latitude = 39.15f,
                         },
                         TransportType = TransportType.AUTO,
                         Entries = new()
                     };
-                    if (_tourCollectionService.SaveTourApi(ref tour))
+                    if (_tourCollectionService.CreateTourApi(ref tour))
                     {
                         _tourCollectionService.AllTours.Add(tour);
                     }

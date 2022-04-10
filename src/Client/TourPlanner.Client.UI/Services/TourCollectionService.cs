@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,7 +33,23 @@ namespace TourPlanner.Client.UI.Services
         {
             _apiService = apiService;
 
+            PostDummyData();
+
             AllTours.CollectionChanged += AllTours_CollectionChanged;
+        }
+
+        void PostDummyData()
+        {
+            var path = "F:\\source\\repos\\TourPlanner\\src\\Client\\TourPlanner.Client.UI\\assets\\dummy_data\\data.json";
+            JObject? obj = (JObject?)JsonConvert.DeserializeObject(File.ReadAllText(path));
+
+            List<Tour> tours = obj["tours"].ToObject<List<Tour>>();
+
+            for (int i = 0; i < tours.Count; i++)
+            {
+                var tour = tours[i];
+                CreateTourApi(ref tour);
+            }
         }
 
         private void AllTours_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -43,7 +60,6 @@ namespace TourPlanner.Client.UI.Services
                 DisplayedTours.Add(tour);
             }
         }
-
 
         public void Export(Uri filePath)
         {
@@ -88,7 +104,7 @@ namespace TourPlanner.Client.UI.Services
                     {
                         var newTour = duplicates[i];
                         var t = AllTours.Where(t => t.Id == newTour.Id).FirstOrDefault();
-                        if (t != null && SaveTourApi(ref newTour))
+                        if (t != null && UpdateTourApi(ref newTour))
                         {
                             AllTours.Remove(t);
                             AllTours.Add(newTour);
@@ -122,7 +138,7 @@ namespace TourPlanner.Client.UI.Services
                     {
                         var newTour = newTours[i];
                         newTour.Id = -1;
-                        if (SaveTourApi(ref newTour))
+                        if (CreateTourApi(ref newTour))
                             AllTours.Add(newTour);
                         else
                             error = true;
@@ -134,7 +150,11 @@ namespace TourPlanner.Client.UI.Services
 
             OnPropertyChanged(nameof(AllTours));
             OnPropertyChanged(nameof(DisplayedTours));
-            MessageBox.Show("Import successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            if(error)
+                MessageBox.Show("Import completed with erros!", "Oh no!", MessageBoxButton.OK, MessageBoxImage.Warning);
+            else
+                MessageBox.Show("Import successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         public bool LoadToursApi()
@@ -171,23 +191,32 @@ namespace TourPlanner.Client.UI.Services
             return false;
         }
 
-        public bool SaveTourApi(ref Tour tour)
+        public bool CreateTourApi(ref Tour tour)
         {
-            // Check if tour already exists via id
-            (string, HttpStatusCode) response;
-            if (tour.Id == -1)
-            {
-                // Post
-                response = _apiService.PostAsync("Tour", tour).Result;
-            }
-            else
-            {
-                // Put
-                response = _apiService.PutAsync($"Tour/{tour.Id}", tour).Result;
-            }
+            // Send post request
+            (string, HttpStatusCode) response = _apiService.PostAsync("Tour", tour).Result;
 
             // Check if saving was successful
-            if (response.Item2 != HttpStatusCode.OK && response.Item2 != HttpStatusCode.Created)
+            if (response.Item2 != HttpStatusCode.Created)
+                return false;
+
+            // Parse string as tour
+            var returnedTour = JsonConvert.DeserializeObject<Tour>(response.Item1);
+            if (returnedTour == null)
+                return false;
+
+            tour = returnedTour;
+
+            return true;
+        }
+
+        public bool UpdateTourApi(ref Tour tour)
+        {
+            // Send put request
+            (string, HttpStatusCode) response = _apiService.PutAsync($"Tour/{tour.Id}", tour).Result;
+
+            // Check if saving was successful
+            if (response.Item2 != HttpStatusCode.OK)
                 return false;
 
             // Parse string as tour

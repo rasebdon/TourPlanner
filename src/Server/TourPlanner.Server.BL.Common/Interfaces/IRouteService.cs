@@ -7,4 +7,9 @@ namespace TourPlanner.Server.BL.Common.Interfaces
     {
         Task<RouteInfo?> GetRouteInfo(TourPoint start, TourPoint end, TransportType transportType);
     }
+
+    public class NoPathException : Exception
+    {
+        public NoPathException() : base("There is no path between start and endpoint!") { }
+    }
 }

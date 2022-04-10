@@ -13,7 +13,8 @@ namespace TourPlanner.Client.UI.Services
         public ObservableCollection<Tour> AllTours { get; }
         public ObservableCollection<Tour> DisplayedTours { get; }
 
-        public bool SaveTourApi(ref Tour tour);
+        public bool CreateTourApi(ref Tour tour);
+        public bool UpdateTourApi(ref Tour tour);
         public bool DeleteTourApi(int tourId);
         public bool LoadToursApi();
 

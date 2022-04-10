@@ -31,6 +31,11 @@ namespace TourPlanner.Server.BL.MapQuestAPI
             if (jsonData == null)
                 return null;
 
+            // Check for errors
+            var statusCode = int.Parse(jsonData["info"]?["statuscode"]?.ToString() ?? "-1");
+            if (statusCode != 0)
+                throw new NoPathException();
+
             // Parse distance
             return new()
             {
