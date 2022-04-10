@@ -17,7 +17,7 @@ namespace TourPlanner.Client.UI.Services
         public bool DeleteTourApi(int tourId);
         public bool LoadToursApi();
 
-        public bool Export(Uri filePath);
-        public bool Import(Uri filePath);
+        public void Export(Uri filePath);
+        public void Import(Uri filePath);
     }
 }

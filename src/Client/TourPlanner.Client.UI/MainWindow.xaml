@@ -23,18 +23,14 @@
         <!-- MenuPanel -->
         <Menu x:Name="MenuPanel" Grid.Row="1">
             <MenuItem Name="FileMenuItem" Header="_File" Height="25">
-                <MenuItem Header="_New" />
-                <MenuItem Header="_Open" />
-                <MenuItem Header="_Save" />
-                <MenuItem Header="_Save As" />
+                <MenuItem Header="_Import" />
+                <MenuItem Header="_Export" Command="{Binding ExportCommand}" />
                 <Separator />
-                <MenuItem Header="_Exit" />
+                <MenuItem Header="_Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
             <MenuItem Name="EditMenuItem" Header="_Edit" Height="25">
                 <MenuItem Header="_Delete" />
                 <MenuItem Header="_Settings" />
-                <Separator />
-                <MenuItem Header="_Exit" />
             </MenuItem>
             <MenuItem x:Name="OptionsButton" Header="_Options" Height="25">
                 <MenuItem Header="_Test01" />

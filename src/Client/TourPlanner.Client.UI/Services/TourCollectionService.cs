@@ -34,12 +34,13 @@ namespace TourPlanner.Client.UI.Services
             }
         }
 
-        public bool Export(Uri filePath)
+        public void Export(Uri filePath)
         {
-            throw new NotImplementedException();
+            // Write all tours as json in given file
+            System.IO.File.WriteAllText(filePath.AbsolutePath, JsonConvert.SerializeObject(AllTours.ToArray()));
         }
 
-        public bool Import(Uri filePath)
+        public void Import(Uri filePath)
         {
             throw new NotImplementedException();
         }

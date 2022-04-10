@@ -55,7 +55,7 @@ namespace TourPlanner.Client.UI.ViewModels
                     if(Tour == null)
                         return;
 
-                    var entry = new TourEntry() { Date = DateTime.Today, Id = -1, TourId = Tour.Id };
+                    var entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = Tour.Id };
                     // Create entry
                     if (CreateTourEntry(ref entry))
                     {
