@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TourPlanner.Client.UI.Views"
+             xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
              mc:Ignorable="d"
              d:DesignHeight="150" d:DesignWidth="300"
              DataContext="{Binding LogViewModel, Source={StaticResource IoCConfig2}}">
@@ -28,13 +29,27 @@
         </Grid>
 
         <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
-                                  ItemsSource="{Binding Data}" AutoGenerateColumns="False"
+                                  ItemsSource="{Binding Data, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False"
-                                  SelectedItem="{Binding SelectedItem}">
+                                  SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="CellEditEnding">
+                    <i:InvokeCommandAction Command="{Binding SaveTableCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <!--<DataGrid.InputBindings>
+                <KeyBinding
+                        Key="S"
+                        Modifiers="Ctrl"
+                        Command="{Binding SaveTableCommand}"/>
+            </DataGrid.InputBindings>-->
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Date" Binding="{Binding Date}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Duration" Binding="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Distance" Binding="{Binding Distance, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Rating" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Difficulty" Binding="{Binding Difficulty, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Comment" Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
