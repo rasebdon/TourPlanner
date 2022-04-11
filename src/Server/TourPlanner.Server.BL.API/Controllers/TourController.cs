@@ -147,7 +147,7 @@ namespace TourPlanner.Server.BL.API.Controllers
         }
 
         [HttpGet("{tourId}/Map")]
-        public async Task<IActionResult> GetTourMap([FromRoute] int tourId)
+        public async Task<IActionResult> GetTourMap([FromRoute] int tourId, [FromQuery] float? width, [FromQuery] float? height)
         {
             try
             {
@@ -160,8 +160,14 @@ namespace TourPlanner.Server.BL.API.Controllers
                 if (tour.StartPoint == null || tour.EndPoint == null)
                     return StatusCode(500);
 
+                if(width == null || height == null)
+                {
+                    width = 0;
+                    height = 0;
+                }
+
                 // Get tour map from map service
-                var map = await _mapService.GetRouteMap(tour.StartPoint, tour.EndPoint);
+                var map = await _mapService.GetRouteMap(tour.StartPoint, tour.EndPoint, width.Value, height.Value);
                 return File(map.ToArray(), "image/jpeg");
             }
             catch (Exception ex)
@@ -189,12 +195,12 @@ namespace TourPlanner.Server.BL.API.Controllers
             return StatusCode(500);
         }
 
-        [HttpDelete("{tourEntryId}/Entry")]
-        public IActionResult DeleteTourEntry([FromRoute] int tourEntryId)
+        [HttpDelete("Entry/{entryId}")]
+        public IActionResult DeleteTourEntry([FromRoute] int entryId)
         {
             try
             {
-                var deleted = _tourEntryRepository.Delete(tourEntryId);
+                var deleted = _tourEntryRepository.Delete(entryId);
                 if (!deleted)
                     return BadRequest();
                 return Ok();
@@ -206,16 +212,16 @@ namespace TourPlanner.Server.BL.API.Controllers
             return StatusCode(500);
         }
 
-        [HttpPut("{tourId}/Entry")]
-        public IActionResult UpdateTourEntry([FromRoute] int tourId, [FromBody] TourEntry entry)
+        [HttpPut("Entry/{entryId}")]
+        public IActionResult UpdateTourEntry([FromRoute] int entryId, [FromBody] TourEntry entry)
         {
             try
             {
-                entry.TourId = tourId;
+                entry.Id = entryId;
                 var updated = _tourEntryRepository.Update(ref entry);
                 if (!updated)
                     return BadRequest();
-                return Ok();
+                return Ok(entry);
             }
             catch (Exception ex)
             {

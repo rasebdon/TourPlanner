@@ -413,15 +413,9 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 List<TourEntry> entries = new();
                 foreach (var entry in tourEntries)
                 {
-                    entries.Add(
-                        new()
-                        {
-                            Id = int.Parse(entry["id"]?.ToString() ?? ""),
-                            TourId = int.Parse(entry["tour_id"]?.ToString() ?? ""),
-                            Date = DateTime.Parse(entry["date"]?.ToString() ?? ""),
-                            Distance = float.Parse(entry["distance"]?.ToString() ?? ""),
-                            Duration = int.Parse(entry["duration"]?.ToString() ?? ""),
-                        });
+                    var entryObj = PgsqlTourEntryRepository.ParseFromRow(entry);
+                    if(entryObj != null)
+                        entries.Add(entryObj);
                 }
 
                 // Get tour start and endpoint
