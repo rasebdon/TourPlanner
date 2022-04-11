@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TourPlanner.Client.UI"
         mc:Ignorable="d"
-        Title="NewTourWindow" Height="500" Width="800"
+        Title="NewTourWindow" Height="520" Width="820"
         DataContext="{Binding NewTourViewModel, Source={StaticResource IoCConfig2}}">
     <StackPanel Orientation="Vertical" Background="white">
         <Grid Margin="20,10,20,20">
             <StackPanel Orientation="Vertical">
-                <Label x:Name="NewTourNameLabel" Content="Name:"></Label>
+                <Label x:Name="NewTourNameLabel" Content="Name *"></Label>
                 <TextBox x:Name="NewTourNameTextBox" Text="{Binding Name}"></TextBox>
-                <Label x:Name="NewTourDescriptionLabel" Content="Description:"></Label>
+                <Label x:Name="NewTourDescriptionLabel" Content="Description"></Label>
                 <TextBox  x:Name="NewTourDescriptionTextBox" Text="{Binding Description}" Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"></TextBox>
             </StackPanel>
         </Grid>
@@ -29,25 +29,28 @@
                     <Label x:Name="NewTourStartAddressLabel" Content="Address:" ></Label>
                     <StackPanel Orientation="Horizontal">
                         <TextBox x:Name="NewTourStartRoadTextBox" Text="{Binding StartRoad}" Width="200"></TextBox>
-                        <TextBox x:Name="NewTourStartNumberTextBox" Text="{Binding StartNumber}" Width="70" Margin="30,0,0,0"></TextBox>
+                        <TextBox x:Name="NewTourStartNumberTextBox" Text="{Binding StartNumber}" Width="80" Margin="20,0,0,0"></TextBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical">
                             <Label x:Name="NewTourStartZIPLabel" Content="ZIP" ></Label>
                             <TextBox x:Name="NewTourStartZIPTextBox" Text="{Binding StartZip}" HorizontalAlignment="Left" Width="100"></TextBox>
+                            <Label x:Name="NewTourStartCountryLabel" Content="Country" ></Label>
+                            <TextBox x:Name="NewTourStartCountryTextBox" Text="{Binding StartCountry}" HorizontalAlignment="Left" Width="100"></TextBox>
+                            <Button x:Name="NewTourStartCheckButton" Command="{Binding TranslateStartAddress}" Content="Check" Margin="0, 20,0,0"></Button>
                         </StackPanel>
-                        <Image Width="150" Height="100" Margin="50,10,0,0"></Image>
+                        <Image Source="{Binding StartImagePath}" Stretch="Fill" Width="180" Height="120" Margin="20,10,0,0"></Image>
                     </StackPanel>
                     <Label x:Name="NewTourStartOrLabel" Content="or" ></Label>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical">
-                            <Label x:Name="NewTourStartLattitudeLabel" Content="Lattitude" ></Label>
-                            <TextBox x:Name="NewTourStartLattitudeTextBox" Text="{Binding StartLattitude}" Width="135"></TextBox>
+                            <Label x:Name="NewTourStartLattitudeLabel" Content="Latitude *" ></Label>
+                            <TextBox x:Name="NewTourStartLattitudeTextBox" Text="{Binding StartLatitude}" Width="135"></TextBox>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="30,0,0,0">
                             <StackPanel Orientation="Vertical">
-                                <Label x:Name="NewTourStartLongtitudeLabel" Content="Longtitude" ></Label>
-                                <TextBox x:Name="NewTourStartLongtitudeTextBox" Text="{Binding StartLongtitude}" Width="135"></TextBox>
+                                <Label x:Name="NewTourStartLongtitudeLabel" Content="Longitude *" ></Label>
+                                <TextBox x:Name="NewTourStartLongtitudeTextBox" Text="{Binding StartLongitude}" Width="135"></TextBox>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -58,28 +61,31 @@
             <Grid Margin="50,0,50,0" Grid.Column="1">
                 <StackPanel Orientation="Vertical" Grid.Column="0">
                     <Label x:Name="NewTourEndHeading" Content="End" HorizontalAlignment="Center"></Label>
-                    <Label x:Name="NewTourEndAddressLabel" Content="Address:" ></Label>
+                    <Label x:Name="NewTourEndAddressLabel" Content="Address" ></Label>
                     <StackPanel Orientation="Horizontal">
                         <TextBox x:Name="NewTourEndRoadTextBox" Text="{Binding EndRoad}" Width="200"></TextBox>
-                        <TextBox x:Name="NewTourEndNumberTextBox" Text="{Binding EndNumber}" Width="70" Margin="30,0,0,0"></TextBox>
+                        <TextBox x:Name="NewTourEndNumberTextBox" Text="{Binding EndNumber}" Width="80" Margin="20,0,0,0"></TextBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical">
                             <Label x:Name="NewTourEndZIPLabel" Content="ZIP" ></Label>
                             <TextBox x:Name="NewTourEndZIPTextBox" Text="{Binding EndZip}" HorizontalAlignment="Left" Width="100"></TextBox>
+                            <Label x:Name="NewTourEndCountryLabel" Content="Country" ></Label>
+                            <TextBox x:Name="NewTourEndCountryTextBox" Text="{Binding EndCountry}" HorizontalAlignment="Left" Width="100"></TextBox>
+                            <Button x:Name="NewTourEndCheckButton" Command="{Binding TranslateEndAddress}" Content="Check" Margin="0, 20,0,0"></Button>
                         </StackPanel>
-                        <Image Width="150" Height="100" Margin="50,10,0,0"></Image>
+                        <Image Source="{Binding EndImagePath}" Stretch="Fill" Width="180" Height="120" Margin="20,10,0,0"></Image>
                     </StackPanel>
                     <Label x:Name="NewTourEndOrLabel" Content="or" ></Label>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical">
-                            <Label x:Name="NewTourEndLattitudeLabel" Content="Lattitude" ></Label>
-                            <TextBox x:Name="NewTourEndLattitudeTextBox" Text="{Binding EndLattitude}" Width="135"></TextBox>
+                            <Label x:Name="NewTourEndLattitudeLabel" Content="Latitude *" ></Label>
+                            <TextBox x:Name="NewTourEndLattitudeTextBox" Text="{Binding EndLatitude}" Width="135"></TextBox>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="30,0,0,0">
                             <StackPanel Orientation="Vertical">
-                                <Label x:Name="NewTourEndLongtitudeLabel" Content="Longtitude" ></Label>
-                                <TextBox x:Name="NewTourEndLongtitudeTextBox" Text="{Binding EndLongtitude}" Width="135"></TextBox>
+                                <Label x:Name="NewTourEndLongtitudeLabel" Content="Longitude *" ></Label>
+                                <TextBox x:Name="NewTourEndLongtitudeTextBox" Text="{Binding EndLongitude}" Width="135"></TextBox>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -88,7 +94,7 @@
 
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="NewTourCreateButton" Command="{Binding CreateTour}" Content="Create"  Margin="10,35,0,10" Width="100"></Button>
+            <Button x:Name="NewTourCreateButton" Command="{Binding CreateTour}" Content="Create"  Margin="10,20,0,10" Width="100"></Button>
         </StackPanel>
     </StackPanel>
 </Window>
