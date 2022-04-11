@@ -76,8 +76,6 @@ namespace TourPlanner.Client.UI.ViewModels
             return new BitmapImage(new Uri(path, UriKind.Absolute));
         }
 
-        private void 
-
 
     }
 }
