@@ -28,7 +28,7 @@ namespace TourPlanner.Server.BL.API.Controllers
             _tourService = tourService;
 
             // Get repositories
-            _tourRepository = repositoryService.GetRepository<Tour>() ?? 
+            _tourRepository = repositoryService.GetRepository<Tour>() ??
                 throw new MissingRepositoryException(typeof(PgsqlTourRepository));
 
             _tourEntryRepository = repositoryService.GetRepository<TourEntry>() ??
@@ -60,7 +60,7 @@ namespace TourPlanner.Server.BL.API.Controllers
             {
                 var tour = _tourRepository.Get(tourId);
 
-                if(tour == null)
+                if (tour == null)
                     return NotFound();
                 return Ok(tour);
             }
@@ -83,7 +83,7 @@ namespace TourPlanner.Server.BL.API.Controllers
                 // Get additional info of tour
                 var info = await _tourService.GetRouteInfo(tour.StartPoint, tour.EndPoint, tour.TransportType);
 
-                if(info == null)
+                if (info == null)
                     return BadRequest();
 
                 tour.Distance = info.Distance;
@@ -95,6 +95,10 @@ namespace TourPlanner.Server.BL.API.Controllers
 
                 // Return tour with ids
                 return StatusCode(201, tour);
+            }
+            catch (NoPathException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -120,7 +124,7 @@ namespace TourPlanner.Server.BL.API.Controllers
                 var updated = _tourRepository.Update(ref tour);
                 if (!updated)
                     return BadRequest();
-                return Ok();
+                return Ok(tour);
             }
             catch (Exception ex)
             {
@@ -135,11 +139,11 @@ namespace TourPlanner.Server.BL.API.Controllers
             try
             {
                 var deleted = _tourRepository.Delete(tourId);
-                if(!deleted)
+                if (!deleted)
                     return BadRequest();
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
             }
@@ -154,13 +158,13 @@ namespace TourPlanner.Server.BL.API.Controllers
                 // Get tour
                 var tour = _tourRepository.Get(tourId);
 
-                if(tour == null)
+                if (tour == null)
                     return NotFound();
 
                 if (tour.StartPoint == null || tour.EndPoint == null)
                     return StatusCode(500);
 
-                if(width == null || height == null)
+                if (width == null || height == null)
                 {
                     width = 0;
                     height = 0;

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TourPlanner.Common.Models;
-using Npgsql;
-using System.Data;
+﻿using Npgsql;
 using System.Collections.Specialized;
+using System.Data;
+using TourPlanner.Common.Models;
 
 namespace TourPlanner.Server.DAL.Repositories.Pgsql
 {
@@ -151,7 +146,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 // Get base tour data
                 var tourData = _database.Select(cmd);
 
-                if(tourData == null)
+                if (tourData == null)
                     return Enumerable.Empty<Tour>();
 
                 foreach (var tour in tourData)
@@ -159,7 +154,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                     // Get tour entries and start + endpoint
                     var t = GetTourFromTourData(tour);
 
-                    if(t != null)
+                    if (t != null)
                         tours.Add(t);
                 }
 
@@ -284,16 +279,16 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             {
                 NpgsqlCommand cmd = new();
                 // Update tour data
-                cmd.CommandText = @"UPDATE tours SET name=@name, description=@desc, dist=@dist,
-                start_point=@start_point_id, end_point=@end_point_idm estimated_time=@eta,
+                cmd.CommandText = @"UPDATE tours SET name=@name, description=@desc, distance=@dist,
+                start_point=@start_point_id, end_point=@end_point_id, estimated_time=@eta,
                 transport_type=@tt WHERE tours.id=@id;";
                 cmd.Parameters.AddWithValue("name", tour.Name);
                 cmd.Parameters.AddWithValue("desc", tour.Description);
                 cmd.Parameters.AddWithValue("dist", tour.Distance);
-                cmd.Parameters.AddWithValue("eta", tour.EstimatedTime);
-                cmd.Parameters.AddWithValue("tt", (int)tour.TransportType);
                 cmd.Parameters.AddWithValue("start_point_id", tour.StartPoint.Id);
                 cmd.Parameters.AddWithValue("end_point_id", tour.EndPoint.Id);
+                cmd.Parameters.AddWithValue("eta", tour.EstimatedTime);
+                cmd.Parameters.AddWithValue("tt", (int)tour.TransportType);
                 cmd.Parameters.AddWithValue("id", tour.Id);
 
                 if (_database.ExecuteNonQuery(cmd) != 1)
@@ -328,14 +323,14 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 var edited = new List<TourEntry>();
 
                 // Update / Delete old entries
-                if(oldEntriesData != null || oldEntriesData?.Length > 0)
+                if (oldEntriesData != null || oldEntriesData?.Length > 0)
                 {
                     foreach (var entryData in oldEntriesData)
                     {
                         // Get old entry
                         var oldEntry = PgsqlTourEntryRepository.ParseFromRow(entryData);
 
-                        if(oldEntry == null)
+                        if (oldEntry == null)
                             continue;
 
                         // Check if it still exists
@@ -344,7 +339,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                         // If it does exist => Update it
                         if (newEntry != null)
                         {
-                            if(!_tourEntryRepository.Update(ref newEntry)) 
+                            if (!_tourEntryRepository.Update(ref newEntry))
                                 return false;
                             edited.Add(newEntry);
                         }
@@ -373,7 +368,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
@@ -414,7 +409,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 foreach (var entry in tourEntries)
                 {
                     var entryObj = PgsqlTourEntryRepository.ParseFromRow(entry);
-                    if(entryObj != null)
+                    if (entryObj != null)
                         entries.Add(entryObj);
                 }
 

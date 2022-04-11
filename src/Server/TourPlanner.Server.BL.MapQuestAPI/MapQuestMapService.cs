@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using TourPlanner.Common.Models;
+﻿using TourPlanner.Common.Models;
 using TourPlanner.Server.BL.Common.Interfaces;
 
 namespace TourPlanner.Server.BL.MapQuestAPI

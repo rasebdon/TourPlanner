@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using TourPlanner.Client.UI.Services;
@@ -19,25 +14,30 @@ namespace TourPlanner.Client.UI.ViewModels
         public BitmapImage ImagePath { get; set; }
 
         private Tour? _tour;
-        public Tour? Tour 
-        { 
+        public Tour? Tour
+        {
             get
             {
                 return _tour;
             }
-            set 
+            set
             {
                 _tour = value;
-                if(_tour != null)
+                if (_tour != null)
                 {
-                    UpdateMap(_tour, false);
+                    if (_tourCollectionService.Online)
+                        UpdateMap(_tour, false);
+
                     Description = _tour.Description;
-                    OnPropertyChanged(nameof(Description));
                 }
                 else
                 {
+                    Description = "";
                     ImagePath = GetImageFromPath("assets/images/no_image.jpg");
                 }
+                OnPropertyChanged(nameof(Tour));
+                OnPropertyChanged(nameof(ImagePath));
+                OnPropertyChanged(nameof(Description));
             }
         }
 
@@ -48,19 +48,22 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public ICommand DisplayRoute { get; }
         public ICommand DisplayDescription { get; }
-        
+
 
         private readonly IApiService _apiService;
+        private readonly ITourCollectionService _tourCollectionService;
 
-        public TourViewModel(IApiService apiService)
+        public TourViewModel(
+            IApiService apiService,
+            ITourCollectionService tourCollectionService)
         {
+            _apiService = apiService;
+            _tourCollectionService = tourCollectionService;
+
             DisplayRoute = new RelayCommand(ShowImage);
             DisplayDescription = new RelayCommand(ShowDescription);
 
-
             ImagePath = GetImageFromPath("assets/images/no_image.jpg");
-
-            _apiService = apiService;
 
             Directory.CreateDirectory("assets");
             Directory.CreateDirectory("assets/images");
@@ -99,7 +102,6 @@ namespace TourPlanner.Client.UI.ViewModels
             }
 
             ImagePath = GetImageFromPath(path);
-            OnPropertyChanged(nameof(ImagePath));
 
             return true;
         }

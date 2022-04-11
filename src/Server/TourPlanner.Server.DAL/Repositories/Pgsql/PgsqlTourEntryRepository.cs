@@ -1,10 +1,5 @@
 ﻿using Npgsql;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TourPlanner.Common.Models;
 
 namespace TourPlanner.Server.DAL.Repositories.Pgsql
@@ -135,7 +130,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }

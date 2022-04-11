@@ -25,11 +25,16 @@ namespace TourPlanner.Server.BL.MapQuestAPI
                 $"&from={start.Latitude.ToString().Replace(",", ".")}, {start.Longitude.ToString().ToString().Replace(",", ".")}" +
                 $"&to={end.Latitude.ToString().Replace(",", ".")}, {end.Longitude.ToString().Replace(",", ".")}&unit=k" +
                 $"&routeType={routeType}");
-            string content = await(await _httpClient.GetAsync(uri)).Content.ReadAsStringAsync();
+            string content = await (await _httpClient.GetAsync(uri)).Content.ReadAsStringAsync();
             var jsonData = (JObject?)JsonConvert.DeserializeObject(content);
 
             if (jsonData == null)
                 return null;
+
+            // Check for errors
+            var statusCode = int.Parse(jsonData["info"]?["statuscode"]?.ToString() ?? "-1");
+            if (statusCode != 0)
+                throw new NoPathException();
 
             // Parse distance
             return new()

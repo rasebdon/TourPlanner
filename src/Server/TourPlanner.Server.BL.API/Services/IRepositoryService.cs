@@ -10,6 +10,7 @@ namespace TourPlanner.Server.BL.API.Services
     public class MissingRepositoryException : Exception
     {
         public MissingRepositoryException(Type repositoryType) : base(
-            $"No {repositoryType.Name} is registered in the repository service!") { }
+            $"No {repositoryType.Name} is registered in the repository service!")
+        { }
     }
 }

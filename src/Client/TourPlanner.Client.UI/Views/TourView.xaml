@@ -8,13 +8,20 @@
              d:DesignHeight="150" d:DesignWidth="300"
              DataContext="{Binding TourViewModel, Source={StaticResource IoCConfig2}}">
     <Grid>
-            <Grid.RowDefinitions>
+        <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label x:Name="TourContentTitle" Content="Tour 1" Grid.Row="0"/>
+        <TextBlock x:Name="TourContentTitle" Grid.Row="0">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0} {{ID:{1}}}">
+                    <Binding Path="Tour.Name" />
+                    <Binding Path="Tour.Id" />
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
 
         <!-- TourContentMenuBar -->
         <Grid x:Name="TourContentMenuBar" Grid.Row="1">
