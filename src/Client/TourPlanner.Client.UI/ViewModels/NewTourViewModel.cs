@@ -75,6 +75,7 @@ namespace TourPlanner.Client.UI.ViewModels
                     // Check for name and coordinates
                     if (NecessaryInputProvided())
                     {
+                        // Create new tour
                         Random rnd = new();
                         var tour = new Tour()
                         {
@@ -93,8 +94,17 @@ namespace TourPlanner.Client.UI.ViewModels
                             TransportType = Common.Models.TransportType.AUTO,
                             Entries = new()
                         };
-                        if (_tourCollectionService.SaveTourApi(ref tour))
+                        if (_tourCollectionService.CreateTourApi(ref tour))
                             _tourCollectionService.AllTours.Add(tour);
+
+                        // Close window
+                        foreach (Window window in Application.Current.Windows)
+                        {
+                            if(window is NewTourWindow)
+                            {
+                                window.Close();
+                            }
+                        }
                     }
                     else
                     {
