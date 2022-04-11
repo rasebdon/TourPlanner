@@ -61,28 +61,27 @@ namespace TourPlanner.Client.UI.ViewModels
             AddListPoint = new RelayCommand(
                 o =>
                 {
-                    var tour = new Tour()
-                    {
-                        Id = -1,
-                        Name = "New Tour",
-                        EndPoint = new()
-                        {
-                            Latitude = 39,
-                            Longitude = 39.05f,
-                        },
-                        StartPoint = new()
-                        {
-                            Latitude = 39.095f,
-                            Longitude = 39.15f,
-                        },
-                        TransportType = TransportType.AUTO,
-                        Entries = new()
-                    };
-                    if (_tourCollectionService.SaveTourApi(ref tour))
-                    {
-                        _tourCollectionService.AllTours.Add(tour);
-                    }
-
+                    var popup = new NewTourWindow();
+                    popup.Show();
+                    //var tour = new Tour()
+                    //{
+                    //    Id = -1,
+                    //    Name = "New Tour",
+                    //    EndPoint = new()
+                    //    {
+                    //        Latitude = 39,
+                    //        Longitude = 39.05f,
+                    //    },
+                    //    StartPoint = new()
+                    //    {
+                    //        Latitude = 39.095f,
+                    //        Longitude = 39.15f,
+                    //    },
+                    //    TransportType = TransportType.AUTO,
+                    //    Entries = new()
+                    //};
+                    //if (_tourCollectionService.SaveTourApi(ref tour))
+                    //    _tourCollectionService.Tours.Add(tour);
                 },
                 o => true);
             RemoveListPoint = new RelayCommand(

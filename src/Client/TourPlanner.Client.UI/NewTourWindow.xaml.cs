@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TourPlanner.Client.UI.Views
+namespace TourPlanner.Client.UI
 {
     /// <summary>
-    /// Interaction logic for NewTourView.xaml
+    /// Interaction logic for NewTourWindow.xaml
     /// </summary>
-    public partial class NewTourView : UserControl
+    public partial class NewTourWindow : Window
     {
-        public NewTourView()
+        public NewTourWindow()
         {
             InitializeComponent();
         }
