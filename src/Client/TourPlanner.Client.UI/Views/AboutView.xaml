@@ -1,0 +1,19 @@
+﻿<Window x:Class="TourPlanner.Client.UI.Views.AboutView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TourPlanner.Client.UI.Views"
+        mc:Ignorable="d"
+        Title="About" Height="200" Width="500"
+        Icon="{StaticResource QuestionMark}">
+    <StackPanel>
+        <Label x:Name="AboutHeader" Content ="About TourPlanner" FontSize="20" />
+        <TextBlock TextWrapping="Wrap" Padding="5 0 0 0">
+            TourPlanner is an application for creating and sharing different tours all over the world.
+            <LineBreak/><LineBreak/>
+            It was made by Raphael Dohnalek and Jonas Brandenburg and can be used online or offline. TourPlanner
+            is a project that was made in the process of the Software Engineering course on the FH Technikum Wien.
+        </TextBlock>
+    </StackPanel>
+</Window>

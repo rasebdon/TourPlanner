@@ -10,7 +10,6 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using TourPlanner.Common.Models;
 
@@ -18,21 +17,25 @@ namespace TourPlanner.Client.UI.Services
 {
     public class TourCollectionService : ITourCollectionService, INotifyPropertyChanged
     {
+        // ITourCollectionService
+        public bool Online { get; private set; }
         public ObservableCollection<Tour> AllTours { get; private set; } = new ObservableCollection<Tour>();
         public ObservableCollection<Tour> DisplayedTours { get; private set; } = new ObservableCollection<Tour>();
 
-        private readonly IApiService _apiService;
-
+        // INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        // Dependencies
+        private readonly IApiService _apiService;
+
         public TourCollectionService(IApiService apiService)
         {
             _apiService = apiService;
-           
+
             AllTours.CollectionChanged += AllTours_CollectionChanged;
         }
 
@@ -52,7 +55,7 @@ namespace TourPlanner.Client.UI.Services
             for (int i = 0; i < tours.Count; i++)
             {
                 var tour = tours[i];
-                if(CreateTourApi(ref tour))
+                if (CreateTourApi(ref tour))
                     AllTours.Add(tour);
             }
 
@@ -112,7 +115,7 @@ namespace TourPlanner.Client.UI.Services
                     {
                         var newTour = duplicates[i];
                         var t = AllTours.Where(t => t.Id == newTour.Id).FirstOrDefault();
-                        if (t != null && UpdateTourApi(ref newTour))
+                        if (t != null && (!Online || UpdateTourApi(ref newTour)))
                         {
                             AllTours.Remove(t);
                             AllTours.Add(newTour);
@@ -146,7 +149,7 @@ namespace TourPlanner.Client.UI.Services
                     {
                         var newTour = newTours[i];
                         newTour.Id = -1;
-                        if (CreateTourApi(ref newTour))
+                        if (!Online || CreateTourApi(ref newTour))
                             AllTours.Add(newTour);
                         else
                             error = true;
@@ -159,7 +162,7 @@ namespace TourPlanner.Client.UI.Services
             OnPropertyChanged(nameof(AllTours));
             OnPropertyChanged(nameof(DisplayedTours));
 
-            if(error)
+            if (error)
                 MessageBox.Show("Import completed with erros!", "Oh no!", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
                 MessageBox.Show("Import successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -184,6 +187,7 @@ namespace TourPlanner.Client.UI.Services
                 AllTours.CollectionChanged += AllTours_CollectionChanged;
 
                 DisplayedTours = new ObservableCollection<Tour>(tours);
+                Online = true;
 
                 return true;
             }
@@ -195,6 +199,7 @@ namespace TourPlanner.Client.UI.Services
                     MessageBoxButton.OK,
                     MessageBoxImage.Error,
                     MessageBoxResult.OK);
+                Online = false;
             }
             return false;
         }

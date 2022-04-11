@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TourPlanner.Client.UI.Services;
-using TourPlanner.Common.Models;
+using TourPlanner.Client.UI.Views;
 
 namespace TourPlanner.Client.UI.ViewModels
 {
@@ -24,8 +15,10 @@ namespace TourPlanner.Client.UI.ViewModels
 
         // Hotbar Commands
         public ICommand ExitCommand { get; }
-        public ICommand ExportCommand { get; }
         public ICommand ImportCommand { get; }
+        public ICommand ExportCommand { get; }
+        public ICommand SettingsCommand { get; }
+        public ICommand AboutCommand { get; }
 
 #if DEBUG
         public ICommand CreateDummyData { get; }
@@ -38,22 +31,42 @@ namespace TourPlanner.Client.UI.ViewModels
 
             SearchCommand = new RelayCommand(Search);
             ExitCommand = new RelayCommand(Exit);
-            ExportCommand = new RelayCommand(Export);
             ImportCommand = new RelayCommand(Import);
+            ExportCommand = new RelayCommand(Export);
+            AboutCommand = new RelayCommand(About);
+            SettingsCommand = new RelayCommand(Settings);
 
 #if DEBUG
             CreateDummyData = new RelayCommand(
-                (object? o) => 
-                { 
-                    ((TourCollectionService)_tourCollectionService).PostDummyData(); 
+                (object? o) =>
+                {
+                    ((TourCollectionService)_tourCollectionService).PostDummyData();
                 });
 #endif
 
-            // Get tours from API and close application if it cannot be retrieved
+            // Try to get tours from API
             if (!_tourCollectionService.LoadToursApi())
             {
-                Exit(null);
+                MessageBox.Show(
+                    "Tours are not saved online!",
+                    "(Unsafe) Offline mode",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
+        }
+
+        private void Settings(object? obj)
+        {
+            SettingsView settingsView = new();
+
+            settingsView.ShowDialog();
+        }
+
+        private void About(object? obj)
+        {
+            AboutView aboutView = new();
+
+            aboutView.ShowDialog();
         }
 
         private void Import(object? obj)

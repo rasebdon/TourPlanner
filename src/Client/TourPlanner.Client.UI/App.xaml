@@ -7,6 +7,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <services:IoCContainerConfig x:Key="IoCConfig2" />
+            <BitmapImage x:Key="Compass" UriSource="/assets/images/compass.png"/>
+            <BitmapImage x:Key="QuestionMark" UriSource="/assets/images/question-mark.png"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,14 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using TourPlanner.Client.UI.Services;
 using TourPlanner.Common.Models;
@@ -20,7 +14,7 @@ namespace TourPlanner.Client.UI.ViewModels
         public ObservableCollection<TourEntry> Data { get; private set; } = new();
 
         private Tour? _tour;
-        public Tour? Tour 
+        public Tour? Tour
         {
             get
             {
@@ -30,7 +24,7 @@ namespace TourPlanner.Client.UI.ViewModels
             {
                 _tour = value;
                 Data.Clear();
-                if(_tour != null)
+                if (_tour != null)
                 {
                     _tour.Entries.ForEach(e => Data.Add(e));
                 }
@@ -45,15 +39,19 @@ namespace TourPlanner.Client.UI.ViewModels
         public ICommand SaveTableCommand { get; }
 
         private readonly IApiService _apiService;
+        private readonly ITourCollectionService _tourCollectionService;
 
-        public LogViewModel(IApiService apiService)
+        public LogViewModel(
+            IApiService apiService,
+            ITourCollectionService tourCollectionService)
         {
             _apiService = apiService;
+            _tourCollectionService = tourCollectionService;
 
             AddLogPoint = new RelayCommand(
                 o =>
                 {
-                    if(Tour == null)
+                    if (Tour == null)
                         return;
 
                     var entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = Tour.Id };
@@ -79,16 +77,16 @@ namespace TourPlanner.Client.UI.ViewModels
             SaveTableCommand = new RelayCommand(
                 o =>
                 {
-                    OnPropertyChanged(nameof(Data));
+                    var entry = SelectedItem;
+
                     OnPropertyChanged(nameof(SelectedItem));
 
-                    var entry = SelectedItem;
-                    if(entry != null && !UpdateTourEntry(ref entry))
-                         MessageBox.Show(
-                            "No connection to server",
-                            "An error occured while updating the table!",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+                    if (entry != null && _tourCollectionService.Online && !UpdateTourEntry(ref entry))
+                        MessageBox.Show(
+                           "No connection to server",
+                           "An error occured while updating the table!",
+                           MessageBoxButton.OK,
+                           MessageBoxImage.Error);
                 },
                 o => true);
         }

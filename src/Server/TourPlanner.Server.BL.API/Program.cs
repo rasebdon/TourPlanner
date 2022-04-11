@@ -1,7 +1,6 @@
 using TourPlanner.Server.BL.API.Services;
 using TourPlanner.Server.BL.Common.Interfaces;
 using TourPlanner.Server.BL.MapQuestAPI;
-using TourPlanner.Server.DAL;
 
 namespace TourPlanner.Server.BL.API
 {

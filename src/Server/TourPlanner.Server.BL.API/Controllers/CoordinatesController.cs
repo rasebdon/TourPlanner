@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TourPlanner.Server.BL.Common.Interfaces;
 
 namespace TourPlanner.Server.BL.API.Controllers

@@ -1,6 +1,4 @@
-﻿using Npgsql;
-using System.Data;
-using TourPlanner.Common.Models;
+﻿using TourPlanner.Common.Models;
 using TourPlanner.Server.DAL;
 using TourPlanner.Server.DAL.Repositories;
 using TourPlanner.Server.DAL.Repositories.Pgsql;
@@ -20,7 +18,6 @@ namespace TourPlanner.Server.BL.API.Services
 
             if (!_database.OpenConnection())
                 throw new Exception("Could not connect to database!");
-
 
             var tourEntryRepo = new PgsqlTourEntryRepository(_database);
 
@@ -45,7 +42,7 @@ namespace TourPlanner.Server.BL.API.Services
 
         public IRepository<T>? GetRepository<T>()
         {
-            if(_repositories.TryGetValue(typeof(T), out object? repository))
+            if (_repositories.TryGetValue(typeof(T), out object? repository))
             {
                 return repository as IRepository<T>;
             }

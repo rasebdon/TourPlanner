@@ -8,7 +8,8 @@
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="TourPlanner.Client.UI.MainWindow"
         mc:Ignorable="d"
         Title="Tour Planner" Height="450" Width="800"
-        DataContext="{Binding MainViewModel, Source={StaticResource IoCConfig2}}">
+        DataContext="{Binding MainViewModel, Source={StaticResource IoCConfig2}}"
+        Icon="{StaticResource Compass}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -30,7 +31,7 @@
             </MenuItem>
             <MenuItem Name="EditMenuItem" Header="_Edit" Height="25">
                 <MenuItem Header="_Delete" />
-                <MenuItem Header="_Settings" />
+                <MenuItem Header="_Settings" Command="{Binding SettingsCommand}" />
                 <!-- Only show this option in debug environment-->
                 <mc:AlternateContent>
                     <mc:Choice Requires="debug">
@@ -39,8 +40,9 @@
                     </mc:Choice>
                 </mc:AlternateContent>
             </MenuItem>
+
             <MenuItem x:Name="HelpButton" Header="_Help" Height="25">
-                <MenuItem Header="_About" />
+                <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
                 <MenuItem Header="_Manual" />
             </MenuItem>
         </Menu>

@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TourPlanner.Common.Models;
 
 namespace TourPlanner.Client.UI.Services
 {
     public interface ITourCollectionService
     {
+        public bool Online { get; }
+
         public ObservableCollection<Tour> AllTours { get; }
         public ObservableCollection<Tour> DisplayedTours { get; }
 
