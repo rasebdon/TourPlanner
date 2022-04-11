@@ -27,19 +27,11 @@
                 <ColumnDefinition Width="40*"/>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
 
             <Label x:Name="TourListHeader" Grid.Column="0" Content="Tours"/>
             <Button x:Name="TourListAddButton" Grid.Column="1" Content="+" Command="{Binding AddListPoint}" Width="20"/>
             <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Command="{Binding RemoveListPoint}" Width="20"/>
-            <ToggleButton x:Name="TogglePopupButton" Grid.Column="3">T</ToggleButton>
-            <!-- Popup -->
-            <Popup Name="myPopup" IsOpen="{Binding IsChecked, ElementName=TogglePopupButton}">
-                <Border BorderThickness="1">                    
-                    <local:NewTourView></local:NewTourView>
-                </Border>
-            </Popup>
         </Grid>
 
         <!-- TourListContentPanel -->
