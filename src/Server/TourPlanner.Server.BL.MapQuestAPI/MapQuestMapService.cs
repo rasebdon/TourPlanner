@@ -21,7 +21,7 @@ namespace TourPlanner.Server.BL.MapQuestAPI
         }
         public async Task<IEnumerable<byte>> GetLocationMap(float lat, float lon)
         {
-            Uri uri = new($"https://www.mapquestapi.com/staticmap/v5/map?key={_apiKey}&center={StrCoord(lat)}, {StrCoord(lon)}&locations={StrCoord(lat)}, {StrCoord(lon)}&zoom=15&size=200,200");
+            Uri uri = new($"https://www.mapquestapi.com/staticmap/v5/map?key={_apiKey}&center={StrCoord(lat)}, {StrCoord(lon)}&locations={StrCoord(lat)}, {StrCoord(lon)}&zoom=15&size=255,170");
             var content = await (await _httpClient.GetAsync(uri)).Content.ReadAsByteArrayAsync();
             return content;
         }
