@@ -19,26 +19,26 @@ namespace TourPlanner.Client.UI.ViewModels
     {
         private readonly ITourCollectionService _tourCollectionService;
         private readonly IApiService _apiService;
-        public BitmapImage StartImagePath { get; set; }
-        public BitmapImage EndImagePath { get; set; }
+        public BitmapImage? StartImagePath { get; set; }
+        public BitmapImage? EndImagePath { get; set; }
 
         public Tour? NewTour;
         public TourPoint? StartTourPoint;
         public TourPoint? EndTourPoint;
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string StartRoad { get; set; }
-        public string StartNumber { get; set; }
-        public string StartZip { get; set; }
-        public string StartCountry { get; set; }
-        public string StartLatitude { get; set; }
-        public string StartLongitude { get; set; }
-        public string EndRoad { get; set; }
-        public string EndNumber { get; set; }
-        public string EndZip { get; set; }
-        public string EndCountry { get; set; }
-        public string EndLatitude { get; set; }
-        public string EndLongitude { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? StartRoad { get; set; }
+        public string? StartNumber { get; set; }
+        public string? StartZip { get; set; }
+        public string? StartCountry { get; set; }
+        public string? StartLatitude { get; set; }
+        public string? StartLongitude { get; set; }
+        public string? EndRoad { get; set; }
+        public string? EndNumber { get; set; }
+        public string? EndZip { get; set; }
+        public string? EndCountry { get; set; }
+        public string? EndLatitude { get; set; }
+        public string? EndLongitude { get; set; }
 
         public ICommand CreateTour { get; }
         public ICommand TranslateStartAddress { get; }
@@ -51,23 +51,7 @@ namespace TourPlanner.Client.UI.ViewModels
             _tourCollectionService = tourCollectionService;
             _apiService = apiService;
 
-            EndImagePath = GetImageFromPath("assets/images/no_image.jpg");
-            StartImagePath = GetImageFromPath("assets/images/no_image.jpg");
-
-            Name = "";
-            Description = "";
-            StartRoad = "";
-            StartNumber = "";
-            StartZip = "";
-            StartCountry = "";
-            StartLatitude = "";
-            StartLongitude = "";
-            EndRoad = "";
-            EndNumber = "";
-            EndZip = "";
-            EndCountry = "";
-            EndLatitude = "";
-            EndLongitude = "";
+            ResetAllFields();
 
             CreateTour = new RelayCommand(
                 o =>
@@ -75,6 +59,7 @@ namespace TourPlanner.Client.UI.ViewModels
                     // Check for name and coordinates
                     if (NecessaryInputProvided())
                     {
+                        // Create new tour
                         Random rnd = new();
                         var tour = new Tour()
                         {
@@ -93,8 +78,18 @@ namespace TourPlanner.Client.UI.ViewModels
                             TransportType = Common.Models.TransportType.AUTO,
                             Entries = new()
                         };
-                        if (_tourCollectionService.SaveTourApi(ref tour))
+                        if (_tourCollectionService.CreateTourApi(ref tour))
                             _tourCollectionService.AllTours.Add(tour);
+
+                        // Close window
+                        foreach (Window window in Application.Current.Windows)
+                        {
+                            if(window is NewTourWindow)
+                            {
+                                ResetAllFields();
+                                window.Close();
+                            }
+                        }
                     }
                     else
                     {
@@ -210,6 +205,27 @@ namespace TourPlanner.Client.UI.ViewModels
 
                 return img;
             }
+        }
+
+        private void ResetAllFields()
+        {
+            EndImagePath = GetImageFromPath("assets/images/no_image.jpg");
+            StartImagePath = GetImageFromPath("assets/images/no_image.jpg");
+
+            Name = "";
+            Description = "";
+            StartRoad = "";
+            StartNumber = "";
+            StartZip = "";
+            StartCountry = "";
+            StartLatitude = "";
+            StartLongitude = "";
+            EndRoad = "";
+            EndNumber = "";
+            EndZip = "";
+            EndCountry = "";
+            EndLatitude = "";
+            EndLongitude = "";
         }
 
         private bool NecessaryInputProvided()
