@@ -33,6 +33,9 @@
                 <MenuItem Header="_Delete" />
                 <MenuItem Header="_Settings" Command="{Binding SettingsCommand}" />
                 <!-- Only show this option in debug environment-->
+                <Separator/>
+                <MenuItem Header="_Generate Pdf Summarize Report" Command="{Binding GenerateSummarizeReportCommand}"/>
+                <MenuItem Header="_Generate Pdf Tour Report" Command="{Binding GenerateTourReportCommand}"/>
                 <mc:AlternateContent>
                     <mc:Choice Requires="debug">
                         <Separator />

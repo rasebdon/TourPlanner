@@ -21,6 +21,7 @@ namespace TourPlanner.Client.UI.ViewModels
                 // Change other component views
                 _logViewModel.Tour = selectedItem;
                 _tourViewModel.Tour = selectedItem;
+                _mainViewModel.Tour = selectedItem;
             }
         }
 
@@ -30,6 +31,7 @@ namespace TourPlanner.Client.UI.ViewModels
         private readonly ITourCollectionService _tourCollectionService;
         private readonly LogViewModel _logViewModel;
         private readonly TourViewModel _tourViewModel;
+        private readonly MainViewModel _mainViewModel;
 
         public ObservableCollection<Tour> Tours
         {
@@ -42,19 +44,19 @@ namespace TourPlanner.Client.UI.ViewModels
         public ListViewModel(
             ITourCollectionService tourCollectionService,
             LogViewModel logViewModel,
-            TourViewModel tourViewModel)
+            TourViewModel tourViewModel,
+            MainViewModel mainViewModel)
         {
             _tourCollectionService = tourCollectionService;
             _logViewModel = logViewModel;
             _tourViewModel = tourViewModel;
+            _mainViewModel = mainViewModel;
 
-            // TODO : Open a new window for creating a new tour
             AddListPoint = new RelayCommand(
                 o =>
                 {
                     var popup = new NewTourWindow();
                     popup.ShowDialog();
-                    
                 },
                 o => true);
             RemoveListPoint = new RelayCommand(
@@ -62,7 +64,7 @@ namespace TourPlanner.Client.UI.ViewModels
                 {
                     if (SelectedItem != null)
                     {
-                        if (_tourCollectionService.DeleteTourApi(SelectedItem.Id))
+                        if (!_tourCollectionService.Online || _tourCollectionService.DeleteTourApi(SelectedItem.Id))
                         {
                             _tourCollectionService.AllTours.Remove(SelectedItem);
                         }
