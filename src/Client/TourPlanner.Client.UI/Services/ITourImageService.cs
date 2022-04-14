@@ -7,8 +7,9 @@ using TourPlanner.Common.Models;
 
 namespace TourPlanner.Client.UI.Services
 {
-    public interface ISummarizeReportGenerationService
+    public interface ITourImageService
     {
-        public byte[] GenerateReport(IEnumerable<Tour> tours);
+        byte[] GetTourImage(Tour tour, bool update);
+        byte[] GetTourPointImage(TourPoint tour);
     }
 }

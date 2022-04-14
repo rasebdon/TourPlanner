@@ -8,19 +8,37 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.IO;
 using iTextSharp.text.pdf.draw;
+using System.Windows.Media.Imaging;
+using TourPlanner.Client.UI.ViewModels;
 
-namespace TourPlanner.Client.UI.Services
+namespace TourPlanner.Client.UI.Services.Reporting
 {
     public class TourPdfReportGenerationService : ITourReportGenerationService
     {
         public byte[] GenerateReport(Tour tour)
         {
+            // Get tour image
+            Image? tourImage = null;
+            try
+            {
+                var imgPath = Path.Combine(Directory.GetCurrentDirectory(), $"assets/images/{tour.Id}.jpg");
+                if (File.Exists(imgPath))
+                    tourImage = Image.GetInstance(imgPath);
+            }
+            catch
+            {
+                tourImage = null;
+            }
+
             using MemoryStream memoryStream = new();
             Document document = new(PageSize.A4, 55, 55, 45, 55);
 
             var headingFont = FontFactory.GetFont(FontFactory.HELVETICA, 20f, BaseColor.BLACK);
 
             PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+            PdfBackgroundHelper pageEventHelper = new();
+            writer.PageEvent = pageEventHelper;
+
             document.Open();
 
             var headingPara = new Paragraph($"{tour.Name} Tour Report\n", headingFont);
@@ -32,8 +50,8 @@ namespace TourPlanner.Client.UI.Services
             // Paragraph tour info
             Paragraph mainInfoPara = new(
                 $"Description: {tour.Description}\n" +
-                $"Distance: {tour.Distance}\n" +
-                $"Estimated Time: {tour.EstimatedTime}\n" +
+                $"Distance: {tour.Distance}m\n" +
+                $"Estimated Time: {tour.EstimatedTime}s\n" +
                 $"Transport Type: {tour.TransportType}\n" +
                 $"Child Friendliness: {tour.ChildFriendliness}\n" +
                 $"Popularity: {tour.Popularity}\n"
@@ -60,7 +78,7 @@ namespace TourPlanner.Client.UI.Services
 
             document.Add(startPointPara);
 
-            // Start point
+            // End point
             Paragraph endPointPara = new();
             // Add heading
             endPointPara.Add(
@@ -76,6 +94,16 @@ namespace TourPlanner.Client.UI.Services
             endPointPara.SpacingAfter = 20;
 
             document.Add(endPointPara);
+
+            // Add image
+            if(tourImage != null)
+            {
+                tourImage.ScalePercent(35f);
+                tourImage.Alignment = 1;
+
+                document.Add(tourImage);
+            }
+
             document.NewPage();
 
             // Paragraph tour logs
@@ -90,8 +118,8 @@ namespace TourPlanner.Client.UI.Services
             PdfPTable logsTable = new(6);
             logsTable.AddCell("Date");
             logsTable.AddCell("Comment");
-            logsTable.AddCell("Distance");
-            logsTable.AddCell("Duration");
+            logsTable.AddCell("Distance (m)");
+            logsTable.AddCell("Duration (s)");
             logsTable.AddCell("Rating");
             logsTable.AddCell("Difficulty");
 

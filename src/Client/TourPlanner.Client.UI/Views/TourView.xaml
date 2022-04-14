@@ -36,9 +36,15 @@
 
         <!-- TourContentBox -->
         <Grid x:Name="TourContentBox" Grid.Row="2">
-            <Image Source="{Binding ImagePath}" Name="TourMapImage" Stretch="Uniform" 
+            <Image Source="{Binding TourImage}" Name="TourMapImage" Stretch="Uniform" 
                    StretchDirection="Both" RenderTransformOrigin="0.5,0.5"
                    Visibility="{Binding ImageEnabled}">
+                <Image.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Refresh"
+                      Command="{Binding RefreshImageCommand}"/>
+                    </ContextMenu>
+                </Image.ContextMenu>
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>

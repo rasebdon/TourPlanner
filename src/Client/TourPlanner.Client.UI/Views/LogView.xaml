@@ -37,16 +37,10 @@
                     <i:InvokeCommandAction Command="{Binding SaveTableCommand}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <!--<DataGrid.InputBindings>
-                <KeyBinding
-                        Key="S"
-                        Modifiers="Ctrl"
-                        Command="{Binding SaveTableCommand}"/>
-            </DataGrid.InputBindings>-->
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Binding="{Binding Date, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Duration" Binding="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Distance" Binding="{Binding Distance, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Duration (s)" Binding="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Distance (m)" Binding="{Binding Distance, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
                 <DataGridTextColumn Header="Rating" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
                 <DataGridTextColumn Header="Difficulty" Binding="{Binding Difficulty, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
                 <DataGridTextColumn Header="Comment" Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>

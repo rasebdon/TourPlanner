@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using TourPlanner.Client.UI.Services;
+using TourPlanner.Client.UI.Services.Reporting;
 using TourPlanner.Client.UI.Views;
 using TourPlanner.Common.Models;
 
@@ -49,11 +50,16 @@ namespace TourPlanner.Client.UI.ViewModels
             ExportCommand = new RelayCommand(Export);
             AboutCommand = new RelayCommand(About);
             SettingsCommand = new RelayCommand(Settings);
-            GenerateTourReportCommand = new RelayCommand(GenerateTourReport, (object? o) =>
-            {
-                return Tour != null;
-            });
-            GenerateSummarizeReportCommand = new RelayCommand(GenerateSummarizeReport);
+            GenerateTourReportCommand = new RelayCommand(GenerateTourReport, 
+                o =>
+                {
+                    return Tour != null;
+                });
+            GenerateSummarizeReportCommand = new RelayCommand(GenerateSummarizeReport,
+                o =>
+                {
+                    return _tourCollectionService.AllTours.Count > 0;
+                });
 
             this.Tour = null;
 #if DEBUG
@@ -77,7 +83,28 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private void GenerateSummarizeReport(object? obj)
         {
+            if (_tourCollectionService.AllTours.Count > 0)
+            {
+                try
+                {
+                    // Create SaveFileDialog
+                    Microsoft.Win32.SaveFileDialog saveFileDialog = new();
 
+                    saveFileDialog.DefaultExt = ".pdf";
+                    saveFileDialog.Filter = "Pdf documents (.pdf)|*.pdf";
+                    bool? result = saveFileDialog.ShowDialog();
+                    if (result == true)
+                    {
+                        var report = _summarizeReportGenerationService.GenerateReport(
+                            _tourCollectionService.AllTours);
+                        File.WriteAllBytes(saveFileDialog.FileName, report);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "An error occured!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void GenerateTourReport(object? obj)

@@ -122,7 +122,7 @@ namespace TourPlanner.Client.UI.ViewModels
             if (result.Item2 != HttpStatusCode.OK)
                 return false;
 
-            StartImagePath = ToBitmapImage(result.Item1);            
+            StartImagePath = BitmapImageHelper.ToBitmapImage(result.Item1);            
             OnPropertyChanged(nameof(StartImagePath));
             return true;
         }
@@ -134,7 +134,7 @@ namespace TourPlanner.Client.UI.ViewModels
             if (result.Item2 != HttpStatusCode.OK)
                 return false;
 
-            EndImagePath = ToBitmapImage(result.Item1);
+            EndImagePath = BitmapImageHelper.ToBitmapImage(result.Item1);
             OnPropertyChanged(nameof(EndImagePath));
             return true;
         }
@@ -179,38 +179,10 @@ namespace TourPlanner.Client.UI.ViewModels
             return true;
         }
 
-
-        private static BitmapImage GetImageFromPath(string path)
-        {
-            path = Path.Combine(Directory.GetCurrentDirectory(), path);
-            return new BitmapImage(new Uri(path, UriKind.Absolute));
-        }
-
-        public static BitmapImage ToBitmapImage(byte[] data)
-        {
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-
-                BitmapImage img = new BitmapImage();
-                img.BeginInit();
-                img.CacheOption = BitmapCacheOption.OnLoad;//CacheOption must be set after BeginInit()
-                img.StreamSource = ms;
-                img.EndInit();
-
-                if (img.CanFreeze)
-                {
-                    img.Freeze();
-                }
-
-
-                return img;
-            }
-        }
-
         private void ResetAllFields()
         {
-            EndImagePath = GetImageFromPath("assets/images/no_image.jpg");
-            StartImagePath = GetImageFromPath("assets/images/no_image.jpg");
+            EndImagePath = BitmapImageHelper.GetImageFromPath("assets/images/no_image.jpg");
+            StartImagePath = BitmapImageHelper.GetImageFromPath("assets/images/no_image.jpg");
 
             Name = "";
             Description = "";

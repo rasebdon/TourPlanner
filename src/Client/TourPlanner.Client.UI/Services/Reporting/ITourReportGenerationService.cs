@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TourPlanner.Common.Models;
 
-namespace TourPlanner.Client.UI.Services
+namespace TourPlanner.Client.UI.Services.Reporting
 {
     public interface ITourReportGenerationService
     {
