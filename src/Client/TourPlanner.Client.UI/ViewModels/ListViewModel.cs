@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using TourPlanner.Client.UI.Services;
 using TourPlanner.Common.Models;
@@ -26,7 +27,8 @@ namespace TourPlanner.Client.UI.ViewModels
         }
 
         public ICommand AddListPoint { get; }
-        public ICommand RemoveListPoint { get; }
+        public ICommand DeleteTourCommand { get; }
+        public ICommand GenerateTourReportCommand { get; }
 
         private readonly ITourCollectionService _tourCollectionService;
         private readonly LogViewModel _logViewModel;
@@ -55,22 +57,23 @@ namespace TourPlanner.Client.UI.ViewModels
             AddListPoint = new RelayCommand(
                 o =>
                 {
-                    var popup = new NewTourWindow();
-                    popup.ShowDialog();
-                },
-                o => true);
-            RemoveListPoint = new RelayCommand(
-                o =>
-                {
-                    if (SelectedItem != null)
+                    if(_tourCollectionService.Online)
                     {
-                        if (!_tourCollectionService.Online || _tourCollectionService.DeleteTourApi(SelectedItem.Id))
-                        {
-                            _tourCollectionService.AllTours.Remove(SelectedItem);
-                        }
+                        var popup = new NewTourWindow();
+                        popup.ShowDialog();
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "Cannot add tour in offline mode!",
+                            "Offline mode",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
                     }
                 },
                 o => true);
+            DeleteTourCommand = _mainViewModel.DeleteTourCommand;
+            GenerateTourReportCommand = _mainViewModel.GenerateTourReportCommand;
         }
     }
 }

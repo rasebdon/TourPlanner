@@ -14,6 +14,16 @@ namespace TourPlanner.Client.UI.ViewModels
     {
         public string SearchText { get; set; } = string.Empty;
 
+        public string Title
+        {
+            get
+            {
+                if (_tourCollectionService.Online)
+                    return "Tour Planner";
+                else return "Tour Planner (Offline)";
+            }
+        }
+
         public ICommand SearchCommand { get; }
 
         // Hotbar Commands
@@ -22,6 +32,7 @@ namespace TourPlanner.Client.UI.ViewModels
         public ICommand ExportCommand { get; }
         public ICommand SettingsCommand { get; }
         public ICommand AboutCommand { get; }
+        public ICommand DeleteTourCommand { get; }
         public ICommand GenerateTourReportCommand { get; }
         public ICommand GenerateSummarizeReportCommand { get; }
 
@@ -60,6 +71,11 @@ namespace TourPlanner.Client.UI.ViewModels
                 {
                     return _tourCollectionService.AllTours.Count > 0;
                 });
+            DeleteTourCommand = new RelayCommand(DelteTour,
+                o =>
+                {
+                    return Tour != null;
+                });
 
             this.Tour = null;
 #if DEBUG
@@ -74,10 +90,18 @@ namespace TourPlanner.Client.UI.ViewModels
             if (!_tourCollectionService.LoadToursApi())
             {
                 MessageBox.Show(
-                    "Tours are not saved online!",
-                    "(Unsafe) Offline mode",
+                    "Could not connect to server!\nSome features are disabled!",
+                    "Offline mode",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
+            }
+        }
+
+        private void DelteTour(object? obj)
+        {
+            if (Tour != null && (!_tourCollectionService.Online || _tourCollectionService.DeleteTourApi(Tour.Id)))
+            {
+                _tourCollectionService.AllTours.Remove(Tour);
             }
         }
 

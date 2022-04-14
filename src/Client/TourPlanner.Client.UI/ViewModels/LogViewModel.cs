@@ -34,9 +34,17 @@ namespace TourPlanner.Client.UI.ViewModels
         }
         public TourEntry? SelectedItem { get; set; }
 
-        public ICommand AddLogPoint { get; }
-        public ICommand RemoveLogPoint { get; }
+        public ICommand AddLogEntryCommand { get; }
+        public ICommand RemoveLogEntryCommand { get; }
         public ICommand SaveTableCommand { get; }
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                return !_tourCollectionService.Online;
+            }
+        }
 
         private readonly IApiService _apiService;
         private readonly ITourCollectionService _tourCollectionService;
@@ -48,31 +56,13 @@ namespace TourPlanner.Client.UI.ViewModels
             _apiService = apiService;
             _tourCollectionService = tourCollectionService;
 
-            AddLogPoint = new RelayCommand(
-                o =>
-                {
-                    if (Tour == null)
-                        return;
+            AddLogEntryCommand = new RelayCommand(
+                AddLogEntry,
+                o => Tour != null && _tourCollectionService.Online);
 
-                    var entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = Tour.Id };
-                    // Create entry
-                    if (CreateTourEntry(ref entry))
-                    {
-                        Data.Add(entry);
-                    }
-                },
-                o => true);
-
-            RemoveLogPoint = new RelayCommand(
-                o =>
-                {
-                    if (SelectedItem != null && DeleteTourEntry(SelectedItem.Id))
-                    {
-                        Data.Remove(SelectedItem);
-                        SelectedItem = null;
-                    }
-                },
-                o => true);
+            RemoveLogEntryCommand = new RelayCommand(
+                RemoveLogEntry,
+                o => SelectedItem != null && _tourCollectionService.Online);
 
             SaveTableCommand = new RelayCommand(
                 o =>
@@ -89,6 +79,28 @@ namespace TourPlanner.Client.UI.ViewModels
                            MessageBoxImage.Error);
                 },
                 o => true);
+        }
+
+        private void RemoveLogEntry(object? obj)
+        {
+            if (SelectedItem != null && DeleteTourEntry(SelectedItem.Id))
+            {
+                Data.Remove(SelectedItem);
+                SelectedItem = null;
+            }
+        }
+
+        private void AddLogEntry(object? obj)
+        {
+            if (Tour == null)
+                return;
+
+            var entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = Tour.Id };
+            // Create entry
+            if (CreateTourEntry(ref entry))
+            {
+                Data.Add(entry);
+            }
         }
 
         private bool CreateTourEntry(ref TourEntry entry)
