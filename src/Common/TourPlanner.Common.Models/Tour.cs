@@ -41,7 +41,7 @@
             }
         }
         /// <summary>
-        /// Value between 0 (not popular) and 1 (popular)
+        /// Value between 0 (not popular) and 10 (popular)
         /// </summary>
         public float Popularity
         {

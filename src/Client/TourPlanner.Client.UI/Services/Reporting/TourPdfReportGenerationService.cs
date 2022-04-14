@@ -50,7 +50,7 @@ namespace TourPlanner.Client.UI.Services.Reporting
             // Paragraph tour info
             Paragraph mainInfoPara = new(
                 $"Description: {tour.Description}\n" +
-                $"Distance: {tour.Distance}m\n" +
+                $"Distance: {tour.Distance}km\n" +
                 $"Estimated Time: {tour.EstimatedTime}s\n" +
                 $"Transport Type: {tour.TransportType}\n" +
                 $"Child Friendliness: {tour.ChildFriendliness}\n" +
@@ -118,7 +118,7 @@ namespace TourPlanner.Client.UI.Services.Reporting
             PdfPTable logsTable = new(6);
             logsTable.AddCell("Date");
             logsTable.AddCell("Comment");
-            logsTable.AddCell("Distance (m)");
+            logsTable.AddCell("Distance (km)");
             logsTable.AddCell("Duration (s)");
             logsTable.AddCell("Rating");
             logsTable.AddCell("Difficulty");

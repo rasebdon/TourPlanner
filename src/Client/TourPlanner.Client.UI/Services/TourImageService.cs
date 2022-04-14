@@ -15,18 +15,22 @@ namespace TourPlanner.Client.UI.Services
     {
         private readonly Dictionary<int, byte[]> _tourImages;
         private readonly IApiService _apiService;
-        private BitmapImage _noImageBitmapImage;
+        public byte[] DefaultImage { get; }
 
         public TourImageService(IApiService apiService)
         {
             _apiService = apiService;
             _tourImages = new();
-            _noImageBitmapImage = BitmapImageHelper.ToBitmapImage(
-                BitmapImageHelper.GetImageBytesFromPath("assets/images/no_image.jpg"));
+            DefaultImage = BitmapImageHelper.GetImageBytesFromPath("assets/images/no_image.jpg");
         }
 
         public byte[] GetTourImage(Tour tour, bool update)
         {
+            if(!Directory.Exists("assets"))
+                Directory.CreateDirectory("assets");
+            if(!Directory.Exists("assets/images"))
+                Directory.CreateDirectory("assets/images");
+
             // Check if image is already saved
             var path = $"assets/images/{tour.Id}.jpg";
             if (update || !File.Exists(path))
@@ -47,7 +51,7 @@ namespace TourPlanner.Client.UI.Services
             }
 
             // Check if the image exists in the dictionary
-            if(_tourImages.TryGetValue(tour.Id, out var image))
+            if (_tourImages.TryGetValue(tour.Id, out var image))
             {
                 return image;
             }
@@ -57,9 +61,15 @@ namespace TourPlanner.Client.UI.Services
             }
         }
 
-        public byte[] GetTourPointImage(TourPoint tour)
+        public byte[] GetTourPointImage(TourPoint tourPoint)
         {
-            throw new NotImplementedException();
+            // Get image from api
+            var result = _apiService.GetBytesAsync($"Coordinates/Map?lat={tourPoint.Latitude}&lon={tourPoint.Longitude}").Result;
+
+            if (result.Item2 != HttpStatusCode.OK)
+                return DefaultImage;
+
+            return result.Item1;
         }
     }
 }

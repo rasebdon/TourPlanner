@@ -27,21 +27,20 @@ namespace TourPlanner.Client.UI.ViewModels
                 {
                     if (_tourCollectionService.Online)
                         UpdateMap(_tour, false);
-
-                    Description = _tour.Description;
                 }
                 else
                 {
-                    Description = "";
-                    TourImage = BitmapImageHelper.GetImageFromPath("assets/images/no_image.jpg");
+                    TourImage = BitmapImageHelper.ToBitmapImage(_tourImageService.DefaultImage);
                 }
                 OnPropertyChanged(nameof(Tour));
+                OnPropertyChanged(nameof(Tour.Description));
+                OnPropertyChanged(nameof(Tour.Distance));
+                OnPropertyChanged(nameof(Tour.ChildFriendliness));
+                OnPropertyChanged(nameof(Tour.Popularity));
+                OnPropertyChanged(nameof(Tour.TransportType));
                 OnPropertyChanged(nameof(TourImage));
-                OnPropertyChanged(nameof(Description));
             }
         }
-
-        public string Description { get; set; } = "";
 
         public Visibility ImageEnabled { get; set; } = Visibility.Visible;
         public Visibility DescriptionEnabled { get; set; } = Visibility.Hidden;
@@ -51,28 +50,21 @@ namespace TourPlanner.Client.UI.ViewModels
         public ICommand DisplayRoute { get; }
         public ICommand DisplayDescription { get; }
 
-
-        private readonly IApiService _apiService;
         private readonly ITourCollectionService _tourCollectionService;
         private readonly ITourImageService _tourImageService;
 
         public TourViewModel(
-            IApiService apiService,
             ITourCollectionService tourCollectionService,
             ITourImageService tourImageService)
         {
-            _apiService = apiService;
             _tourCollectionService = tourCollectionService;
             _tourImageService = tourImageService;
 
             DisplayRoute = new RelayCommand(ShowImage);
-            DisplayDescription = new RelayCommand(ShowDescription);
+            DisplayDescription = new RelayCommand(ShowDescription, o => Tour != null);
             RefreshImageCommand = new RelayCommand(RefreshImage, CanRefreshImage);
 
-            TourImage = BitmapImageHelper.GetImageFromPath("assets/images/no_image.jpg");
-
-            Directory.CreateDirectory("assets");
-            Directory.CreateDirectory("assets/images");
+            TourImage = BitmapImageHelper.ToBitmapImage(_tourImageService.DefaultImage);
         }
 
         private void RefreshImage(object? obj)

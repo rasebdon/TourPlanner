@@ -19,6 +19,7 @@ namespace TourPlanner.Client.UI.ViewModels
     {
         private readonly ITourCollectionService _tourCollectionService;
         private readonly IApiService _apiService;
+        private readonly ITourImageService _tourImageService;
         public BitmapImage? StartImagePath { get; set; }
         public BitmapImage? EndImagePath { get; set; }
 
@@ -46,10 +47,12 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public NewTourViewModel(
             ITourCollectionService tourCollectionService,
-            IApiService apiService)
+            IApiService apiService,
+            ITourImageService tourImageService)
         {
             _tourCollectionService = tourCollectionService;
             _apiService = apiService;
+            _tourImageService = tourImageService;
 
             ResetAllFields();
 
@@ -116,27 +119,25 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private bool UpdateStartImage()
         {
-            // Get image from api
-            var result = _apiService.GetBytesAsync($"Coordinates/Map?lat={StartLatitude}&lon={StartLongitude}").Result;
-
-            if (result.Item2 != HttpStatusCode.OK)
-                return false;
-
-            StartImagePath = BitmapImageHelper.ToBitmapImage(result.Item1);            
-            OnPropertyChanged(nameof(StartImagePath));
-            return true;
+            if(StartTourPoint != null)
+            {
+                StartImagePath = BitmapImageHelper.ToBitmapImage(
+                    _tourImageService.GetTourPointImage(StartTourPoint));
+                OnPropertyChanged(nameof(StartImagePath));
+                return true;
+            }
+            return false;
         }
         private bool UpdateEndImage()
         {
-            // Get image from api
-            var result = _apiService.GetBytesAsync($"Coordinates/Map?lat={EndLatitude}&lon={EndLongitude}").Result;
-
-            if (result.Item2 != HttpStatusCode.OK)
-                return false;
-
-            EndImagePath = BitmapImageHelper.ToBitmapImage(result.Item1);
-            OnPropertyChanged(nameof(EndImagePath));
-            return true;
+            if (EndTourPoint != null)
+            {
+                EndImagePath = BitmapImageHelper.ToBitmapImage(
+                    _tourImageService.GetTourPointImage(EndTourPoint));
+                OnPropertyChanged(nameof(EndImagePath));
+                return true;
+            }
+            return false;
         }
 
         private bool GetStartCoordinatesFromAddress()
