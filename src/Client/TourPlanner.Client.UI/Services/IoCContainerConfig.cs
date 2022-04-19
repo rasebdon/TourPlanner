@@ -27,7 +27,7 @@ namespace TourPlanner.Client.UI.Services
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<LogViewModel>();
             services.AddSingleton<TourViewModel>();
-            services.AddSingleton<NewTourViewModel>();
+            services.AddTransient<NewTourViewModel>();
             services.AddSingleton<ListViewModel>();
             services.AddSingleton<SettingsViewModel>();
 

@@ -54,7 +54,9 @@ namespace TourPlanner.Client.UI.ViewModels
             _apiService = apiService;
             _tourImageService = tourImageService;
 
-            ResetAllFields();
+            StartImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
+            EndImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
+
 
             CreateTour = new RelayCommand(
                 o =>
@@ -87,9 +89,8 @@ namespace TourPlanner.Client.UI.ViewModels
                         // Close window
                         foreach (Window window in Application.Current.Windows)
                         {
-                            if(window is NewTourWindow)
+                            if (window is NewTourWindow)
                             {
-                                ResetAllFields();
                                 window.Close();
                             }
                         }
@@ -119,7 +120,7 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private bool UpdateStartImage()
         {
-            if(StartTourPoint != null)
+            if (StartTourPoint != null)
             {
                 StartImagePath = BitmapImageHelper.ToBitmapImage(
                     _tourImageService.GetTourPointImage(StartTourPoint));
@@ -152,8 +153,8 @@ namespace TourPlanner.Client.UI.ViewModels
             StartTourPoint = JsonConvert.DeserializeObject<TourPoint>(result.Item1);
 
             // Update View
-            StartLatitude = StartTourPoint.Latitude.ToString();
-            StartLongitude = StartTourPoint.Longitude.ToString();
+            StartLatitude = StartTourPoint?.Latitude.ToString();
+            StartLongitude = StartTourPoint?.Longitude.ToString();
             OnPropertyChanged(nameof(StartLatitude));
             OnPropertyChanged(nameof(StartLongitude));
 
@@ -172,44 +173,22 @@ namespace TourPlanner.Client.UI.ViewModels
             EndTourPoint = JsonConvert.DeserializeObject<TourPoint>(result.Item1);
 
             // Update View
-            EndLatitude = EndTourPoint.Latitude.ToString();
-            EndLongitude = EndTourPoint.Longitude.ToString();
+            EndLatitude = EndTourPoint?.Latitude.ToString();
+            EndLongitude = EndTourPoint?.Longitude.ToString();
             OnPropertyChanged(nameof(EndLatitude));
             OnPropertyChanged(nameof(EndLongitude));
 
             return true;
         }
 
-        private void ResetAllFields()
-        {
-            EndImagePath = BitmapImageHelper.GetImageFromPath("assets/images/no_image.jpg");
-            StartImagePath = BitmapImageHelper.GetImageFromPath("assets/images/no_image.jpg");
-
-            Name = "";
-            Description = "";
-            StartRoad = "";
-            StartNumber = "";
-            StartZip = "";
-            StartCountry = "";
-            StartLatitude = "";
-            StartLongitude = "";
-            EndRoad = "";
-            EndNumber = "";
-            EndZip = "";
-            EndCountry = "";
-            EndLatitude = "";
-            EndLongitude = "";
-        }
-
         private bool NecessaryInputProvided()
         {
-            if (Name.Length == 0) return false;
-            if (StartLatitude.Length == 0) return false;
-            if (StartLongitude.Length == 0) return false;
-            if (EndLatitude.Length == 0) return false;
-            if (EndLongitude.Length == 0) return false;
+            if (Name == null || Name.Length == 0) return false;
+            if (StartLatitude == null || StartLatitude.Length == 0) return false;
+            if (StartLongitude == null || StartLongitude.Length == 0) return false;
+            if (EndLatitude == null || EndLatitude.Length == 0) return false;
+            if (EndLongitude == null || EndLongitude.Length == 0) return false;
             return true;
         }
-
     }
 }
