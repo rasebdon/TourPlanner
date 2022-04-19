@@ -63,8 +63,14 @@ namespace TourPlanner.Client.UI.Services
 
         public byte[] GetTourPointImage(TourPoint tourPoint)
         {
+            var latString = tourPoint.Latitude.ToString().Replace(',', '.');
+            var lonString = tourPoint.Longitude.ToString().Replace(',', '.');
+
             // Get image from api
-            var result = _apiService.GetBytesAsync($"Coordinates/Map?lat={tourPoint.Latitude}&lon={tourPoint.Longitude}").Result;
+            var result = _apiService.GetBytesAsync(
+                $"Coordinates/Map?lat={latString}" +
+                $"&lon={lonString}")
+                .Result;
 
             if (result.Item2 != HttpStatusCode.OK)
                 return DefaultImage;
