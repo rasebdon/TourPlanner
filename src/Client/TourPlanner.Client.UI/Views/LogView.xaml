@@ -24,33 +24,33 @@
             </Grid.ColumnDefinitions>
 
             <Label x:Name="TourContentDataPanelTitle" Content="Logs:" Grid.Column="0"/>
-            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding AddLogPoint}"  Grid.Column="1"/>
-            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding RemoveLogPoint}" Grid.Column="2"/>
+            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding AddLogEntryCommand}"  Grid.Column="1"/>
+            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding RemoveLogEntryCommand}" Grid.Column="2"/>
         </Grid>
 
         <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
-                                  ItemsSource="{Binding Data, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
-                                  CanUserAddRows="False" CanUserDeleteRows="False"
-                                  SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single">
+                  ItemsSource="{Binding Data, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False" 
+                  IsReadOnly="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="CellEditEnding">
                     <i:InvokeCommandAction Command="{Binding SaveTableCommand}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <!--<DataGrid.InputBindings>
-                <KeyBinding
-                        Key="S"
-                        Modifiers="Ctrl"
-                        Command="{Binding SaveTableCommand}"/>
-            </DataGrid.InputBindings>-->
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Binding="{Binding Date, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Duration" Binding="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Distance" Binding="{Binding Distance, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Rating" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Difficulty" Binding="{Binding Difficulty, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Duration (s)" Binding="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Distance (km)" Binding="{Binding Distance, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Rating" Binding="{Binding Rating, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Difficulty" Binding="{Binding Difficulty, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
                 <DataGridTextColumn Header="Comment" Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
             </DataGrid.Columns>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Delete Entry" Command="{Binding RemoveLogEntryCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
         </DataGrid>
     </Grid>
 </UserControl>

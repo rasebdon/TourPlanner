@@ -193,12 +193,6 @@ namespace TourPlanner.Client.UI.Services
             }
             catch (Exception)
             {
-                MessageBox.Show(
-                    "Error retrieving tours from server!\nMaybe check your internet connection?",
-                    "Could not get tours!",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error,
-                    MessageBoxResult.OK);
                 Online = false;
             }
             return false;

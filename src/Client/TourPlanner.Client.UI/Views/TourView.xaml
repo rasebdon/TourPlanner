@@ -36,9 +36,15 @@
 
         <!-- TourContentBox -->
         <Grid x:Name="TourContentBox" Grid.Row="2">
-            <Image Source="{Binding ImagePath}" Name="TourMapImage" Stretch="Uniform" 
+            <Image Source="{Binding TourImage}" Name="TourMapImage" Stretch="Uniform" 
                    StretchDirection="Both" RenderTransformOrigin="0.5,0.5"
                    Visibility="{Binding ImageEnabled}">
+                <Image.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Refresh"
+                      Command="{Binding RefreshImageCommand}"/>
+                    </ContextMenu>
+                </Image.ContextMenu>
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -48,7 +54,32 @@
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>
-            <TextBlock Name="TourDescription" Visibility="{Binding DescriptionEnabled}" Text="{Binding Description}"></TextBlock>
+            <StackPanel Visibility="{Binding DescriptionEnabled}">
+                <TextBlock Name="TourDistance"
+                       Text="Distance: ">
+                    <TextBlock Text="{Binding Tour.Distance, StringFormat={}{0:0.###}, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="km"/>
+                </TextBlock>
+                <TextBlock Name="TourEstimatedTime"
+                       Text="Estimated Time: ">
+                    <TextBlock Text="{Binding Tour.EstimatedTime, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="s"/>
+                </TextBlock>
+                <TextBlock Name="TourChildFriendliness"
+                       Text="Child Friendliness (0 worst - 10 best): ">
+                    <TextBlock Text="{Binding Tour.ChildFriendliness, StringFormat={}{0:0.###}, UpdateSourceTrigger=PropertyChanged}"/>
+                </TextBlock>
+                <TextBlock Name="TourPopularity"
+                       Text="Popularity (0 worst - 10 best): ">
+                    <TextBlock Text="{Binding Tour.Popularity, StringFormat={}{0:0.###}, UpdateSourceTrigger=PropertyChanged}"/>
+                </TextBlock>
+                <TextBlock Name="TourTransportType"
+                       Text="Transport Type: ">
+                    <TextBlock Text="{Binding Tour.TransportType, UpdateSourceTrigger=PropertyChanged}"/>
+                </TextBlock>
+                <TextBlock Name="TourDescription"
+                       Text="{Binding Tour.Description, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TourPlanner.Client.UI.Services.Reporting;
 using TourPlanner.Client.UI.ViewModels;
 
 namespace TourPlanner.Client.UI.Services
@@ -17,13 +18,16 @@ namespace TourPlanner.Client.UI.Services
             // same for ICommunicationHandler, IContentInterpreter, IFilterHandler
             services.AddSingleton<IApiService, TourPlannerApiService>();
             services.AddSingleton<ITourCollectionService, TourCollectionService>();
+            services.AddSingleton<ITourReportGenerationService, TourPdfReportGenerationService>();
+            services.AddSingleton<ISummarizeReportGenerationService, SummarizePdfReportGenerationService>();
+            services.AddSingleton<ITourImageService, TourImageService>();
 
             // register the MainViewModel as well, the ServiceProvider will provide the constructor parameters
             // for the MainViewModel based on the configuration above
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<LogViewModel>();
             services.AddSingleton<TourViewModel>();
-            services.AddSingleton<NewTourViewModel>();
+            services.AddTransient<NewTourViewModel>();
             services.AddSingleton<ListViewModel>();
             services.AddSingleton<SettingsViewModel>();
 

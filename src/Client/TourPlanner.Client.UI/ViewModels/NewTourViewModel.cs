@@ -19,6 +19,7 @@ namespace TourPlanner.Client.UI.ViewModels
     {
         private readonly ITourCollectionService _tourCollectionService;
         private readonly IApiService _apiService;
+        private readonly ITourImageService _tourImageService;
         public BitmapImage? StartImagePath { get; set; }
         public BitmapImage? EndImagePath { get; set; }
 
@@ -46,12 +47,16 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public NewTourViewModel(
             ITourCollectionService tourCollectionService,
-            IApiService apiService)
+            IApiService apiService,
+            ITourImageService tourImageService)
         {
             _tourCollectionService = tourCollectionService;
             _apiService = apiService;
+            _tourImageService = tourImageService;
 
-            ResetAllFields();
+            StartImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
+            EndImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
+
 
             CreateTour = new RelayCommand(
                 o =>
@@ -84,9 +89,8 @@ namespace TourPlanner.Client.UI.ViewModels
                         // Close window
                         foreach (Window window in Application.Current.Windows)
                         {
-                            if(window is NewTourWindow)
+                            if (window is NewTourWindow)
                             {
-                                ResetAllFields();
                                 window.Close();
                             }
                         }
@@ -116,27 +120,25 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private bool UpdateStartImage()
         {
-            // Get image from api
-            var result = _apiService.GetBytesAsync($"Coordinates/Map?lat={StartLatitude}&lon={StartLongitude}").Result;
-
-            if (result.Item2 != HttpStatusCode.OK)
-                return false;
-
-            StartImagePath = ToBitmapImage(result.Item1);            
-            OnPropertyChanged(nameof(StartImagePath));
-            return true;
+            if (StartTourPoint != null)
+            {
+                StartImagePath = BitmapImageHelper.ToBitmapImage(
+                    _tourImageService.GetTourPointImage(StartTourPoint));
+                OnPropertyChanged(nameof(StartImagePath));
+                return true;
+            }
+            return false;
         }
         private bool UpdateEndImage()
         {
-            // Get image from api
-            var result = _apiService.GetBytesAsync($"Coordinates/Map?lat={EndLatitude}&lon={EndLongitude}").Result;
-
-            if (result.Item2 != HttpStatusCode.OK)
-                return false;
-
-            EndImagePath = ToBitmapImage(result.Item1);
-            OnPropertyChanged(nameof(EndImagePath));
-            return true;
+            if (EndTourPoint != null)
+            {
+                EndImagePath = BitmapImageHelper.ToBitmapImage(
+                    _tourImageService.GetTourPointImage(EndTourPoint));
+                OnPropertyChanged(nameof(EndImagePath));
+                return true;
+            }
+            return false;
         }
 
         private bool GetStartCoordinatesFromAddress()
@@ -151,8 +153,8 @@ namespace TourPlanner.Client.UI.ViewModels
             StartTourPoint = JsonConvert.DeserializeObject<TourPoint>(result.Item1);
 
             // Update View
-            StartLatitude = StartTourPoint.Latitude.ToString();
-            StartLongitude = StartTourPoint.Longitude.ToString();
+            StartLatitude = StartTourPoint?.Latitude.ToString();
+            StartLongitude = StartTourPoint?.Longitude.ToString();
             OnPropertyChanged(nameof(StartLatitude));
             OnPropertyChanged(nameof(StartLongitude));
 
@@ -171,72 +173,22 @@ namespace TourPlanner.Client.UI.ViewModels
             EndTourPoint = JsonConvert.DeserializeObject<TourPoint>(result.Item1);
 
             // Update View
-            EndLatitude = EndTourPoint.Latitude.ToString();
-            EndLongitude = EndTourPoint.Longitude.ToString();
+            EndLatitude = EndTourPoint?.Latitude.ToString();
+            EndLongitude = EndTourPoint?.Longitude.ToString();
             OnPropertyChanged(nameof(EndLatitude));
             OnPropertyChanged(nameof(EndLongitude));
 
             return true;
         }
 
-
-        private static BitmapImage GetImageFromPath(string path)
-        {
-            path = Path.Combine(Directory.GetCurrentDirectory(), path);
-            return new BitmapImage(new Uri(path, UriKind.Absolute));
-        }
-
-        public static BitmapImage ToBitmapImage(byte[] data)
-        {
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-
-                BitmapImage img = new BitmapImage();
-                img.BeginInit();
-                img.CacheOption = BitmapCacheOption.OnLoad;//CacheOption must be set after BeginInit()
-                img.StreamSource = ms;
-                img.EndInit();
-
-                if (img.CanFreeze)
-                {
-                    img.Freeze();
-                }
-
-
-                return img;
-            }
-        }
-
-        private void ResetAllFields()
-        {
-            EndImagePath = GetImageFromPath("assets/images/no_image.jpg");
-            StartImagePath = GetImageFromPath("assets/images/no_image.jpg");
-
-            Name = "";
-            Description = "";
-            StartRoad = "";
-            StartNumber = "";
-            StartZip = "";
-            StartCountry = "";
-            StartLatitude = "";
-            StartLongitude = "";
-            EndRoad = "";
-            EndNumber = "";
-            EndZip = "";
-            EndCountry = "";
-            EndLatitude = "";
-            EndLongitude = "";
-        }
-
         private bool NecessaryInputProvided()
         {
-            if (Name.Length == 0) return false;
-            if (StartLatitude.Length == 0) return false;
-            if (StartLongitude.Length == 0) return false;
-            if (EndLatitude.Length == 0) return false;
-            if (EndLongitude.Length == 0) return false;
+            if (Name == null || Name.Length == 0) return false;
+            if (StartLatitude == null || StartLatitude.Length == 0) return false;
+            if (StartLongitude == null || StartLongitude.Length == 0) return false;
+            if (EndLatitude == null || EndLatitude.Length == 0) return false;
+            if (EndLongitude == null || EndLongitude.Length == 0) return false;
             return true;
         }
-
     }
 }

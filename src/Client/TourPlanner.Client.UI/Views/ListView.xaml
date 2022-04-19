@@ -31,12 +31,18 @@
 
             <Label x:Name="TourListHeader" Grid.Column="0" Content="Tours"/>
             <Button x:Name="TourListAddButton" Grid.Column="1" Content="+" Command="{Binding AddListPoint}" Width="20"/>
-            <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Command="{Binding RemoveListPoint}" Width="20"/>
+            <Button x:Name="TourListRemoveButton" Grid.Column="2" Content="-" Command="{Binding DeleteTourCommand}" Width="20"/>
         </Grid>
 
         <!-- TourListContentPanel -->
         <ListBox ItemTemplate="{DynamicResource ListPointItemTemplate}" x:Name="TourListContentPanel" Grid.Row="1" 
                  ItemsSource="{Binding Tours}" SelectedItem="{Binding SelectedItem}">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Delete" Command="{Binding DeleteTourCommand}"/>
+                    <MenuItem Header="_Generate Pdf Report" Command="{Binding GenerateTourReportCommand}"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
         </ListBox>
     </Grid>
 </UserControl>

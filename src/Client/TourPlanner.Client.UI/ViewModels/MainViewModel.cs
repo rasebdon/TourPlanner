@@ -1,15 +1,28 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using TourPlanner.Client.UI.Services;
+using TourPlanner.Client.UI.Services.Reporting;
 using TourPlanner.Client.UI.Views;
+using TourPlanner.Common.Models;
 
 namespace TourPlanner.Client.UI.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
         public string SearchText { get; set; } = string.Empty;
+
+        public string Title
+        {
+            get
+            {
+                if (_tourCollectionService.Online)
+                    return "Tour Planner";
+                else return "Tour Planner (Offline)";
+            }
+        }
 
         public ICommand SearchCommand { get; }
 
@@ -19,15 +32,28 @@ namespace TourPlanner.Client.UI.ViewModels
         public ICommand ExportCommand { get; }
         public ICommand SettingsCommand { get; }
         public ICommand AboutCommand { get; }
+        public ICommand DeleteTourCommand { get; }
+        public ICommand GenerateTourReportCommand { get; }
+        public ICommand GenerateSummarizeReportCommand { get; }
 
 #if DEBUG
         public ICommand CreateDummyData { get; }
 #endif
-        private readonly ITourCollectionService _tourCollectionService;
 
-        public MainViewModel(ITourCollectionService tourCollectionService)
+        public Tour? Tour { get; set; }
+
+        private readonly ITourCollectionService _tourCollectionService;
+        private readonly ITourReportGenerationService _tourReportGenerationService;
+        private readonly ISummarizeReportGenerationService _summarizeReportGenerationService;
+
+        public MainViewModel(
+            ITourCollectionService tourCollectionService,
+            ITourReportGenerationService tourReportGenerationService,
+            ISummarizeReportGenerationService summarizeReportGenerationService)
         {
             _tourCollectionService = tourCollectionService;
+            _tourReportGenerationService = tourReportGenerationService;
+            _summarizeReportGenerationService = summarizeReportGenerationService;
 
             SearchCommand = new RelayCommand(Search);
             ExitCommand = new RelayCommand(Exit);
@@ -35,7 +61,23 @@ namespace TourPlanner.Client.UI.ViewModels
             ExportCommand = new RelayCommand(Export);
             AboutCommand = new RelayCommand(About);
             SettingsCommand = new RelayCommand(Settings);
+            GenerateTourReportCommand = new RelayCommand(GenerateTourReport, 
+                o =>
+                {
+                    return Tour != null;
+                });
+            GenerateSummarizeReportCommand = new RelayCommand(GenerateSummarizeReport,
+                o =>
+                {
+                    return _tourCollectionService.AllTours.Count > 0;
+                });
+            DeleteTourCommand = new RelayCommand(DelteTour,
+                o =>
+                {
+                    return Tour != null;
+                });
 
+            this.Tour = null;
 #if DEBUG
             CreateDummyData = new RelayCommand(
                 (object? o) =>
@@ -48,10 +90,69 @@ namespace TourPlanner.Client.UI.ViewModels
             if (!_tourCollectionService.LoadToursApi())
             {
                 MessageBox.Show(
-                    "Tours are not saved online!",
-                    "(Unsafe) Offline mode",
+                    "Could not connect to server!\nSome features are disabled!",
+                    "Offline mode",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
+            }
+        }
+
+        private void DelteTour(object? obj)
+        {
+            if (Tour != null && (!_tourCollectionService.Online || _tourCollectionService.DeleteTourApi(Tour.Id)))
+            {
+                _tourCollectionService.AllTours.Remove(Tour);
+            }
+        }
+
+        private void GenerateSummarizeReport(object? obj)
+        {
+            if (_tourCollectionService.AllTours.Count > 0)
+            {
+                try
+                {
+                    // Create SaveFileDialog
+                    Microsoft.Win32.SaveFileDialog saveFileDialog = new();
+
+                    saveFileDialog.DefaultExt = ".pdf";
+                    saveFileDialog.Filter = "Pdf documents (.pdf)|*.pdf";
+                    bool? result = saveFileDialog.ShowDialog();
+                    if (result == true)
+                    {
+                        var report = _summarizeReportGenerationService.GenerateReport(
+                            _tourCollectionService.AllTours);
+                        File.WriteAllBytes(saveFileDialog.FileName, report);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "An error occured!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void GenerateTourReport(object? obj)
+        {
+            if (Tour != null)
+            {
+                try
+                {
+                    // Create SaveFileDialog
+                    Microsoft.Win32.SaveFileDialog saveFileDialog = new();
+
+                    saveFileDialog.DefaultExt = ".pdf";
+                    saveFileDialog.Filter = "Pdf documents (.pdf)|*.pdf";
+                    bool? result = saveFileDialog.ShowDialog();
+                    if (result == true)
+                    {
+                        var report = _tourReportGenerationService.GenerateReport(Tour);
+                        File.WriteAllBytes(saveFileDialog.FileName, report);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "An error occured!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -78,7 +179,7 @@ namespace TourPlanner.Client.UI.ViewModels
 
                 openFileDialog.DefaultExt = ".tours";
                 openFileDialog.Filter = "Tour planner documents (.tours)|*.tours";
-                Nullable<bool> result = openFileDialog.ShowDialog();
+                bool? result = openFileDialog.ShowDialog();
                 if (result == true)
                 {
                     _tourCollectionService.Import(new Uri(openFileDialog.FileName, UriKind.Absolute));
@@ -94,12 +195,12 @@ namespace TourPlanner.Client.UI.ViewModels
         {
             try
             {
-                // Create OpenFileDialog
+                // Create SaveFileDialog
                 Microsoft.Win32.SaveFileDialog saveFileDialog = new();
 
                 saveFileDialog.DefaultExt = ".tours";
                 saveFileDialog.Filter = "Tour planner documents (.tours)|*.tours";
-                Nullable<bool> result = saveFileDialog.ShowDialog();
+                bool? result = saveFileDialog.ShowDialog();
                 if (result == true)
                 {
                     _tourCollectionService.Export(new Uri(saveFileDialog.FileName, UriKind.Absolute));

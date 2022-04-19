@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using TourPlanner.Client.UI.Services;
 using TourPlanner.Common.Models;
@@ -21,15 +22,18 @@ namespace TourPlanner.Client.UI.ViewModels
                 // Change other component views
                 _logViewModel.Tour = selectedItem;
                 _tourViewModel.Tour = selectedItem;
+                _mainViewModel.Tour = selectedItem;
             }
         }
 
         public ICommand AddListPoint { get; }
-        public ICommand RemoveListPoint { get; }
+        public ICommand DeleteTourCommand { get; }
+        public ICommand GenerateTourReportCommand { get; }
 
         private readonly ITourCollectionService _tourCollectionService;
         private readonly LogViewModel _logViewModel;
         private readonly TourViewModel _tourViewModel;
+        private readonly MainViewModel _mainViewModel;
 
         public ObservableCollection<Tour> Tours
         {
@@ -42,33 +46,34 @@ namespace TourPlanner.Client.UI.ViewModels
         public ListViewModel(
             ITourCollectionService tourCollectionService,
             LogViewModel logViewModel,
-            TourViewModel tourViewModel)
+            TourViewModel tourViewModel,
+            MainViewModel mainViewModel)
         {
             _tourCollectionService = tourCollectionService;
             _logViewModel = logViewModel;
             _tourViewModel = tourViewModel;
+            _mainViewModel = mainViewModel;
 
-            // TODO : Open a new window for creating a new tour
             AddListPoint = new RelayCommand(
                 o =>
                 {
-                    var popup = new NewTourWindow();
-                    popup.ShowDialog();
-                    
-                },
-                o => true);
-            RemoveListPoint = new RelayCommand(
-                o =>
-                {
-                    if (SelectedItem != null)
+                    if(_tourCollectionService.Online)
                     {
-                        if (_tourCollectionService.DeleteTourApi(SelectedItem.Id))
-                        {
-                            _tourCollectionService.AllTours.Remove(SelectedItem);
-                        }
+                        var popup = new NewTourWindow();
+                        popup.ShowDialog();
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "Cannot add tour in offline mode!",
+                            "Offline mode",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
                     }
                 },
                 o => true);
+            DeleteTourCommand = _mainViewModel.DeleteTourCommand;
+            GenerateTourReportCommand = _mainViewModel.GenerateTourReportCommand;
         }
     }
 }
