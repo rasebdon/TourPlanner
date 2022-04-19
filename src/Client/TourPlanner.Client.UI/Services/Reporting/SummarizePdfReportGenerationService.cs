@@ -51,9 +51,18 @@ namespace TourPlanner.Client.UI.Services.Reporting
             {
                 logsTable.AddCell($"{tour.Id}");
                 logsTable.AddCell($"{tour.Name}");
-                logsTable.AddCell($"{tour.Entries.Average(t => t.Duration)}");
-                logsTable.AddCell($"{tour.Entries.Average(t => t.Distance)}");
-                logsTable.AddCell($"{tour.Entries.Average(t => t.Rating)}");
+                if(tour.Entries.Count > 0)
+                {
+                    logsTable.AddCell($"{tour.Entries.Average(t => t.Duration)}");
+                    logsTable.AddCell($"{tour.Entries.Average(t => t.Distance)}");
+                    logsTable.AddCell($"{tour.Entries.Average(t => t.Rating)}");
+                }
+                else
+                {
+                    logsTable.AddCell($"NaN");
+                    logsTable.AddCell($"NaN");
+                    logsTable.AddCell($"NaN");
+                }
             }
 
             document.Add(logsTable);
