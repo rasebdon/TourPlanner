@@ -41,9 +41,9 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Binding="{Binding Date, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
                 <DataGridTextColumn Header="Duration (s)" Binding="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Distance (km)" Binding="{Binding Distance, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Rating" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <DataGridTextColumn Header="Difficulty" Binding="{Binding Difficulty, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Distance (km)" Binding="{Binding Distance, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Rating" Binding="{Binding Rating, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Difficulty" Binding="{Binding Difficulty, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
                 <DataGridTextColumn Header="Comment" Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
             </DataGrid.Columns>
             <DataGrid.ContextMenu>

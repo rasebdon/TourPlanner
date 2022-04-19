@@ -86,6 +86,7 @@ namespace TourPlanner.Client.UI.ViewModels
             if (SelectedItem != null && DeleteTourEntry(SelectedItem.Id))
             {
                 Data.Remove(SelectedItem);
+                _tour?.Entries.Remove(SelectedItem);
                 SelectedItem = null;
             }
         }
@@ -100,6 +101,7 @@ namespace TourPlanner.Client.UI.ViewModels
             if (CreateTourEntry(ref entry))
             {
                 Data.Add(entry);
+                _tour.Entries.Add(entry);
             }
         }
 
