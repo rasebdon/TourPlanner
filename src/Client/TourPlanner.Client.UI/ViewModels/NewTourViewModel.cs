@@ -81,7 +81,8 @@ namespace TourPlanner.Client.UI.ViewModels
                                 Longitude = float.Parse(StartLongitude),
                             },
                             TransportType = Common.Models.TransportType.AUTO,
-                            Entries = new()
+                            Entries = new(),
+                            Description = Description ?? "",
                         };
                         if (_tourCollectionService.CreateTourApi(ref tour))
                             _tourCollectionService.AllTours.Add(tour);

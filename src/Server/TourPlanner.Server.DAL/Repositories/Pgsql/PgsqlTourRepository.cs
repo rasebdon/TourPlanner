@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Logging;
+using Npgsql;
 using System.Collections.Specialized;
 using System.Data;
 using TourPlanner.Common.Models;
@@ -7,26 +8,38 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
 {
     public class PgsqlTourRepository : IRepository<Tour>
     {
-        private readonly PgsqlDatabase _database;
+        private readonly IDatabase _database;
         private readonly PgsqlTourEntryRepository _tourEntryRepository;
+        private readonly ILogger<PgsqlTourRepository> _logger;
 
-        public PgsqlTourRepository(PgsqlDatabase database, PgsqlTourEntryRepository tourEntryRepository)
+        public PgsqlTourRepository(
+            IDatabase database,
+            IRepository<TourEntry> tourEntryRepository,
+            ILogger<PgsqlTourRepository> logger)
         {
+            _logger = logger;
             _database = database;
-            _tourEntryRepository = tourEntryRepository;
+            _tourEntryRepository = tourEntryRepository as PgsqlTourEntryRepository;
 
-            NpgsqlCommand cmd = new();
-            cmd.CommandText = @"SELECT EXISTS (
+            try
+            {
+                NpgsqlCommand cmd = new();
+                cmd.CommandText = @"SELECT EXISTS (
                 SELECT FROM 
                     pg_tables
                 WHERE 
                     schemaname = 'public' AND 
                     tablename  = 'tours'
                 );";
-            var result = _database.SelectSingle(cmd);
+                var result = _database.SelectSingle(cmd);
 
-            if (result == null || bool.Parse(result["exists"]?.ToString() ?? "") == false)
-                CreateTables();
+                if (result == null || bool.Parse(result["exists"]?.ToString() ?? "") == false)
+                    CreateTables();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
         }
 
         public void DeleteTables()
@@ -78,35 +91,43 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
 
         public bool Delete(int id)
         {
-            // Get tour for points
-            Tour? tour = Get(id);
-            if (tour == null)
-                return false;
+            try
+            {
+                // Get tour for points
+                Tour? tour = Get(id);
+                if (tour == null)
+                    return false;
 
-            NpgsqlCommand cmd = new();
-            cmd.CommandText = "DELETE FROM tours WHERE id=@id;";
-            cmd.Parameters.AddWithValue("id", id);
+                NpgsqlCommand cmd = new();
+                cmd.CommandText = "DELETE FROM tours WHERE id=@id;";
+                cmd.Parameters.AddWithValue("id", id);
 
-            bool success = _database.ExecuteNonQuery(cmd) == 1;
-            if (!success)
-                return false;
+                bool success = _database.ExecuteNonQuery(cmd) == 1;
+                if (!success)
+                    return false;
 
-            cmd.CommandText = "DELETE FROM tour_entries WHERE tour_id=@id;";
-            _database.ExecuteNonQuery(cmd);
+                cmd.CommandText = "DELETE FROM tour_entries WHERE tour_id=@id;";
+                _database.ExecuteNonQuery(cmd);
 
-            cmd.CommandText = "DELETE FROM tour_points WHERE id=@id";
-            cmd.Parameters["id"].Value = tour.StartPoint?.Id;
+                cmd.CommandText = "DELETE FROM tour_points WHERE id=@id";
+                cmd.Parameters["id"].Value = tour.StartPoint?.Id;
 
-            success = _database.ExecuteNonQuery(cmd) == 1;
-            if (!success)
-                return false;
+                success = _database.ExecuteNonQuery(cmd) == 1;
+                if (!success)
+                    return false;
 
-            cmd.Parameters["id"].Value = tour.EndPoint?.Id;
-            success = _database.ExecuteNonQuery(cmd) == 1;
-            if (!success)
-                return false;
+                cmd.Parameters["id"].Value = tour.EndPoint?.Id;
+                success = _database.ExecuteNonQuery(cmd) == 1;
+                if (!success)
+                    return false;
 
-            return true;
+                return true;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return false;
         }
 
         public Tour? Get(int id)
@@ -127,8 +148,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                // LOG ERROR
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
 
             return null;
@@ -162,7 +182,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return Enumerable.Empty<Tour>();
         }
@@ -264,7 +284,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return false;
         }
@@ -328,7 +348,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                     foreach (var entryData in oldEntriesData)
                     {
                         // Get old entry
-                        var oldEntry = PgsqlTourEntryRepository.ParseFromRow(entryData);
+                        var oldEntry = _tourEntryRepository.ParseFromRow(entryData);
 
                         if (oldEntry == null)
                             continue;
@@ -370,7 +390,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return false;
         }
@@ -396,7 +416,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             return ParseFromRow(tourData, tourEntries, tourStartPoint, tourEndPoint);
         }
 
-        private static Tour? ParseFromRow(
+        private Tour? ParseFromRow(
             OrderedDictionary tourData,
             OrderedDictionary[] tourEntries,
             OrderedDictionary startPointData,
@@ -408,7 +428,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                 List<TourEntry> entries = new();
                 foreach (var entry in tourEntries)
                 {
-                    var entryObj = PgsqlTourEntryRepository.ParseFromRow(entry);
+                    var entryObj = _tourEntryRepository.ParseFromRow(entry);
                     if (entryObj != null)
                         entries.Add(entryObj);
                 }
@@ -442,10 +462,11 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
                     EndPoint = endPoint,
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                _logger.LogError(ex.ToString());
             }
+            return null;
         }
     }
 }

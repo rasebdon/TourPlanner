@@ -5,7 +5,7 @@ namespace TourPlanner.Server.DAL
 {
     public interface IDatabase : IDisposable
     {
-        bool OpenConnection();
+        bool OpenConnection(string connectionString);
         OrderedDictionary SelectSingle(IDbCommand cmd);
         OrderedDictionary[] Select(IDbCommand cmd);
         int ExecuteNonQuery(IDbCommand cmd);
