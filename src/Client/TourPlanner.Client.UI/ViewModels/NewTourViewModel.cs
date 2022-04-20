@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -41,6 +42,24 @@ namespace TourPlanner.Client.UI.ViewModels
         public string? EndLatitude { get; set; }
         public string? EndLongitude { get; set; }
 
+        public Dictionary<Common.Models.TransportType, string> TransportTypes { get; } = new()
+        {
+            { Common.Models.TransportType.AUTO, "Car" },
+            { Common.Models.TransportType.WALKING, "On foot" },
+            { Common.Models.TransportType.BICYCLE, "Bicycle" }
+        };
+
+        private Common.Models.TransportType _transportType;
+        public Common.Models.TransportType TransportType
+        {
+            get { return _transportType; }
+            set
+            {
+                _transportType = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand CreateTour { get; }
         public ICommand TranslateStartAddress { get; }
         public ICommand TranslateEndAddress { get; }
@@ -56,7 +75,6 @@ namespace TourPlanner.Client.UI.ViewModels
 
             StartImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
             EndImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
-
 
             CreateTour = new RelayCommand(
                 o =>
@@ -80,7 +98,7 @@ namespace TourPlanner.Client.UI.ViewModels
                                 Latitude = float.Parse(StartLatitude),
                                 Longitude = float.Parse(StartLongitude),
                             },
-                            TransportType = Common.Models.TransportType.AUTO,
+                            TransportType = TransportType,
                             Entries = new()
                         };
                         if (_tourCollectionService.CreateTourApi(ref tour))
