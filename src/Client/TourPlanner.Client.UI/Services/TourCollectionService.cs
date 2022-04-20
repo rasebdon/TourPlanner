@@ -79,14 +79,14 @@ namespace TourPlanner.Client.UI.Services
             byte[] hashedData = Encrypt(fileData, "TourPlannerSecret");
 
             // Write all tours as json in given file
-            File.WriteAllBytes(filePath.AbsolutePath, hashedData);
+            File.WriteAllBytes(filePath.AbsolutePath.Replace("%20", " "), hashedData);
         }
         public void Import(Uri filePath)
         {
             bool error = false;
 
             // Load and decrypt file
-            byte[] hashedData = File.ReadAllBytes(filePath.AbsolutePath);
+            byte[] hashedData = File.ReadAllBytes(filePath.AbsolutePath.Replace("%20", " "));
             byte[] fileData = Decrypt(hashedData, "TourPlannerSecret");
 
             // Parse json format into list of tours
