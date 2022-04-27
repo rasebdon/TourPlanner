@@ -13,7 +13,7 @@ namespace TourPlanner.Server.BL.API
         static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            
             if (!ConfigureServices(builder))
                 return;
 
@@ -52,11 +52,13 @@ namespace TourPlanner.Server.BL.API
             builder.Services.AddSingleton<IRepository<TourEntry>, PgsqlTourEntryRepository>();
             builder.Services.AddSingleton<IRepository<Tour>, PgsqlTourRepository>();
 
+            if (!configuration.TryGetObject("api_key", out var apiKey))
+                configuration.AddObject("api_key", "");
+
             // Configure mapquestapi
-            var apiKey = builder.Configuration.GetValue(typeof(string), "apiKey") as string;
-            IMapService mapService = new MapQuestMapService(apiKey ?? "");
-            IRouteService tourService = new MapQuestTourService(apiKey ?? "");
-            ICoordinatesService coordinatesService = new MapQuestCoordinatesService(apiKey ?? "");
+            IMapService mapService = new MapQuestMapService(apiKey?.ToString() ?? "");
+            IRouteService tourService = new MapQuestTourService(apiKey?.ToString() ?? "");
+            ICoordinatesService coordinatesService = new MapQuestCoordinatesService(apiKey?.ToString() ?? "");
 
             // Add services to the container
             builder.Services.AddSingleton(mapService);

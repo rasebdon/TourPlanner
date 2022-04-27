@@ -1,7 +1,3 @@
 {
-  "database_address": "127.0.0.1",
-  "database_port": 5432,
-  "database_name": "tour_planner",
-  "database_username": "tour_planner_admin",
-  "database_password": "tour_planner_1234"
+  "api_key": ""
 }
