@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Logging;
+using Npgsql;
 using System.Collections.Specialized;
 using TourPlanner.Common.Models;
 
@@ -6,10 +7,14 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
 {
     public class PgsqlTourEntryRepository : IRepository<TourEntry>
     {
-        private readonly PgsqlDatabase _database;
+        private readonly IDatabase _database;
+        private readonly ILogger<PgsqlTourEntryRepository> _logger;
 
-        public PgsqlTourEntryRepository(PgsqlDatabase database)
+        public PgsqlTourEntryRepository(
+            IDatabase database,
+            ILogger<PgsqlTourEntryRepository> logger)
         {
+            _logger = logger;
             _database = database;
         }
 
@@ -40,14 +45,13 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                // LOG ERROR
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
 
             return null;
         }
 
-        internal static TourEntry? ParseFromRow(OrderedDictionary row)
+        internal TourEntry? ParseFromRow(OrderedDictionary row)
         {
             try
             {
@@ -65,7 +69,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return null;
         }
@@ -97,7 +101,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             catch (Exception ex)
             {
                 // LOG ERROR
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
 
             return Enumerable.Empty<TourEntry>();
@@ -132,7 +136,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return false;
         }
@@ -157,7 +161,7 @@ namespace TourPlanner.Server.DAL.Repositories.Pgsql
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return false;
         }

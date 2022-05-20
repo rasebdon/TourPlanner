@@ -3,27 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{CB4715EB-AB07-4806-9A17-CC3D5006F1A5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{937AE6FD-A57A-43D3-AE6E-286BBC400964}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{49F5DF50-6CAA-45A6-8DC5-C8B4BC948759}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Client.UI", "src\Client\TourPlanner.Client.UI\TourPlanner.Client.UI.csproj", "{50445E36-7393-47D1-A5AC-0A45B0E106C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Common.Models", "Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj", "{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Common.Models", "src\Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj", "{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.API", "Server\TourPlanner.Server.BL.API\TourPlanner.Server.BL.API.csproj", "{A5730320-D6C4-45B1-A06E-D7C410758955}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.API", "src\Server\TourPlanner.Server.BL.API\TourPlanner.Server.BL.API.csproj", "{A5730320-D6C4-45B1-A06E-D7C410758955}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.DAL", "Server\TourPlanner.Server.DAL\TourPlanner.Server.DAL.csproj", "{07767972-BE1D-4DFD-8DDD-19FB25D65457}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.DAL", "src\Server\TourPlanner.Server.DAL\TourPlanner.Server.DAL.csproj", "{07767972-BE1D-4DFD-8DDD-19FB25D65457}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.MapQuestAPI", "Server\TourPlanner.Server.BL.MapQuestAPI\TourPlanner.Server.BL.MapQuestAPI.csproj", "{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.MapQuestAPI", "src\Server\TourPlanner.Server.BL.MapQuestAPI\TourPlanner.Server.BL.MapQuestAPI.csproj", "{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.Common", "Server\TourPlanner.Server.BL.Common\TourPlanner.Server.BL.Common.csproj", "{26E4BCD5-1063-4B5B-B7DD-7D3DC0CDC542}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Client.UI.Test", "src\Client\TourPlanner.Client.UI.Test\TourPlanner.Client.UI.Test.csproj", "{ABED775D-BE56-4C5C-98E1-B358121F3F1B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.Common", "src\Server\TourPlanner.Server.BL.Common\TourPlanner.Server.BL.Common.csproj", "{26E4BCD5-1063-4B5B-B7DD-7D3DC0CDC542}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.API.Test", "src\Server\TourPlanner.Server.BL.API.Test\TourPlanner.Server.BL.API.Test.csproj", "{EE419C61-A12D-46FA-922A-C52F739FE647}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourPlanner.Server.BL.API.Test", "Server\TourPlanner.Server.BL.API.Test\TourPlanner.Server.BL.API.Test.csproj", "{EE419C61-A12D-46FA-922A-C52F739FE647}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50445E36-7393-47D1-A5AC-0A45B0E106C8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,10 +41,6 @@ Global
 		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABED775D-BE56-4C5C-98E1-B358121F3F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABED775D-BE56-4C5C-98E1-B358121F3F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABED775D-BE56-4C5C-98E1-B358121F3F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABED775D-BE56-4C5C-98E1-B358121F3F1B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{26E4BCD5-1063-4B5B-B7DD-7D3DC0CDC542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26E4BCD5-1063-4B5B-B7DD-7D3DC0CDC542}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26E4BCD5-1063-4B5B-B7DD-7D3DC0CDC542}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -68,12 +54,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{50445E36-7393-47D1-A5AC-0A45B0E106C8} = {CB4715EB-AB07-4806-9A17-CC3D5006F1A5}
 		{CB14662F-4A15-463C-BD4C-1FB3C40F5B0E} = {49F5DF50-6CAA-45A6-8DC5-C8B4BC948759}
 		{A5730320-D6C4-45B1-A06E-D7C410758955} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
 		{07767972-BE1D-4DFD-8DDD-19FB25D65457} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
 		{5223D16F-BFCC-4D0F-9D99-47FB60D54AD0} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
-		{ABED775D-BE56-4C5C-98E1-B358121F3F1B} = {CB4715EB-AB07-4806-9A17-CC3D5006F1A5}
 		{26E4BCD5-1063-4B5B-B7DD-7D3DC0CDC542} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
 		{EE419C61-A12D-46FA-922A-C52F739FE647} = {937AE6FD-A57A-43D3-AE6E-286BBC400964}
 	EndGlobalSection

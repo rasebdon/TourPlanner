@@ -1,6 +1,9 @@
-using TourPlanner.Server.BL.API.Services;
+using TourPlanner.Common.Models;
 using TourPlanner.Server.BL.Common.Interfaces;
 using TourPlanner.Server.BL.MapQuestAPI;
+using TourPlanner.Server.DAL;
+using TourPlanner.Server.DAL.Repositories;
+using TourPlanner.Server.DAL.Repositories.Pgsql;
 
 namespace TourPlanner.Server.BL.API
 {
@@ -9,22 +12,9 @@ namespace TourPlanner.Server.BL.API
         static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Configure repository service
-            IRepositoryService repositoryService = new PgsqlRepositoryService(
-                "tour_planner", "tour_planner_admin", "tour_planner_1234");
-
-            // Configure mapquestapi
-            var apiKey = builder.Configuration.GetValue(typeof(string), "apiKey") as string;
-            IMapService mapService = new MapQuestMapService(apiKey ?? "");
-            IRouteService tourService = new MapQuestTourService(apiKey ?? "");
-            ICoordinatesService coordinatesService = new MapQuestCoordinatesService(apiKey ?? "");
-
-            // Add services to the container.
-            builder.Services.AddSingleton(repositoryService);
-            builder.Services.AddSingleton(mapService);
-            builder.Services.AddSingleton(tourService);
-            builder.Services.AddSingleton(coordinatesService);
+            
+            if (!ConfigureServices(builder))
+                return;
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -34,11 +24,8 @@ namespace TourPlanner.Server.BL.API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
@@ -47,6 +34,44 @@ namespace TourPlanner.Server.BL.API
             app.MapControllers();
 
             app.Run();
+        }
+    
+        private static bool ConfigureServices(WebApplicationBuilder builder)
+        {
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder();
+            // Check if there is config file
+            if (File.Exists("config.json"))
+            {
+                configBuilder.AddJsonFile("config.json");
+            }
+            // Get via environment variables
+            else
+            {
+                configBuilder.AddEnvironmentVariables();
+            }
+            IConfigurationRoot? config = configBuilder.Build();
+
+            // Configure DAL access
+            builder.Services.AddSingleton(config);
+            builder.Services.AddSingleton<IDatabase, PgsqlDatabase>();
+
+            // Add repositories
+            builder.Services.AddSingleton<IRepository<TourEntry>, PgsqlTourEntryRepository>();
+            builder.Services.AddSingleton<IRepository<Tour>, PgsqlTourRepository>();
+
+            string apiKey = config.GetValue<string>("MAPQUESTAPI_KEY");
+
+            // Configure mapquestapi
+            IMapService mapService = new MapQuestMapService(apiKey);
+            IRouteService tourService = new MapQuestTourService(apiKey);
+            ICoordinatesService coordinatesService = new MapQuestCoordinatesService(apiKey);
+
+            // Add services to the container
+            builder.Services.AddSingleton(mapService);
+            builder.Services.AddSingleton(tourService);
+            builder.Services.AddSingleton(coordinatesService);
+
+            return true;
         }
     }
 }

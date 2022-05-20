@@ -1,4 +1,6 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Npgsql;
 using System.Collections.Specialized;
 using System.Data;
 
@@ -11,25 +13,46 @@ namespace TourPlanner.Server.DAL
     {
         private bool _disposed;
 
-        private readonly IDbConnection _connection;
+        private IDbConnection? _connection = null;
         private readonly object _connectionLock = new();
         private readonly object _transactionLock = new();
+        private readonly ILogger<PgsqlDatabase> _logger;
+        private readonly IConfiguration _configuration;
 
-        public PgsqlDatabase(string connectionString)
+        public PgsqlDatabase(
+            ILogger<PgsqlDatabase> logger,
+            IConfiguration configuration)
         {
+            _configuration = configuration;
+            _logger = logger;
             _disposed = false;
 
-            // Connect to postgresql database
-            _connection = new NpgsqlConnection(connectionString);
+            string connectionString = GetConnectionString();
+            if (!OpenConnection(connectionString))
+                _logger.LogError($"Connection to database failed!\n {connectionString}");
+        }
+
+        private string GetConnectionString()
+        {
+            string connectionString = "";
+            connectionString += $"Server={_configuration.GetValue<string>("DATABASE_ADDRESS")};";
+            connectionString += $"Port={_configuration.GetValue<int>("DATABASE_PORT")};";
+            connectionString += $"Database={_configuration.GetValue<string>("DATABASE_NAME")};";
+            connectionString += $"Username={_configuration.GetValue<string>("DATABASE_USERNAME")};";
+            connectionString += $"Password={_configuration.GetValue<string>("DATABASE_PASSWORD")};";
+            return connectionString;
         }
 
         /// <summary>
         /// Opens the database connection
         /// </summary>
-        public bool OpenConnection()
+        public bool OpenConnection(string connectionString)
         {
             try
             {
+                // Connect to postgresql database
+                _connection = new NpgsqlConnection(connectionString);
+
                 if (_disposed)
                     throw new ObjectDisposedException(GetType().FullName);
 
@@ -40,8 +63,9 @@ namespace TourPlanner.Server.DAL
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 return false;
             }
         }
@@ -53,15 +77,22 @@ namespace TourPlanner.Server.DAL
         /// <returns>The first row of the result or an empty collection if no results where found</returns>
         public OrderedDictionary SelectSingle(IDbCommand cmd)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(GetType().FullName);
+            try
+            {
+                if (_disposed)
+                    throw new ObjectDisposedException(GetType().FullName);
 
-            // Execute sql
-            OrderedDictionary[] results = Select(cmd);
+                // Execute sql
+                OrderedDictionary[] results = Select(cmd);
 
-            // Return data
-            if (results.Length > 0)
-                return results[0];
+                // Return data
+                if (results.Length > 0)
+                    return results[0];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
             return new OrderedDictionary();
         }
 
@@ -72,35 +103,42 @@ namespace TourPlanner.Server.DAL
         /// <returns>All rows of the result or null if no results where found</returns>
         public OrderedDictionary[] Select(IDbCommand cmd)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(GetType().FullName);
-
-            cmd.Connection = this._connection;
-
-            List<OrderedDictionary> rows = new();
-
-            lock (_connectionLock)
+            try
             {
-                // Execute query
-                var rdr = cmd.ExecuteReader();
+                if (_disposed)
+                    throw new ObjectDisposedException(GetType().FullName);
 
-                // Run reader over results
-                while (rdr.Read())
+                cmd.Connection = this._connection;
+
+                List<OrderedDictionary> rows = new();
+
+                lock (_connectionLock)
                 {
-                    // Parse data into dictionaries
-                    OrderedDictionary row = new();
-                    for (int i = 0; i < rdr.FieldCount; i++)
+                    // Execute query
+                    var rdr = cmd.ExecuteReader();
+
+                    // Run reader over results
+                    while (rdr.Read())
                     {
-                        row.Add(rdr.GetName(i), rdr[i]);
+                        // Parse data into dictionaries
+                        OrderedDictionary row = new();
+                        for (int i = 0; i < rdr.FieldCount; i++)
+                        {
+                            row.Add(rdr.GetName(i), rdr[i]);
+                        }
+                        rows.Add(row);
                     }
-                    rows.Add(row);
+
+                    // Close reader and return results
+                    rdr.Close();
+                    return rows.ToArray();
                 }
-
-                // Close reader and return results
-                rdr.Close();
             }
-
-            return rows.ToArray();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return Array.Empty<OrderedDictionary>();
         }
 
         /// <summary>
@@ -110,17 +148,25 @@ namespace TourPlanner.Server.DAL
         /// <returns>Number of rows affected</returns>
         public int ExecuteNonQuery(IDbCommand cmd)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(GetType().FullName);
-
-            cmd.Connection = this._connection;
-            int rowsAffected;
-
-            lock (_connectionLock)
+            try
             {
-                rowsAffected = cmd.ExecuteNonQuery();
+                if (_disposed)
+                    throw new ObjectDisposedException(GetType().FullName);
+
+                cmd.Connection = this._connection;
+                int rowsAffected;
+
+                lock (_connectionLock)
+                {
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+                return rowsAffected;
             }
-            return rowsAffected;
+            catch (Exception ex) 
+            { 
+                _logger.LogError(ex.ToString());
+            }
+            return 0;
         }
 
 
@@ -147,8 +193,9 @@ namespace TourPlanner.Server.DAL
                     if (success)
                         transaction.Commit();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _logger.LogError(ex.ToString());
                     transaction.Rollback();
                     success = false;
                 }

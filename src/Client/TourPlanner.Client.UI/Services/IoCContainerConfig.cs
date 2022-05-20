@@ -15,15 +15,14 @@ namespace TourPlanner.Client.UI.Services
         {
             var services = new ServiceCollection();
 
-            // same for ICommunicationHandler, IContentInterpreter, IFilterHandler
+            // Add services
             services.AddSingleton<IApiService, TourPlannerApiService>();
             services.AddSingleton<ITourCollectionService, TourCollectionService>();
             services.AddSingleton<ITourReportGenerationService, TourPdfReportGenerationService>();
             services.AddSingleton<ISummarizeReportGenerationService, SummarizePdfReportGenerationService>();
             services.AddSingleton<ITourImageService, TourImageService>();
 
-            // register the MainViewModel as well, the ServiceProvider will provide the constructor parameters
-            // for the MainViewModel based on the configuration above
+            // Add ViewModels
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<LogViewModel>();
             services.AddSingleton<TourViewModel>();
