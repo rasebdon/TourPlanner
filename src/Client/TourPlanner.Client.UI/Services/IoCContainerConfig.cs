@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using TourPlanner.Client.UI.Services.Reporting;
 using TourPlanner.Client.UI.ViewModels;
 
@@ -15,7 +16,11 @@ namespace TourPlanner.Client.UI.Services
         {
             var services = new ServiceCollection();
 
+            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddJsonFile("config.json");
+
             // Add services
+            services.AddSingleton<IConfiguration>(configurationBuilder.Build());
             services.AddSingleton<IApiService, TourPlannerApiService>();
             services.AddSingleton<ITourCollectionService, TourCollectionService>();
             services.AddSingleton<ITourReportGenerationService, TourPdfReportGenerationService>();

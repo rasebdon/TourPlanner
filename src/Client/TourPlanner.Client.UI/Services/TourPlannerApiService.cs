@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
@@ -11,16 +12,18 @@ namespace TourPlanner.Client.UI.Services
 {
     public class TourPlannerApiService : IApiService
     {
-#if DEBUG
-        private readonly string _url = $"https://localhost:7222/api/";
-#else
-        private readonly string _url = $"https://localhost:5001/api/";
-#endif
         private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
+        private readonly string _url;
 
-        public TourPlannerApiService()
+        public TourPlannerApiService(IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpClient = new HttpClient();
+
+            _url = $"http{(_configuration.GetValue<bool>("HTTPS") ? "s" : "")}" +
+                $"://{_configuration.GetValue<string>("SERVER_ADDRESS")}" +
+                $":{_configuration.GetValue<int>("SERVER_PORT")}/api/";
         }
 
         public async Task<HttpStatusCode> DeleteAsync(string path)

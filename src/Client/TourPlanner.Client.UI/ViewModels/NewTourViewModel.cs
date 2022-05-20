@@ -99,7 +99,7 @@ namespace TourPlanner.Client.UI.ViewModels
                                 Longitude = float.Parse(StartLongitude),
                             },
                             Description = Description ?? "",
-                            Entries = new()
+                            Entries = new(),
                             TransportType = TransportType,
                         };
                         if (_tourCollectionService.CreateTourApi(ref tour))
