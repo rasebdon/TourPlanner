@@ -29,9 +29,57 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
         }
 
         [Test]
-        public void Test1()
+        public void SearchCommandNotNull()
         {
-            Assert.Pass();
+            Assert.NotNull(_mainViewModel.SearchCommand);    
+        }
+
+        [Test]
+        public void ImportCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.ImportCommand);
+        }
+
+        [Test]
+        public void DeleteTourCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.DeleteTourCommand);
+        }
+
+        [Test]
+        public void ExitCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.ExitCommand);
+        }
+
+        [Test]
+        public void ExportCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.ExportCommand);
+        }
+
+        [Test]
+        public void GenerateSummarizeReportCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.GenerateSummarizeReportCommand);
+        }
+
+        [Test]
+        public void GenerateTourReportCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.GenerateTourReportCommand);
+        }
+
+        [Test]
+        public void SettingsCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.SettingsCommand);
+        }
+
+        [Test]
+        public void AboutCommandNotNull()
+        {
+            Assert.NotNull(_mainViewModel.AboutCommand);
         }
     }
 }

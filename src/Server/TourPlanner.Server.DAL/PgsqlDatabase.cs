@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Collections.Specialized;
 using System.Data;
-using TourPlanner.Server.DAL.Configuration;
 
 namespace TourPlanner.Server.DAL
 {
@@ -27,58 +27,20 @@ namespace TourPlanner.Server.DAL
             _logger = logger;
             _disposed = false;
 
-            if(!OpenConnection(GetConnectionString()))
-                _logger.LogError("Connection to database failed!");
+            string connectionString = GetConnectionString();
+            if (!OpenConnection(connectionString))
+                _logger.LogError($"Connection to database failed!\n {connectionString}");
         }
 
         private string GetConnectionString()
         {
             string connectionString = "";
-            int fails = 0;
-            if (_configuration.TryGetObject("database_address", out var dbAddress))
-                connectionString += $"Server = {dbAddress};";
-            else
-            {
-                _configuration.AddObject("database_address", "127.0.0.1");
-                fails++;
-            }
-
-            if (_configuration.TryGetObject("database_port", out var port))
-                connectionString += $"Port = {port};";
-            else
-            {
-                _configuration.AddObject("database_port", 5432);
-                fails++;
-            }
-
-            if (_configuration.TryGetObject("database_name", out var name))
-                connectionString += $"Database = {name};";
-            else
-                {
-                _configuration.AddObject("database_name", "tour_planner");
-                fails++;
-            }
-
-            if (_configuration.TryGetObject("database_username", out var username))
-                connectionString += $"Username = {username};";
-            else
-                {
-                _configuration.AddObject("database_username", "tour_planner_admin");
-                fails++;
-            }
-
-            if (_configuration.TryGetObject("database_password", out var password))
-                connectionString += $"Password = {password};";
-            else
-                {
-                _configuration.AddObject("database_password", "tour_planner_1234");
-                fails++;
-            }
-
-            if (fails > 0)
-                return GetConnectionString();
-            else 
-                return connectionString;
+            connectionString += $"Server={_configuration.GetValue<string>("DATABASE_ADDRESS")};";
+            connectionString += $"Port={_configuration.GetValue<int>("DATABASE_PORT")};";
+            connectionString += $"Database={_configuration.GetValue<string>("DATABASE_NAME")};";
+            connectionString += $"Username={_configuration.GetValue<string>("DATABASE_USERNAME")};";
+            connectionString += $"Password={_configuration.GetValue<string>("DATABASE_PASSWORD")};";
+            return connectionString;
         }
 
         /// <summary>

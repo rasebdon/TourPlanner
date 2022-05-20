@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.Net.Http;
 using TourPlanner.Common.Models;
-using TourPlanner.Server.BL.API.Services;
 using TourPlanner.Server.DAL.Repositories;
 
 namespace TourPlanner.Server.BL.API.Test.IntegrationTests
@@ -23,23 +22,17 @@ namespace TourPlanner.Server.BL.API.Test.IntegrationTests
         [SetUp]
         public virtual void SetUp()
         {
-            var repoService = new PgsqlRepositoryService(
-                "tour_planner_test", "tour_planner_admin", "tour_planner_1234");
-            ServiceDescriptor repositoryDescriptor = new(typeof(IRepositoryService), repoService);
-
             var application = new WebApplicationFactory<Program>()
                     .WithWebHostBuilder(builder =>
                     {
                         builder.ConfigureTestServices(services =>
                         {
-                            services.Add(repositoryDescriptor);
+                            
                         });
                     });
 
             _server = application.Server;
             _client = application.CreateClient();
-
-            _tourRepository = repoService.GetRepository<Tour>();
         }
 
         [TearDown]

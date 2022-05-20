@@ -2,7 +2,6 @@ using TourPlanner.Common.Models;
 using TourPlanner.Server.BL.Common.Interfaces;
 using TourPlanner.Server.BL.MapQuestAPI;
 using TourPlanner.Server.DAL;
-using TourPlanner.Server.DAL.Configuration;
 using TourPlanner.Server.DAL.Repositories;
 using TourPlanner.Server.DAL.Repositories.Pgsql;
 
@@ -25,11 +24,8 @@ namespace TourPlanner.Server.BL.API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
@@ -42,23 +38,33 @@ namespace TourPlanner.Server.BL.API
     
         private static bool ConfigureServices(WebApplicationBuilder builder)
         {
-            // Configure DAL access
-            DAL.Configuration.IConfiguration configuration = new JsonConfiguration(Directory.GetCurrentDirectory());
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder();
+            // Check if there is config file
+            if (File.Exists("config.json"))
+            {
+                configBuilder.AddJsonFile("config.json");
+            }
+            // Get via environment variables
+            else
+            {
+                configBuilder.AddEnvironmentVariables();
+            }
+            IConfigurationRoot? config = configBuilder.Build();
 
-            builder.Services.AddSingleton(configuration);
+            // Configure DAL access
+            builder.Services.AddSingleton(config);
             builder.Services.AddSingleton<IDatabase, PgsqlDatabase>();
 
             // Add repositories
             builder.Services.AddSingleton<IRepository<TourEntry>, PgsqlTourEntryRepository>();
             builder.Services.AddSingleton<IRepository<Tour>, PgsqlTourRepository>();
 
-            if (!configuration.TryGetObject("api_key", out var apiKey))
-                configuration.AddObject("api_key", "");
+            string apiKey = config.GetValue<string>("MAPQUESTAPI_KEY");
 
             // Configure mapquestapi
-            IMapService mapService = new MapQuestMapService(apiKey?.ToString() ?? "");
-            IRouteService tourService = new MapQuestTourService(apiKey?.ToString() ?? "");
-            ICoordinatesService coordinatesService = new MapQuestCoordinatesService(apiKey?.ToString() ?? "");
+            IMapService mapService = new MapQuestMapService(apiKey);
+            IRouteService tourService = new MapQuestTourService(apiKey);
+            ICoordinatesService coordinatesService = new MapQuestCoordinatesService(apiKey);
 
             // Add services to the container
             builder.Services.AddSingleton(mapService);

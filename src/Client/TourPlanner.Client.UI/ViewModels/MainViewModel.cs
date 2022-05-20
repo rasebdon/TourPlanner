@@ -89,11 +89,13 @@ namespace TourPlanner.Client.UI.ViewModels
             // Try to get tours from API
             if (!_tourCollectionService.LoadToursApi())
             {
+#if !DEBUG
                 MessageBox.Show(
                     "Could not connect to server!\nSome features are disabled!",
                     "Offline mode",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
+#endif
             }
         }
 

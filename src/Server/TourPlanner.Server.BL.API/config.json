@@ -1,3 +1,8 @@
 {
-  "api_key": ""
+  "MAPQUESTAPI_KEY": "khIRs0cAibIWfBhG7R7mZppDFNhowLfL",
+  "DATABASE_ADDRESS": "127.0.0.1",
+  "DATABASE_PORT": 5432,
+  "DATABASE_NAME":  "tourplanner",
+  "DATABASE_USERNAME": "admin",
+  "DATABASE_PASSWORD":  ""
 }
