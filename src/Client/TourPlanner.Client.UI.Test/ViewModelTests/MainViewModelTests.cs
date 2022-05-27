@@ -42,6 +42,41 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
         }
 
         [Test]
+        public void ExportCommand_ShouldTriggerExportMethod()
+        {
+            // Arrange
+            var allTours = new ObservableCollection<Tour>()
+                {
+                    new Tour() { Name = "Test Tour" },
+                    new Tour() { Name = "Test Tour" }
+                };
+            _tourCollectionService.Setup(mock => mock.AllTours).Returns(allTours);
+            _saveFileDialogProvider.Setup(mock => mock.GetFileName()).Returns("test.tours");
+
+            // Act
+            _mainViewModel.ExportCommand.Execute(null);
+
+            // Assert
+            _tourCollectionService.Verify(mock => mock.Export("test.tours"), Times.Once);
+        }
+
+        [Test]
+        public void ImportCommand_ShouldTriggerImportMethod()
+        {
+            // Arrange
+            var allTours = new ObservableCollection<Tour>();
+            _tourCollectionService.Setup(mock => mock.AllTours).Returns(allTours);
+            _openFileDialogProvider.Setup(mock => mock.GetFileName()).Returns("test.tours");
+
+            // Act
+            _mainViewModel.ImportCommand.Execute(null);
+
+            // Assert
+            _tourCollectionService.Verify(mock => mock.Import("test.tours"), Times.Once);
+        }
+
+
+        [Test]
         public void AboutCommand_ShouldOpenWindow()
         {
             // Act && Assert
@@ -104,55 +139,55 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
         }
 
         [Test]
-        public void SearchCommandNotNull()
+        public void SearchCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.SearchCommand);    
         }
 
         [Test]
-        public void ImportCommandNotNull()
+        public void ImportCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.ImportCommand);
         }
 
         [Test]
-        public void DeleteTourCommandNotNull()
+        public void DeleteTourCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.DeleteTourCommand);
         }
 
         [Test]
-        public void ExitCommandNotNull()
+        public void ExitCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.ExitCommand);
         }
 
         [Test]
-        public void ExportCommandNotNull()
+        public void ExportCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.ExportCommand);
         }
 
         [Test]
-        public void GenerateSummarizeReportCommandNotNull()
+        public void GenerateSummarizeReportCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.GenerateSummarizeReportCommand);
         }
 
         [Test]
-        public void GenerateTourReportCommandNotNull()
+        public void GenerateTourReportCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.GenerateTourReportCommand);
         }
 
         [Test]
-        public void SettingsCommandNotNull()
+        public void SettingsCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.SettingsCommand);
         }
 
         [Test]
-        public void AboutCommandNotNull()
+        public void AboutCommand_NotNull()
         {
             Assert.NotNull(_mainViewModel.AboutCommand);
         }

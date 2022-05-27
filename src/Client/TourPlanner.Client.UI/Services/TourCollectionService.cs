@@ -72,21 +72,21 @@ namespace TourPlanner.Client.UI.Services
             }
         }
 
-        public void Export(Uri filePath)
+        public void Export(string filePath)
         {
             // Compute file hash => File cannot be edited by user
             byte[] fileData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(AllTours.ToArray()));
             byte[] hashedData = Encrypt(fileData, "TourPlannerSecret");
 
             // Write all tours as json in given file
-            File.WriteAllBytes(filePath.AbsolutePath.Replace("%20", " "), hashedData);
+            File.WriteAllBytes(filePath.Replace("%20", " "), hashedData);
         }
-        public void Import(Uri filePath)
+        public void Import(string filePath)
         {
             bool error = false;
 
             // Load and decrypt file
-            byte[] hashedData = File.ReadAllBytes(filePath.AbsolutePath.Replace("%20", " "));
+            byte[] hashedData = File.ReadAllBytes(filePath.Replace("%20", " "));
             byte[] fileData = Decrypt(hashedData, "TourPlannerSecret");
 
             // Parse json format into list of tours

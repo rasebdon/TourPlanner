@@ -186,7 +186,7 @@ namespace TourPlanner.Client.UI.ViewModels
 
                 if (fileName != null)
                 {
-                    _tourCollectionService.Import(new Uri(fileName, UriKind.Absolute));
+                    _tourCollectionService.Import(fileName);
                 }
             }
             catch (Exception ex)
@@ -206,7 +206,7 @@ namespace TourPlanner.Client.UI.ViewModels
 
                 if (fileName != null)
                 {
-                    _tourCollectionService.Export(new Uri(fileName, UriKind.Absolute));
+                    _tourCollectionService.Export(fileName);
                 }
             }
             catch (Exception ex)
