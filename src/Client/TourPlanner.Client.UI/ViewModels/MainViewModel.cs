@@ -45,11 +45,15 @@ namespace TourPlanner.Client.UI.ViewModels
         private readonly ITourCollectionService _tourCollectionService;
         private readonly ITourReportGenerationService _tourReportGenerationService;
         private readonly ISummarizeReportGenerationService _summarizeReportGenerationService;
+        private readonly ISaveFileDialogProvider _saveFileDialogProvider;
+        private readonly IOpenFileDialogProvider _openFileDialogProvider;
 
         public MainViewModel(
             ITourCollectionService tourCollectionService,
             ITourReportGenerationService tourReportGenerationService,
-            ISummarizeReportGenerationService summarizeReportGenerationService)
+            ISummarizeReportGenerationService summarizeReportGenerationService,
+            ISaveFileDialogProvider saveFileDialogProvider,
+            IOpenFileDialogProvider openFileDialogProvider)
         {
             _tourCollectionService = tourCollectionService;
             _tourReportGenerationService = tourReportGenerationService;
@@ -61,7 +65,7 @@ namespace TourPlanner.Client.UI.ViewModels
             ExportCommand = new RelayCommand(Export);
             AboutCommand = new RelayCommand(About);
             SettingsCommand = new RelayCommand(Settings);
-            GenerateTourReportCommand = new RelayCommand(GenerateTourReport, 
+            GenerateTourReportCommand = new RelayCommand(GenerateTourReport,
                 o =>
                 {
                     return Tour != null;
@@ -71,7 +75,7 @@ namespace TourPlanner.Client.UI.ViewModels
                 {
                     return _tourCollectionService.AllTours.Count > 0;
                 });
-            DeleteTourCommand = new RelayCommand(DelteTour,
+            DeleteTourCommand = new RelayCommand(DeleteTour,
                 o =>
                 {
                     return Tour != null;
@@ -97,9 +101,11 @@ namespace TourPlanner.Client.UI.ViewModels
                     MessageBoxImage.Warning);
 #endif
             }
+            _saveFileDialogProvider = saveFileDialogProvider;
+            _openFileDialogProvider = openFileDialogProvider;
         }
 
-        private void DelteTour(object? obj)
+        private void DeleteTour(object? obj)
         {
             if (Tour != null && (!_tourCollectionService.Online || _tourCollectionService.DeleteTourApi(Tour.Id)))
             {
@@ -113,17 +119,15 @@ namespace TourPlanner.Client.UI.ViewModels
             {
                 try
                 {
-                    // Create SaveFileDialog
-                    Microsoft.Win32.SaveFileDialog saveFileDialog = new();
+                    _saveFileDialogProvider.DefaultExt = ".pdf";
+                    _saveFileDialogProvider.Filter = "Pdf documents (.pdf)|*.pdf";
 
-                    saveFileDialog.DefaultExt = ".pdf";
-                    saveFileDialog.Filter = "Pdf documents (.pdf)|*.pdf";
-                    bool? result = saveFileDialog.ShowDialog();
-                    if (result == true)
+                    var fileName = _saveFileDialogProvider.GetFileName();
+                    if (fileName != null)
                     {
                         var report = _summarizeReportGenerationService.GenerateReport(
                             _tourCollectionService.AllTours);
-                        File.WriteAllBytes(saveFileDialog.FileName, report);
+                        File.WriteAllBytes(fileName, report);
                     }
                 }
                 catch (Exception ex)
@@ -139,16 +143,15 @@ namespace TourPlanner.Client.UI.ViewModels
             {
                 try
                 {
-                    // Create SaveFileDialog
-                    Microsoft.Win32.SaveFileDialog saveFileDialog = new();
+                    _saveFileDialogProvider.DefaultExt = ".pdf";
+                    _saveFileDialogProvider.Filter = "Pdf documents (.pdf)|*.pdf";
 
-                    saveFileDialog.DefaultExt = ".pdf";
-                    saveFileDialog.Filter = "Pdf documents (.pdf)|*.pdf";
-                    bool? result = saveFileDialog.ShowDialog();
-                    if (result == true)
+                    var fileName = _saveFileDialogProvider.GetFileName();
+
+                    if (fileName != null)
                     {
                         var report = _tourReportGenerationService.GenerateReport(Tour);
-                        File.WriteAllBytes(saveFileDialog.FileName, report);
+                        File.WriteAllBytes(fileName, report);
                     }
                 }
                 catch (Exception ex)
@@ -176,15 +179,14 @@ namespace TourPlanner.Client.UI.ViewModels
         {
             try
             {
-                // Create OpenFileDialog
-                Microsoft.Win32.OpenFileDialog openFileDialog = new();
+                _openFileDialogProvider.DefaultExt = ".tours";
+                _openFileDialogProvider.Filter = "Tour planner documents (.tours)|*.tours";
 
-                openFileDialog.DefaultExt = ".tours";
-                openFileDialog.Filter = "Tour planner documents (.tours)|*.tours";
-                bool? result = openFileDialog.ShowDialog();
-                if (result == true)
+                var fileName = _openFileDialogProvider.GetFileName();
+
+                if (fileName != null)
                 {
-                    _tourCollectionService.Import(new Uri(openFileDialog.FileName, UriKind.Absolute));
+                    _tourCollectionService.Import(fileName);
                 }
             }
             catch (Exception ex)
@@ -197,15 +199,14 @@ namespace TourPlanner.Client.UI.ViewModels
         {
             try
             {
-                // Create SaveFileDialog
-                Microsoft.Win32.SaveFileDialog saveFileDialog = new();
+                _saveFileDialogProvider.DefaultExt = ".tours";
+                _saveFileDialogProvider.Filter = "Tour planner documents (.tours)|*.tours";
 
-                saveFileDialog.DefaultExt = ".tours";
-                saveFileDialog.Filter = "Tour planner documents (.tours)|*.tours";
-                bool? result = saveFileDialog.ShowDialog();
-                if (result == true)
+                var fileName = _saveFileDialogProvider.GetFileName();
+
+                if (fileName != null)
                 {
-                    _tourCollectionService.Export(new Uri(saveFileDialog.FileName, UriKind.Absolute));
+                    _tourCollectionService.Export(fileName);
                 }
             }
             catch (Exception ex)
