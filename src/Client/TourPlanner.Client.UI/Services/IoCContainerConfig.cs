@@ -20,6 +20,7 @@ namespace TourPlanner.Client.UI.Services
             configurationBuilder.AddJsonFile("config.json");
 
             // Add services
+            services.AddSingleton<IBitmapImageService, BitmapImageService>();
             services.AddSingleton<IConfiguration>(configurationBuilder.Build());
             services.AddSingleton<IApiService, TourPlannerApiService>();
             services.AddSingleton<ITourCollectionService, TourCollectionService>();

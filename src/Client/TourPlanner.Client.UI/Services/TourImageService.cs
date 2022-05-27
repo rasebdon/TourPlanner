@@ -15,13 +15,15 @@ namespace TourPlanner.Client.UI.Services
     {
         private readonly Dictionary<int, byte[]> _tourImages;
         private readonly IApiService _apiService;
+        private readonly IBitmapImageService _bitmapImageService;
         public byte[] DefaultImage { get; }
 
-        public TourImageService(IApiService apiService)
+        public TourImageService(IApiService apiService, IBitmapImageService bitmapImageService)
         {
             _apiService = apiService;
+            _bitmapImageService = bitmapImageService;
             _tourImages = new();
-            DefaultImage = BitmapImageHelper.GetImageBytesFromPath("assets/images/no_image.jpg");
+            DefaultImage = _bitmapImageService.GetImageBytesFromPath("assets/images/no_image.jpg");
         }
 
         public byte[] GetTourImage(Tour tour, bool update)
@@ -57,7 +59,7 @@ namespace TourPlanner.Client.UI.Services
             }
             else
             {
-                return BitmapImageHelper.GetImageBytesFromPath(path);
+                return _bitmapImageService.GetImageBytesFromPath(path);
             }
         }
 

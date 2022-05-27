@@ -30,7 +30,7 @@ namespace TourPlanner.Client.UI.ViewModels
                 }
                 else
                 {
-                    TourImage = BitmapImageHelper.ToBitmapImage(_tourImageService.DefaultImage);
+                    TourImage = _bitmapImageService.ToBitmapImage(_tourImageService.DefaultImage);
                 }
                 OnPropertyChanged(nameof(Tour));
                 OnPropertyChanged(nameof(Tour.Description));
@@ -52,19 +52,22 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private readonly ITourCollectionService _tourCollectionService;
         private readonly ITourImageService _tourImageService;
+        private readonly IBitmapImageService _bitmapImageService;
 
         public TourViewModel(
             ITourCollectionService tourCollectionService,
-            ITourImageService tourImageService)
+            ITourImageService tourImageService,
+            IBitmapImageService bitmapImageService)
         {
             _tourCollectionService = tourCollectionService;
             _tourImageService = tourImageService;
+            _bitmapImageService = bitmapImageService;
 
             DisplayRoute = new RelayCommand(ShowImage);
             DisplayDescription = new RelayCommand(ShowDescription, o => Tour != null);
             RefreshImageCommand = new RelayCommand(RefreshImage, CanRefreshImage);
 
-            TourImage = BitmapImageHelper.ToBitmapImage(_tourImageService.DefaultImage);
+            TourImage = _bitmapImageService.ToBitmapImage(_tourImageService.DefaultImage);
         }
 
         private void RefreshImage(object? obj)
@@ -97,7 +100,7 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public void UpdateMap(Tour tour, bool forceUpdate)
         {
-            TourImage = BitmapImageHelper.ToBitmapImage(
+            TourImage = _bitmapImageService.ToBitmapImage(
                 _tourImageService.GetTourImage(tour, forceUpdate));
             OnPropertyChanged(nameof(TourImage));
         }
