@@ -223,4 +223,5 @@ project.lock.json
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
 
-**/config.json
+src/Server/TourPlanner.Server.BL.API/config.json
+src/Client/TourPlanner.Client.UI/config.json
