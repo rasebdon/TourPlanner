@@ -38,28 +38,25 @@ namespace TourPlanner.Server.BL.API
     
         private static bool ConfigureServices(WebApplicationBuilder builder)
         {
-            IConfigurationBuilder configBuilder = new ConfigurationBuilder();
             // Check if there is config file
             if (File.Exists("config.json"))
             {
-                configBuilder.AddJsonFile("config.json");
+                builder.Configuration.AddJsonFile("config.json");
             }
             // Get via environment variables
             else
             {
-                configBuilder.AddEnvironmentVariables();
+                builder.Configuration.AddEnvironmentVariables();
             }
-            IConfigurationRoot? config = configBuilder.Build();
 
             // Configure DAL access
-            builder.Services.AddSingleton(config);
             builder.Services.AddSingleton<IDatabase, PgsqlDatabase>();
 
             // Add repositories
             builder.Services.AddSingleton<IRepository<TourEntry>, PgsqlTourEntryRepository>();
             builder.Services.AddSingleton<IRepository<Tour>, PgsqlTourRepository>();
 
-            string apiKey = config.GetValue<string>("MAPQUESTAPI_KEY");
+            string apiKey = builder.Configuration.GetValue<string>("MAPQUESTAPI_KEY");
 
             // Configure mapquestapi
             IMapService mapService = new MapQuestMapService(apiKey);
