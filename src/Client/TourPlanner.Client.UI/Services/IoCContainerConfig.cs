@@ -21,6 +21,8 @@ namespace TourPlanner.Client.UI.Services
 
             // Add services
             services.AddSingleton<IConfiguration>(configurationBuilder.Build());
+            services.AddSingleton<ISaveFileDialogProvider, WindowsSaveFileDialogProvider>();
+            services.AddSingleton<IOpenFileDialogProvider, WindowsOpenFileDialogProvider>();
             services.AddSingleton<IApiService, TourPlannerApiService>();
             services.AddSingleton<ITourCollectionService, TourCollectionService>();
             services.AddSingleton<ITourReportGenerationService, TourPdfReportGenerationService>();
