@@ -109,13 +109,17 @@ namespace TourPlanner.Client.UI.ViewModels
                             _tourCollectionService.AllTours.Add(tour);
 
                         // Close window
-                        foreach (Window window in Application.Current.Windows)
+                        if (Application.Current != null) // for unit testing
                         {
-                            if (window is NewTourWindow)
+                            foreach (Window window in Application.Current.Windows)
                             {
-                                window.Close();
+                                if (window is NewTourWindow)
+                                {
+                                    window.Close();
+                                }
                             }
                         }
+                        
                     }
                     else
                     {
