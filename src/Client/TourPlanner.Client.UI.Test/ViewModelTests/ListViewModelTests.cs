@@ -18,6 +18,8 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
         private Mock<ITourReportGenerationService> _tourReportGenerationService;
         private Mock<ISummarizeReportGenerationService> _summarizeReportGenerationService;
         private Mock<IBitmapImageService> _bitmapImageService;
+        private Mock<IOpenFileDialogProvider> _openFileDialogProvider;
+        private Mock<ISaveFileDialogProvider> _saveFileDialogProvider;
 
         // Mocked View models
         private Mock<LogViewModel> _logViewModel;
@@ -34,11 +36,18 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
             _tourReportGenerationService = new();
             _summarizeReportGenerationService = new();
             _bitmapImageService = new();
+            _saveFileDialogProvider = new();
+            _openFileDialogProvider = new();
+
 
             _logViewModel = new Mock<LogViewModel>(_apiService.Object, _tourCollectionService.Object);
             _tourViewModel = new Mock<TourViewModel>(_tourCollectionService.Object, _tourImageService.Object, _bitmapImageService.Object);
-            _mainViewModel = new Mock<MainViewModel>(_tourCollectionService.Object,
-                _tourReportGenerationService.Object, _summarizeReportGenerationService.Object);
+            _mainViewModel = new Mock<MainViewModel>(
+                _tourCollectionService.Object,
+                _tourReportGenerationService.Object, 
+                _summarizeReportGenerationService.Object,
+                _saveFileDialogProvider.Object,
+                _openFileDialogProvider.Object);
 
 
             _tourImageService.Setup(mock => mock.DefaultImage).Returns(Array.Empty<byte>());
@@ -48,6 +57,32 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
                 _logViewModel.Object,
                 _tourViewModel.Object,
                 _mainViewModel.Object);
+        }
+
+        [Test]
+        public void AddListPointCommand_OpensNewTourWindow()
+        {
+            // Arrange
+            _tourCollectionService.Setup(mock => mock.Online).Returns(true);
+
+            // Act & Assert         
+            Assert.Throws<InvalidOperationException>(() =>
+            _listViewModel.AddListPoint.Execute(null));
+
+        }
+
+        [Test]
+        public void DeleteTourCommand_CallsMainWindowCommand()
+        {
+            // Assert
+            Assert.AreEqual(_listViewModel.DeleteTourCommand, _mainViewModel.Object.DeleteTourCommand);
+        }
+
+        [Test]
+        public void GenerateTourReportCommand_CallsMainWindowCommand()
+        {
+            // Assert
+            Assert.AreEqual(_listViewModel.GenerateTourReportCommand, _mainViewModel.Object.GenerateTourReportCommand);
         }
 
         [Test]
