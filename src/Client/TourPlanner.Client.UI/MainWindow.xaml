@@ -46,7 +46,7 @@
 
             <MenuItem x:Name="HelpButton" Header="_Help" Height="25">
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
-                <MenuItem Header="_Manual" />
+                <!--<MenuItem Header="_Manual" />-->
             </MenuItem>
         </Menu>
 

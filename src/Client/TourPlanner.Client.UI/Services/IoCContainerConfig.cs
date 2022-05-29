@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 using TourPlanner.Client.UI.Services.Reporting;
 using TourPlanner.Client.UI.ViewModels;
 
@@ -17,6 +18,11 @@ namespace TourPlanner.Client.UI.Services
             var services = new ServiceCollection();
 
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            // Create config file if it does not exist
+            if (!File.Exists("config.json"))
+            {
+                File.WriteAllText("config.json", "{\n\"HTTPS\": false,\n\"SERVER_ADDRESS\": \"localhost\",\n\"SERVER_PORT\": 8080\n}");
+            }
             configurationBuilder.AddJsonFile("config.json");
 
             // Add services
