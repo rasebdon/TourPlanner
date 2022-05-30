@@ -1,0 +1,103 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TourPlanner.Client.UI.Views"
+        xmlns:debug="debug-mode"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="TourPlanner.Client.UI.MainWindow"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="450" Width="800"
+        DataContext="{Binding MainViewModel, Source={StaticResource IoCConfig2}}"
+        Icon="{StaticResource Compass}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Label x:Name="Title" Grid.Row="0" Content="Tour Planner" FontSize="20px"/>
+        
+        <!-- MenuPanel -->
+        <Menu x:Name="MenuPanel" Grid.Row="1">
+            <MenuItem Name="FileMenuItem" Header="_File" Height="25">
+                <MenuItem Header="_Import" Command="{Binding ImportCommand}"/>
+                <MenuItem Header="_Export" Command="{Binding ExportCommand}" />
+                <Separator />
+                <MenuItem Header="_Exit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Name="EditMenuItem" Header="_Edit" Height="25">
+                <MenuItem Header="_Delete Tour" Command="{Binding DeleteTourCommand}"/>
+                <MenuItem Header="_Settings" Command="{Binding SettingsCommand}" />
+                <!-- Only show this option in debug environment-->
+                <Separator/>
+                <MenuItem Header="_Generate Pdf Summarize Report" Command="{Binding GenerateSummarizeReportCommand}"/>
+                <MenuItem Header="_Generate Pdf Tour Report" Command="{Binding GenerateTourReportCommand}"/>
+                <mc:AlternateContent>
+                    <mc:Choice Requires="debug">
+                        <Separator />
+                        <MenuItem Header="_Create Dummy Data" Command="{Binding CreateDummyData}"/>
+                    </mc:Choice>
+                </mc:AlternateContent>
+            </MenuItem>
+
+            <MenuItem x:Name="HelpButton" Header="_Help" Height="25">
+                <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
+                <!--<MenuItem Header="_Manual" />-->
+            </MenuItem>
+        </Menu>
+
+        <!-- SearchPanel -->
+        <Grid x:Name="SearchPanel" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="40"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="SearchBar" Grid.Column="0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding
+                        Key="Return" 
+                        Command="{Binding SearchCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+            <Button x:Name="SearchButton" Grid.Column="1" Content="Search" Command="{Binding SearchCommand}"/>
+        </Grid>
+
+        <!-- ContentPanel -->
+        <Grid x:Name="ContentPanel" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="150" Width="1*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition MinWidth="300" Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ListView -->
+            <local:ListView Grid.Column="0"></local:ListView>
+
+            <GridSplitter x:Name="ContentGridSplitter" Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+            
+            <!-- TourContentPanel -->
+            <Grid x:Name="TourContentPanel" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="150px" Height="*"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition MinHeight="150px" Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- MapView-->
+                <local:TourView Grid.Row="0"></local:TourView>
+
+                <GridSplitter x:Name="TourContentGridSplitter" Height="5" Grid.Row="1" HorizontalAlignment="Stretch"/>
+                
+                <!-- LogView -->
+                <local:LogView Grid.Row="2"></local:LogView>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</Window>
+    

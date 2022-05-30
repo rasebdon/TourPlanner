@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="TourPlanner.Client.UI.Views.LogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TourPlanner.Client.UI.Views"
+             xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
+             mc:Ignorable="d"
+             d:DesignHeight="150" d:DesignWidth="300"
+             DataContext="{Binding LogViewModel, Source={StaticResource IoCConfig2}}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TourContentDataPanelMenuBar -->
+        <Grid x:Name="TourContentDataPanelMenuBar" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="40"/>
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="TourContentDataPanelTitle" Content="Logs:" Grid.Column="0"/>
+            <Button x:Name="TourContentDataPanelAdd" Content="+" Command="{Binding AddLogEntryCommand}"  Grid.Column="1"/>
+            <Button x:Name="TourContentDataPanelRemove" Content="-" Command="{Binding RemoveLogEntryCommand}" Grid.Column="2"/>
+        </Grid>
+
+        <DataGrid x:Name="TourContentDataPanelContent" Grid.Row="1"
+                  ItemsSource="{Binding Data, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False" 
+                  IsReadOnly="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="CellEditEnding">
+                    <i:InvokeCommandAction Command="{Binding SaveTableCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Duration (s)" Binding="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Distance (km)" Binding="{Binding Distance, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Rating" Binding="{Binding Rating, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Difficulty" Binding="{Binding Difficulty, UpdateSourceTrigger=LostFocus}" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Comment" Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+            </DataGrid.Columns>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Delete Entry" Command="{Binding RemoveLogEntryCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+    </Grid>
+</UserControl>

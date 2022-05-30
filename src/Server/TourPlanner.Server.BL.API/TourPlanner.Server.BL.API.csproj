@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <StartupObject>TourPlanner.Server.BL.API.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="6.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\TourPlanner.Common.Models\TourPlanner.Common.Models.csproj" />
+    <ProjectReference Include="..\TourPlanner.Server.BL.MapQuestAPI\TourPlanner.Server.BL.MapQuestAPI.csproj" />
+    <ProjectReference Include="..\TourPlanner.Server.DAL\TourPlanner.Server.DAL.csproj" />
+  </ItemGroup>
+
+</Project>

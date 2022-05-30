@@ -1,0 +1,44 @@
+# Docker Compose for TourPlanner
+
+networks:
+  mynet:
+    name: my-shared-db-network
+
+volumes:
+  postgresql_data:
+      external: false
+
+services:
+  # Database
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - mynet
+     
+  # TourPlanner Backend (ASP.NET)
+  aspnet:
+    build: .
+    ports:
+      - 8080:80
+      - 8443:443
+    restart: always
+    environment:
+      MAPQUESTAPI_KEY: khIRs0cAibIWfBhG7R7mZppDFNhowLfL
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_ADDRESS: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: postgres
+    depends_on:
+      - postgres
+    networks:
+      - mynet
