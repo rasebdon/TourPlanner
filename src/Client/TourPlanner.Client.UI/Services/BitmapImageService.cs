@@ -5,24 +5,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using TourPlanner.Client.UI.Services;
 
 namespace TourPlanner.Client.UI.ViewModels
 {
-    public static class BitmapImageHelper
+    public class BitmapImageService : IBitmapImageService
     {
-        public static BitmapImage GetImageFromPath(string path)
+        public BitmapImage GetImageFromPath(string path)
         {
             path = Path.Combine(Directory.GetCurrentDirectory(), path);
             return new BitmapImage(new Uri(path, UriKind.Absolute));
         }
 
-        public static byte[] GetImageBytesFromPath(string path)
+        public byte[] GetImageBytesFromPath(string path)
         {
             path = Path.Combine(Directory.GetCurrentDirectory(), path);
             return File.ReadAllBytes(path);
         }
 
-        public static BitmapImage ToBitmapImage(byte[] data)
+        public BitmapImage ToBitmapImage(byte[] data)
         {
             using MemoryStream ms = new(data);
 

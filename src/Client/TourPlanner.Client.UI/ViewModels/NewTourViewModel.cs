@@ -21,6 +21,7 @@ namespace TourPlanner.Client.UI.ViewModels
         private readonly ITourCollectionService _tourCollectionService;
         private readonly IApiService _apiService;
         private readonly ITourImageService _tourImageService;
+        private readonly IBitmapImageService _bitmapImageService;
         public BitmapImage? StartImagePath { get; set; }
         public BitmapImage? EndImagePath { get; set; }
 
@@ -67,14 +68,16 @@ namespace TourPlanner.Client.UI.ViewModels
         public NewTourViewModel(
             ITourCollectionService tourCollectionService,
             IApiService apiService,
-            ITourImageService tourImageService)
+            ITourImageService tourImageService,
+            IBitmapImageService bitmapImageService)
         {
             _tourCollectionService = tourCollectionService;
             _apiService = apiService;
             _tourImageService = tourImageService;
+            _bitmapImageService = bitmapImageService;
 
-            StartImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
-            EndImagePath = BitmapImageHelper.ToBitmapImage(tourImageService.DefaultImage);
+            StartImagePath = _bitmapImageService.ToBitmapImage(tourImageService.DefaultImage);
+            EndImagePath = _bitmapImageService.ToBitmapImage(tourImageService.DefaultImage);
 
             CreateTour = new RelayCommand(
                 o =>
@@ -106,13 +109,17 @@ namespace TourPlanner.Client.UI.ViewModels
                             _tourCollectionService.AllTours.Add(tour);
 
                         // Close window
-                        foreach (Window window in Application.Current.Windows)
+                        if (Application.Current != null) // for unit testing
                         {
-                            if (window is NewTourWindow)
+                            foreach (Window window in Application.Current.Windows)
                             {
-                                window.Close();
+                                if (window is NewTourWindow)
+                                {
+                                    window.Close();
+                                }
                             }
                         }
+                        
                     }
                     else
                     {
@@ -141,7 +148,7 @@ namespace TourPlanner.Client.UI.ViewModels
         {
             if (StartTourPoint != null)
             {
-                StartImagePath = BitmapImageHelper.ToBitmapImage(
+                StartImagePath = _bitmapImageService.ToBitmapImage(
                     _tourImageService.GetTourPointImage(StartTourPoint));
                 OnPropertyChanged(nameof(StartImagePath));
                 return true;
@@ -152,7 +159,7 @@ namespace TourPlanner.Client.UI.ViewModels
         {
             if (EndTourPoint != null)
             {
-                EndImagePath = BitmapImageHelper.ToBitmapImage(
+                EndImagePath = _bitmapImageService.ToBitmapImage(
                     _tourImageService.GetTourPointImage(EndTourPoint));
                 OnPropertyChanged(nameof(EndImagePath));
                 return true;
