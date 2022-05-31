@@ -179,8 +179,8 @@ namespace TourPlanner.Client.UI.ViewModels
             StartTourPoint = JsonConvert.DeserializeObject<TourPoint>(result.Item1);
 
             // Update View
-            StartLatitude = StartTourPoint?.Latitude.ToString();
-            StartLongitude = StartTourPoint?.Longitude.ToString();
+            StartLatitude = StartTourPoint?.Latitude.ToString().Replace(',', '.');
+            StartLongitude = StartTourPoint?.Longitude.ToString().Replace(',', '.');
             OnPropertyChanged(nameof(StartLatitude));
             OnPropertyChanged(nameof(StartLongitude));
 

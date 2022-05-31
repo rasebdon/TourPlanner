@@ -91,8 +91,8 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
             _newTourViewModel.TranslateStartAddress.Execute(null);
 
             // Assert
-            Assert.AreEqual(_newTourViewModel.StartLatitude, "50,001");
-            Assert.AreEqual(_newTourViewModel.StartLongitude, "50,002");
+            Assert.AreEqual(_newTourViewModel.StartLatitude, "50.001");
+            Assert.AreEqual(_newTourViewModel.StartLongitude, "50.002");
 
         }
 
@@ -115,8 +115,8 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
             _newTourViewModel.TranslateEndAddress.Execute(null);
 
             // Assert
-            Assert.AreEqual(_newTourViewModel.EndLatitude, "50,001");
-            Assert.AreEqual(_newTourViewModel.EndLongitude, "50,002");
+            Assert.AreEqual(_newTourViewModel.EndLatitude, "50.001");
+            Assert.AreEqual(_newTourViewModel.EndLongitude, "50.002");
 
         }
 
