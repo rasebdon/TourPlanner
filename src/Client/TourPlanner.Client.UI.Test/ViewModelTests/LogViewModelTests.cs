@@ -21,12 +21,14 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
         // Mocked Services
         private Mock<IApiService> _apiService;
         private Mock<ITourCollectionService> _tourCollectionService;
+        private Mock<ITourSelectionService> _tourSelectionService;
 
         [SetUp]
         public void SetUp()
         {
             _apiService = new();
             _tourCollectionService = new();
+            _tourSelectionService = new();
 
             // Tour
             Tour tour = new();
@@ -49,11 +51,14 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
                 Duration = 1,
                 Distance = 1
             };
-
+            
             // LogViewModel
-            _logViewModel = new LogViewModel(_apiService.Object, _tourCollectionService.Object);
-            _logViewModel.Tour = tour;
-            _logViewModel.SelectedItem = _tourentry;
+            _logViewModel = new LogViewModel(
+                _apiService.Object,
+                _tourCollectionService.Object,
+                _tourSelectionService.Object);
+            _logViewModel.SelectedTour = tour;
+            _logViewModel.SelectedTourEntry = _tourentry;
         }
 
         [Test]
@@ -65,15 +70,15 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
             (string, HttpStatusCode) task_result = (JsonConvert.SerializeObject(_tourentry), HttpStatusCode.Created);
             var responseTask = Task.FromResult(task_result);
 
-            TourEntry entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = _logViewModel.Tour.Id };
-            _apiService.Setup(mock => mock.PostAsync($"Tour/{_logViewModel.Tour.Id}/Entry", entry)).Returns(responseTask);
+            TourEntry entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = _logViewModel.SelectedTour.Id };
+            _apiService.Setup(mock => mock.PostAsync($"Tour/{_logViewModel.SelectedTour.Id}/Entry", entry)).Returns(responseTask);
 
             // Act
             _logViewModel.AddLogEntryCommand.Execute(null);
 
             // Assert
             Assert.AreEqual(_logViewModel.Data[0], _tourentry);
-            Assert.AreEqual(_logViewModel.Tour.Entries[0], _tourentry);
+            Assert.AreEqual(_logViewModel.SelectedTour.Entries[0], _tourentry);
         }
 
         [Test]
@@ -81,14 +86,14 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
         {
             // Arrange
             _logViewModel.Data.Add(_tourentry);
-            _apiService.Setup(mock => mock.DeleteAsync($"Tour/Entry/{_logViewModel.SelectedItem.Id}")).Returns(Task.FromResult(HttpStatusCode.OK));
+            _apiService.Setup(mock => mock.DeleteAsync($"Tour/Entry/{_logViewModel.SelectedTourEntry.Id}")).Returns(Task.FromResult(HttpStatusCode.OK));
 
             // Act
             _logViewModel.RemoveLogEntryCommand.Execute(null);
 
             // Assert
             Assert.IsEmpty(_logViewModel.Data);
-            Assert.IsEmpty(_logViewModel.Tour.Entries);
+            Assert.IsEmpty(_logViewModel.SelectedTour.Entries);
         }
 
         [Test]
@@ -99,13 +104,13 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
 
             (string, HttpStatusCode) task_result = (JsonConvert.SerializeObject(_tourentry), HttpStatusCode.OK);
             var responseTask = Task.FromResult(task_result);
-            _apiService.Setup(mock => mock.PutAsync($"Tour/Entry/{_logViewModel.SelectedItem.Id}", _logViewModel.SelectedItem)).Returns(responseTask);
+            _apiService.Setup(mock => mock.PutAsync($"Tour/Entry/{_logViewModel.SelectedTourEntry.Id}", _logViewModel.SelectedTourEntry)).Returns(responseTask);
 
             // Act 
             _logViewModel.SaveTableCommand.Execute(null);
 
             // Assert
-            _apiService.Verify(mock => mock.PutAsync($"Tour/Entry/{_logViewModel.SelectedItem.Id}", _logViewModel.SelectedItem), Times.Once);
+            _apiService.Verify(mock => mock.PutAsync($"Tour/Entry/{_logViewModel.SelectedTourEntry.Id}", _logViewModel.SelectedTourEntry), Times.Once);
         }
 
         [Test]
