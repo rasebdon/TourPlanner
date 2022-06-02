@@ -32,7 +32,7 @@
                   ItemsSource="{Binding Data, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
                   CanUserAddRows="False" CanUserDeleteRows="False" 
                   IsReadOnly="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single">
+                  SelectedItem="{Binding SelectedTourEntry, UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="CellEditEnding">
                     <i:InvokeCommandAction Command="{Binding SaveTableCommand}"/>

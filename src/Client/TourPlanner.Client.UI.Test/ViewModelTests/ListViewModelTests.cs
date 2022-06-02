@@ -13,50 +13,23 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
 
         // Mocked services
         private Mock<ITourCollectionService> _tourCollectionService;
-        private Mock<IApiService> _apiService;
-        private Mock<ITourImageService> _tourImageService;
         private Mock<ITourReportGenerationService> _tourReportGenerationService;
-        private Mock<ISummarizeReportGenerationService> _summarizeReportGenerationService;
-        private Mock<IBitmapImageService> _bitmapImageService;
-        private Mock<IOpenFileDialogProvider> _openFileDialogProvider;
         private Mock<ISaveFileDialogProvider> _saveFileDialogProvider;
-
-        // Mocked View models
-        private Mock<LogViewModel> _logViewModel;
-        private Mock<TourViewModel> _tourViewModel;
-        private Mock<MainViewModel> _mainViewModel;
-
+        private Mock<ITourSelectionService> _tourSelectionService;
 
         [SetUp]
         public void Setup()
         {
             _tourCollectionService = new();
-            _apiService = new();
-            _tourImageService = new();
             _tourReportGenerationService = new();
-            _summarizeReportGenerationService = new();
-            _bitmapImageService = new();
             _saveFileDialogProvider = new();
-            _openFileDialogProvider = new();
-
-
-            _logViewModel = new Mock<LogViewModel>(_apiService.Object, _tourCollectionService.Object);
-            _tourViewModel = new Mock<TourViewModel>(_tourCollectionService.Object, _tourImageService.Object, _bitmapImageService.Object);
-            _mainViewModel = new Mock<MainViewModel>(
-                _tourCollectionService.Object,
-                _tourReportGenerationService.Object, 
-                _summarizeReportGenerationService.Object,
-                _saveFileDialogProvider.Object,
-                _openFileDialogProvider.Object);
-
-
-            _tourImageService.Setup(mock => mock.DefaultImage).Returns(Array.Empty<byte>());
+            _tourSelectionService = new();
 
             _listViewModel = new ListViewModel(
                 _tourCollectionService.Object,
-                _logViewModel.Object,
-                _tourViewModel.Object,
-                _mainViewModel.Object);
+                _tourSelectionService.Object,
+                _tourReportGenerationService.Object,
+                _saveFileDialogProvider.Object);
         }
 
         [Test]
@@ -75,14 +48,14 @@ namespace TourPlanner.Client.UI.Test.ViewModelTests
         public void DeleteTourCommand_CallsMainWindowCommand()
         {
             // Assert
-            Assert.AreEqual(_listViewModel.DeleteTourCommand, _mainViewModel.Object.DeleteTourCommand);
+            Assert.IsNotNull(_listViewModel.DeleteTourCommand);
         }
 
         [Test]
         public void GenerateTourReportCommand_CallsMainWindowCommand()
         {
             // Assert
-            Assert.AreEqual(_listViewModel.GenerateTourReportCommand, _mainViewModel.Object.GenerateTourReportCommand);
+            Assert.IsNotNull(_listViewModel.GenerateTourReportCommand);
         }
 
         [Test]

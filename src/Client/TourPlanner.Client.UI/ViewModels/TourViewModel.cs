@@ -13,34 +13,7 @@ namespace TourPlanner.Client.UI.ViewModels
     {
         public BitmapImage TourImage { get; set; }
 
-        private Tour? _tour;
-        public Tour? Tour
-        {
-            get
-            {
-                return _tour;
-            }
-            set
-            {
-                _tour = value;
-                if (_tour != null)
-                {
-                    if (_tourCollectionService.Online)
-                        UpdateMap(_tour, false);
-                }
-                else
-                {
-                    TourImage = _bitmapImageService.ToBitmapImage(_tourImageService.DefaultImage);
-                }
-                OnPropertyChanged(nameof(Tour));
-                OnPropertyChanged(nameof(Tour.Description));
-                OnPropertyChanged(nameof(Tour.Distance));
-                OnPropertyChanged(nameof(Tour.ChildFriendliness));
-                OnPropertyChanged(nameof(Tour.Popularity));
-                OnPropertyChanged(nameof(Tour.TransportType));
-                OnPropertyChanged(nameof(TourImage));
-            }
-        }
+        public Tour? Tour { get; set; }
 
         public Visibility ImageEnabled { get; set; } = Visibility.Visible;
         public Visibility DescriptionEnabled { get; set; } = Visibility.Hidden;
@@ -53,21 +26,47 @@ namespace TourPlanner.Client.UI.ViewModels
         private readonly ITourCollectionService _tourCollectionService;
         private readonly ITourImageService _tourImageService;
         private readonly IBitmapImageService _bitmapImageService;
+        ITourSelectionService _selectionService;
 
         public TourViewModel(
             ITourCollectionService tourCollectionService,
             ITourImageService tourImageService,
-            IBitmapImageService bitmapImageService)
+            IBitmapImageService bitmapImageService,
+            ITourSelectionService selectionService)
         {
             _tourCollectionService = tourCollectionService;
             _tourImageService = tourImageService;
             _bitmapImageService = bitmapImageService;
+            _selectionService = selectionService;
+
+            _selectionService.OnTourChanged += OnTourChanged;
 
             DisplayRoute = new RelayCommand(ShowImage);
             DisplayDescription = new RelayCommand(ShowDescription, o => Tour != null);
             RefreshImageCommand = new RelayCommand(RefreshImage, CanRefreshImage);
 
             TourImage = _bitmapImageService.ToBitmapImage(_tourImageService.DefaultImage);
+        }
+
+        private void OnTourChanged(object? sender, TourChangedEventArgs e)
+        {
+            Tour = e.NewValue;
+            if (Tour!= null)
+            {
+                if (_tourCollectionService.Online)
+                    UpdateMap(Tour, false);
+            }
+            else
+            {
+                TourImage = _bitmapImageService.ToBitmapImage(_tourImageService.DefaultImage);
+            }
+            OnPropertyChanged(nameof(Tour));
+            OnPropertyChanged(nameof(Tour.Description));
+            OnPropertyChanged(nameof(Tour.Distance));
+            OnPropertyChanged(nameof(Tour.ChildFriendliness));
+            OnPropertyChanged(nameof(Tour.Popularity));
+            OnPropertyChanged(nameof(Tour.TransportType));
+            OnPropertyChanged(nameof(TourImage));
         }
 
         private void RefreshImage(object? obj)

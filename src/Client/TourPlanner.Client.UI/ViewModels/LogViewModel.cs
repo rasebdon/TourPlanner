@@ -13,26 +13,8 @@ namespace TourPlanner.Client.UI.ViewModels
     {
         public ObservableCollection<TourEntry> Data { get; private set; } = new();
 
-        private Tour? _tour;
-        public Tour? Tour
-        {
-            get
-            {
-                return _tour;
-            }
-            set
-            {
-                _tour = value;
-                Data.Clear();
-                if (_tour != null)
-                {
-                    _tour.Entries.ForEach(e => Data.Add(e));
-                }
-                OnPropertyChanged(nameof(Data));
-                OnPropertyChanged(nameof(Tour));
-            }
-        }
-        public TourEntry? SelectedItem { get; set; }
+        public Tour? SelectedTour { get; set; }
+        public TourEntry? SelectedTourEntry { get; set; }
 
         public ICommand AddLogEntryCommand { get; }
         public ICommand RemoveLogEntryCommand { get; }
@@ -48,28 +30,33 @@ namespace TourPlanner.Client.UI.ViewModels
 
         private readonly IApiService _apiService;
         private readonly ITourCollectionService _tourCollectionService;
+        private readonly ITourSelectionService _tourSelectionService;
 
         public LogViewModel(
             IApiService apiService,
-            ITourCollectionService tourCollectionService)
+            ITourCollectionService tourCollectionService,
+            ITourSelectionService tourSelectionService)
         {
             _apiService = apiService;
             _tourCollectionService = tourCollectionService;
+            _tourSelectionService = tourSelectionService;
+
+            _tourSelectionService.OnTourChanged += OnTourChanged;
 
             AddLogEntryCommand = new RelayCommand(
                 AddLogEntry,
-                o => Tour != null && _tourCollectionService.Online);
+                o => SelectedTour != null && _tourCollectionService.Online);
 
             RemoveLogEntryCommand = new RelayCommand(
                 RemoveLogEntry,
-                o => SelectedItem != null && _tourCollectionService.Online);
+                o => SelectedTourEntry != null && _tourCollectionService.Online);
 
             SaveTableCommand = new RelayCommand(
                 o =>
                 {
-                    var entry = SelectedItem;
+                    var entry = SelectedTourEntry;
 
-                    OnPropertyChanged(nameof(SelectedItem));
+                    OnPropertyChanged(nameof(SelectedTourEntry));
 
                     if (entry != null && _tourCollectionService.Online && !UpdateTourEntry(ref entry))
                         MessageBox.Show(
@@ -81,27 +68,39 @@ namespace TourPlanner.Client.UI.ViewModels
                 o => true);
         }
 
+        private void OnTourChanged(object? sender, TourChangedEventArgs e)
+        {
+            Data.Clear();
+            SelectedTour = e.NewValue;
+            if (SelectedTour != null)
+            {
+                SelectedTour.Entries.ForEach(e => Data.Add(e));
+            }
+            OnPropertyChanged(nameof(Data));
+            OnPropertyChanged(nameof(SelectedTour));
+        }
+
         private void RemoveLogEntry(object? obj)
         {
-            if (SelectedItem != null && DeleteTourEntry(SelectedItem.Id))
+            if (SelectedTourEntry != null && DeleteTourEntry(SelectedTourEntry.Id))
             {
-                Data.Remove(SelectedItem);
-                _tour?.Entries.Remove(SelectedItem);
-                SelectedItem = null;
+                Data.Remove(SelectedTourEntry);
+                SelectedTour?.Entries.Remove(SelectedTourEntry);
+                SelectedTourEntry = null;
             }
         }
 
         private void AddLogEntry(object? obj)
         {
-            if (Tour == null)
+            if (SelectedTour == null)
                 return;
 
-            var entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = Tour.Id };
+            var entry = new TourEntry() { Date = DateTime.Now, Id = -1, TourId = SelectedTour.Id };
             // Create entry
             if (CreateTourEntry(ref entry))
             {
                 Data.Add(entry);
-                _tour.Entries.Add(entry);
+                SelectedTour.Entries.Add(entry);
             }
         }
 

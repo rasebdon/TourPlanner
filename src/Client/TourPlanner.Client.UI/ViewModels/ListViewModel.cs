@@ -1,7 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using TourPlanner.Client.UI.Services;
+using TourPlanner.Client.UI.Services.Reporting;
 using TourPlanner.Common.Models;
 
 namespace TourPlanner.Client.UI.ViewModels
@@ -9,7 +12,7 @@ namespace TourPlanner.Client.UI.ViewModels
     public class ListViewModel : BaseViewModel
     {
         private Tour? selectedItem;
-        public Tour? SelectedItem
+        public Tour? SelectedTour
         {
             get
             {
@@ -18,11 +21,7 @@ namespace TourPlanner.Client.UI.ViewModels
             set
             {
                 selectedItem = value;
-
-                // Change other component views
-                _logViewModel.Tour = selectedItem;
-                _tourViewModel.Tour = selectedItem;
-                _mainViewModel.Tour = selectedItem;
+                _tourSelectionService.Tour = value;
             }
         }
 
@@ -31,9 +30,9 @@ namespace TourPlanner.Client.UI.ViewModels
         public ICommand GenerateTourReportCommand { get; }
 
         private readonly ITourCollectionService _tourCollectionService;
-        private readonly LogViewModel _logViewModel;
-        private readonly TourViewModel _tourViewModel;
-        private readonly MainViewModel _mainViewModel;
+        private readonly ITourSelectionService _tourSelectionService;
+        private readonly ITourReportGenerationService _tourReportGenerationService;
+        private readonly ISaveFileDialogProvider _saveFileDialogProvider;
 
         public ObservableCollection<Tour> Tours
         {
@@ -45,14 +44,14 @@ namespace TourPlanner.Client.UI.ViewModels
 
         public ListViewModel(
             ITourCollectionService tourCollectionService,
-            LogViewModel logViewModel,
-            TourViewModel tourViewModel,
-            MainViewModel mainViewModel)
+            ITourSelectionService tourSelectionService,
+            ITourReportGenerationService tourReportGenerationService,
+            ISaveFileDialogProvider saveFileDialogProvider)
         {
             _tourCollectionService = tourCollectionService;
-            _logViewModel = logViewModel;
-            _tourViewModel = tourViewModel;
-            _mainViewModel = mainViewModel;
+            _tourSelectionService = tourSelectionService;
+            _tourReportGenerationService = tourReportGenerationService;
+            _saveFileDialogProvider = saveFileDialogProvider;
 
             AddListPoint = new RelayCommand(
                 o =>
@@ -72,8 +71,41 @@ namespace TourPlanner.Client.UI.ViewModels
                     }
                 },
                 o => true);
-            DeleteTourCommand = _mainViewModel.DeleteTourCommand;
-            GenerateTourReportCommand = _mainViewModel.GenerateTourReportCommand;
+            DeleteTourCommand = new RelayCommand(DeleteTour);
+            GenerateTourReportCommand = new RelayCommand(GenerateTourReport);
+        }
+
+        private void DeleteTour(object? obj)
+        {
+            if (SelectedTour != null && (!_tourCollectionService.Online || _tourCollectionService.DeleteTourApi(SelectedTour.Id)))
+            {
+                _tourCollectionService.AllTours.Remove(SelectedTour);
+            }
+        }
+
+
+        private void GenerateTourReport(object? obj)
+        {
+            if (SelectedTour != null)
+            {
+                try
+                {
+                    _saveFileDialogProvider.DefaultExt = ".pdf";
+                    _saveFileDialogProvider.Filter = "Pdf documents (.pdf)|*.pdf";
+
+                    var fileName = _saveFileDialogProvider.GetFileName();
+
+                    if (fileName != null)
+                    {
+                        var report = _tourReportGenerationService.GenerateReport(SelectedTour);
+                        File.WriteAllBytes(fileName, report);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "An error occured!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

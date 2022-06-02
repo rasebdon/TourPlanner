@@ -36,7 +36,7 @@
 
         <!-- TourListContentPanel -->
         <ListBox ItemTemplate="{DynamicResource ListPointItemTemplate}" x:Name="TourListContentPanel" Grid.Row="1" 
-                 ItemsSource="{Binding Tours}" SelectedItem="{Binding SelectedItem}">
+                 ItemsSource="{Binding Tours}" SelectedItem="{Binding SelectedTour}">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="_Delete" Command="{Binding DeleteTourCommand}"/>
